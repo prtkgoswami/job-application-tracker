@@ -2,15 +2,11 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import { useAuth } from "@/app/components/AuthProvider";
-import useJobs, { CountsType } from "@/app/hooks/useJobs";
+import useJobs from "@/app/hooks/useJobs";
 import JobDetailsModal from "@/app/components/JobDetailsModal";
 import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEye,
-  faEyeSlash,
-  faSpinner,
-} from "@fortawesome/free-solid-svg-icons";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
 
@@ -47,7 +43,7 @@ const ApplicationTable = ({
   jobs,
   isLoading,
   error,
-  refetch
+  refetch,
 }: ApplicationTableProps) => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
@@ -79,7 +75,6 @@ const ApplicationTable = ({
   useEffect(() => {
     toast.error(error?.message);
   }, [error]);
-
 
   return (
     <div className="grow w-full flex justify-center items-start overflow-x-auto mt-4">
@@ -115,10 +110,7 @@ const ApplicationTable = ({
         <tbody>
           {!isLoading &&
             jobList.map((job, i) => (
-              <tr
-                key={job.id}
-                onClick={() => setSelectedJob(job)}
-              >
+              <tr key={job.id} onClick={() => setSelectedJob(job)}>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
                     i % 2 === 0 ? "bg-gray-100/10" : ""
@@ -222,8 +214,11 @@ const JobsDashboardPage = () => {
   const [activeJobFilter, setActiveJobFilter] =
     useState<(typeof JOB_FILTERS)[number]>("active");
   const user = useAuth();
-  const {refetchKey} = useApplicationsRefetch();
-  const { jobs, counts, error, isLoading, refetch } = useJobs(user?.uid, refetchKey);
+  const { refetchKey } = useApplicationsRefetch();
+  const { jobs, counts, error, isLoading, refetch } = useJobs(
+    user?.uid,
+    refetchKey
+  );
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setActiveJobFilter(e.currentTarget.value);
@@ -234,29 +229,30 @@ const JobsDashboardPage = () => {
       <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-400">
         <div className="flex items-center gap-2">
           <label className="text-gray-800 text-lg">Filter:</label>
-        <select
-          name="status"
-          value={activeJobFilter}
-          onChange={handleFilterChange}
-          className="w-max border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer"
-        >
-          {JOB_FILTERS.map((filter) => (
-            <option key={filter} value={filter} className="capitalize">
-              {filter}
-            </option>
-          ))}
-        </select>
+          <select
+            name="status"
+            value={activeJobFilter}
+            onChange={handleFilterChange}
+            className="w-max border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer"
+          >
+            {JOB_FILTERS.map((filter) => (
+              <option key={filter} value={filter} className="capitalize">
+                {filter}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="flex flex-col items-end">
-        <p className="text-gray-800 text-sm">
-          Total Active Applications: {counts?.active}
-        </p>
-        <p className="text-gray-900 text-xs">
-          Total Applications: {counts?.total}
-        </p>
+        <div className="hidden md:flex flex-col items-end">
+          <p className="text-gray-800 text-sm">
+            Total Active Applications: {counts?.active}
+          </p>
+          <p className="text-gray-900 text-xs">
+            Total Applications: {counts?.total}
+          </p>
         </div>
       </div>
+
       <ApplicationTable
         userId={user?.uid ?? ""}
         activeFilter={activeJobFilter}

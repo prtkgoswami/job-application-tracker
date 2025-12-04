@@ -4,8 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
   faClose,
+  faFloppyDisk,
   faLink,
-  faLocationDot
+  faLocationDot,
+  faPenToSquare,
+  faTrash,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -21,7 +25,7 @@ type JobDetailsModalProps = {
 };
 
 const STATUS_COLOR_MAP = {
-  wishlist: {bgColor: "bg-fuchsia-300", textColor: "text-fuchsia-600"},
+  wishlist: { bgColor: "bg-fuchsia-300", textColor: "text-fuchsia-600" },
   applied: { bgColor: "bg-blue-300", textColor: "text-blue-600" },
   interviewing: { bgColor: "bg-amber-300", textColor: "text-amber-600" },
   rejected: { bgColor: "bg-red-300", textColor: "text-red-600" },
@@ -68,7 +72,7 @@ const JobDetailsModal = ({
   ) => {
     const { name, value } = e.target;
     if (!name || !value) return;
-    
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -116,9 +120,9 @@ const JobDetailsModal = ({
 
   return (
     <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center bg-gray-800/40">
-      <div className="w-2/3 bg-gray-100 h-170 rounded-lg relative">
+      <div className="w-full md:w-2/3 bg-gray-100 h-full md:h-170 rounded-lg relative">
         <div className="w-full absolute bottom-0 left-0 bg-amber-400 px-5 py-4 border-t border-gray-800 flex justify-center items-center">
-          <div className="grid grid-cols-4 gap-8 w-4/5">
+          <div className="hidden md:grid grid-cols-4 gap-8 w-4/5">
             <button
               type="button"
               className="cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-red-600/60 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
@@ -154,6 +158,46 @@ const JobDetailsModal = ({
               </button>
             )}
           </div>
+          <div className="grid md:hidden grid-cols-4 gap-8 w-4/5">
+            <button
+              type="button"
+              className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+              style={{height: '60px'}}
+              onClick={handleDelete}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+            {isInEditMode ? (
+              <>
+                <button
+                  type="button"
+                  className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+                  style={{height: '60px'}}
+                  onClick={handleAction}
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+
+                <button
+                  type="button"
+                  className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+                  style={{height: '60px'}}
+                  onClick={handleUpdate}
+                >
+                  <FontAwesomeIcon icon={faFloppyDisk} />
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+                style={{height: '60px'}}
+                onClick={handleAction}
+              >
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="h-full w-full overflow-y-auto p-5 flex flex-col ">
@@ -175,7 +219,7 @@ const JobDetailsModal = ({
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
-                className="w-4/5 flex flex-col items-center gap-5"
+                className="w-full md:w-4/5 flex flex-col items-center gap-5"
               >
                 <div className="w-full">
                   <label className="text-amber-500 uppercase font-semibold">
@@ -206,7 +250,7 @@ const JobDetailsModal = ({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-2 gap-5">
+                <div className="w-full grid md:grid-cols-2 gap-5">
                   <div className="w-full">
                     <label className="text-amber-500 uppercase font-semibold">
                       Job Link
@@ -236,7 +280,7 @@ const JobDetailsModal = ({
                     />
                   </div>
                 </div>
-                <div className="w-full grid grid-cols-2 gap-5">
+                <div className="w-full grid md:grid-cols-2 gap-5">
                   <div className="w-full">
                     <label className="text-amber-500 uppercase font-semibold">
                       Application Status
@@ -347,7 +391,7 @@ const JobDetailsModal = ({
                         {jobData.status}
                       </span>
                     </p>
-                    <p className="text-xs">
+                    <p className="text-xs" style={{textAlign: "right"}}>
                       Last Updated On: {jobData.lastUpdateDate}
                     </p>
                   </div>
@@ -356,13 +400,17 @@ const JobDetailsModal = ({
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                     Responsibilities
                   </h4>
-                  <p className="px-4 whitespace-pre-wrap">{jobData.responsibilities}</p>
+                  <p className="px-4 whitespace-pre-wrap">
+                    {jobData.responsibilities}
+                  </p>
                 </div>
                 <div className="flex flex-col gap-2">
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                     Requirements
                   </h4>
-                  <p className="px-4 whitespace-pre-wrap">{jobData.requirements}</p>
+                  <p className="px-4 whitespace-pre-wrap">
+                    {jobData.requirements}
+                  </p>
                 </div>
                 <div className="flex flex-col gap-2">
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">

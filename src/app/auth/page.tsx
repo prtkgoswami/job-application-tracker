@@ -34,11 +34,10 @@ const RegisterForm = ({
 
   const handleRegisterClick = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (Object.entries(formError).length > 0)
-      return;
+    if (Object.entries(formError).length > 0) return;
 
-    onRegister(e)
-  }
+    onRegister(e);
+  };
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -48,25 +47,25 @@ const RegisterForm = ({
     const confirmPwd = e.target.value;
     const pwd = formRef.current.password.value;
 
-    let currErrors = formError;
-    delete currErrors.password;
-    delete currErrors["confirm-password"];
+    const { password, "confirm-password": _, ...restErrors } = formError;
 
     if (confirmPwd !== pwd) {
-      currErrors = {
-        ...currErrors,
+      setFormError({
+        ...restErrors,
         password: "Passwords do not match",
         "confirm-password": "Passwords do not match",
-      };
+      });
+    } else {
+      setFormError(restErrors);
     }
-    setFormError(currErrors)
   };
 
   return (
     <div className="w-full flex flex-col items-center gap-5">
       <form
-        className="flex flex-col items-center gap-4 w-3/5"
+        className="flex flex-col items-center gap-4 w-full md:w-3/5"
         onSubmit={handleRegisterClick}
+        ref={formRef}
       >
         <input
           type="text"
@@ -97,20 +96,36 @@ const RegisterForm = ({
           name="password"
           id=""
           placeholder="Password"
-          className={`px-4 py-2 w-4/5 ${formError && formError.password ? "border border-red-500" : "border-b border-gray-50"}`}
+          className={`px-4 py-2 w-4/5 ${
+            formError && formError.password
+              ? "border border-red-500"
+              : "border-b border-gray-50"
+          }`}
           required
         />
-        <p className="text-sm text-red-500">Error:: {formError.password}</p>
+        {Object.keys(formError).includes("password") && (
+          <p className="text-xs text-red-500 text-left">
+            Error:: {formError.password}
+          </p>
+        )}
         <input
           type="password"
           name="confirm-password"
           id=""
           placeholder="Confirm Password"
-          className={`px-4 py-2 w-4/5 ${formError && formError.password ? "border border-red-500" : "border-b border-gray-50"}`}
+          className={`px-4 py-2 w-4/5 ${
+            formError && formError.password
+              ? "border border-red-500"
+              : "border-b border-gray-50"
+          }`}
           required
-          onChange={handleConfirmPasswordChange}
+          onBlur={handleConfirmPasswordChange}
         />
-        <p className="text-sm text-red-500">Error:: {formError["confirm-password"]}</p>
+        {Object.keys(formError).includes("confirm-password") && (
+          <p className="text-xs text-red-500 text-left">
+            Error:: {formError["confirm-password"]}
+          </p>
+        )}
         <button
           type="submit"
           className="mt-5 w-full px-5 py-3 cursor-pointer border-2 border-gray-50 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
@@ -132,7 +147,7 @@ const LoginForm = ({ onRegisterClick, onLogin, isLoading }: LoginFormProps) => {
   return (
     <div className="w-full flex flex-col items-center gap-5">
       <form
-        className="flex flex-col gap-4 items-center w-3/5"
+        className="flex flex-col gap-4 items-center w-full md:w-3/5"
         onSubmit={onLogin}
       >
         <input
@@ -251,44 +266,87 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 min-h-screen">
-      <div className="w-full h-full flex justify-center items-center">
-        {authMode === "login" ? (
-          <LoginForm
-            isLoading={isLoading}
-            onRegisterClick={() => setAuthMode("register")}
-            onLogin={handleLoginClick}
-          />
-        ) : (
-          <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center">
-            <h3 className="text-green-800/60 uppercase font-semibold text-3xl">
-              Job Tracker
-            </h3>
-            <h1 className="text-green-800/30 text-8xl uppercase font-bold select-none">
-              Register
-            </h1>
-          </div>
-        )}
+    <>
+      <div className="hidden md:grid grid-cols-2 min-h-screen">
+        <div className="w-full h-full flex justify-center items-center">
+          {authMode === "login" ? (
+            <LoginForm
+              isLoading={isLoading}
+              onRegisterClick={() => setAuthMode("register")}
+              onLogin={handleLoginClick}
+            />
+          ) : (
+            <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center">
+              <h3 className="text-green-800/60 uppercase font-semibold text-3xl">
+                Job Tracker
+              </h3>
+              <h1 className="text-green-800/30 text-8xl uppercase font-bold select-none">
+                Register
+              </h1>
+            </div>
+          )}
+        </div>
+        <div className="w-full h-full flex justify-center items-center">
+          {authMode === "register" ? (
+            <RegisterForm
+              isLoading={isLoading}
+              onLoginClick={() => setAuthMode("login")}
+              onRegister={handleRegisterClick}
+            />
+          ) : (
+            <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center">
+              <h3 className="text-blue-800/60 uppercase font-semibold text-3xl">
+                Job Tracker
+              </h3>
+              <h1 className="text-blue-800/30 text-8xl uppercase font-bold select-none">
+                Login
+              </h1>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="w-full h-full flex justify-center items-center">
-        {authMode === "register" ? (
-          <RegisterForm
-            isLoading={isLoading}
-            onLoginClick={() => setAuthMode("login")}
-            onRegister={handleRegisterClick}
-          />
-        ) : (
-          <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center">
-            <h3 className="text-blue-800/60 uppercase font-semibold text-3xl">
-              Job Tracker
-            </h3>
-            <h1 className="text-blue-800/30 text-8xl uppercase font-bold select-none">
-              Login
-            </h1>
-          </div>
-        )}
+
+      <div className="md:hidden min-h-screen flex flex-col p-5">
+        <div className="w-full h-full grow flex flex-col justify-center items-center">
+          <h1
+            className="text-4xl uppercase font-semibold text-amber-400 text-center"
+            style={{ paddingBottom: "30px", lineHeight: "60px" }}
+          >
+            Job Application Tracker
+          </h1>
+          {authMode === "login" && (
+            <>
+              <h3
+                className="uppercase text-2xl font-semibold text-gray-100/50"
+                style={{ paddingBottom: "30px" }}
+              >
+                Login
+              </h3>
+              <LoginForm
+                isLoading={isLoading}
+                onRegisterClick={() => setAuthMode("register")}
+                onLogin={handleLoginClick}
+              />
+            </>
+          )}
+          {authMode === "register" && (
+            <>
+              <h3
+                className="uppercase text-2xl font-semibold text-gray-100/50"
+                style={{ paddingBottom: "30px" }}
+              >
+                Register
+              </h3>
+              <RegisterForm
+                isLoading={isLoading}
+                onLoginClick={() => setAuthMode("login")}
+                onRegister={handleRegisterClick}
+              />
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

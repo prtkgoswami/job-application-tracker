@@ -22,7 +22,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
   };
 
   return (
-    <div className="flex-col justify-between grow gap-2 px-4 py-4 border-r border-gray-50 col-span-2 hidden md:flex">
+    <div className="h-screen flex-col justify-between grow gap-2 px-4 py-4 border-r border-gray-50 col-span-2 hidden md:flex">
       <div>
         <h2 className="px-2 text-2xl font-semibold uppercase mb-5">
           Job Tracker
@@ -42,7 +42,15 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
             }}
             className="p-2 rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
           >
-            Analysis Dashboard *Coming Soon*
+            Analysis Dashboard
+          </div>
+          <div
+            onClick={() => {
+              routeToPage("about");
+            }}
+            className="p-2 rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+          >
+            About
           </div>
         </nav>
       </div>

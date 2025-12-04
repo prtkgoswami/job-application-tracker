@@ -65,13 +65,13 @@ export default function RootLayout({
 
   return (
     <ApplicationsProvider>
-      <div className="min-h-screen w-full relative p-4 md:grid grid-cols-7 gap-4">
+      <div className="min-h-screen w-full relative md:grid grid-cols-9 gap-4">
         <Sidebar
           onLogout={handleLogout}
           onNewEntryClick={() => setShowEntryModal(true)}
         />
 
-        <header className="md:hidden flex justify-between items-center mb-5">
+        <header className="md:hidden flex justify-between items-center mb-5 px-3 py-3">
           <h2 className="text-xl md:text-2xl text-gray-100">
             Job Tracker{" "}
             <span className="hidden md:inline-block">- Job Dashboard</span>
@@ -86,7 +86,7 @@ export default function RootLayout({
           </div>
         </header>
 
-        <div className="flex flex-col md:col-span-5">{children}</div>
+        <div className="flex flex-col md:col-span-7 h-screen overflow-auto">{children}</div>
 
         <MobileMenu
           showMenu={showMobileMenu}

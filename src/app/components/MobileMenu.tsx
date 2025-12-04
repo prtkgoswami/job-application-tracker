@@ -51,6 +51,7 @@ const MobileMenu = ({
         <div
           onClick={() => {
             routeToPage("jobs");
+            onCloseMobileMenu();
           }}
           className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
         >
@@ -59,10 +60,20 @@ const MobileMenu = ({
         <div
           onClick={() => {
             routeToPage("analysis");
+            onCloseMobileMenu();
           }}
           className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
         >
-          Analysis Dashboard *Coming Soon*
+          Analysis Dashboard
+        </div>
+        <div
+          onClick={() => {
+            routeToPage("about");
+            onCloseMobileMenu();
+          }}
+          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
+        >
+          About
         </div>
       </nav>
 
