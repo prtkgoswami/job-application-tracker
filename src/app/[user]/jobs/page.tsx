@@ -2,38 +2,84 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import { useAuth } from "@/app/components/AuthProvider";
-import useJobs from "@/app/hooks/useJobs";
+import useJobs, { CountsType } from "@/app/hooks/useJobs";
 import JobDetailsModal from "@/app/components/JobDetailsModal";
 import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
 
 const STATUS_COLOR_MAP = {
+  wishlist: "bg-fuchsia-300",
   applied: "bg-blue-300",
   interviewing: "bg-amber-300",
   rejected: "bg-red-300",
   offer: "bg-green-300",
 };
 
-type JobTitleProps = {
-  userId: string;
-  showRejected: boolean;
-}
+const JOB_FILTERS = [
+  "all",
+  "active",
+  "applied",
+  "wishlisted",
+  "interviewing",
+  "offered",
+  "rejected",
+];
 
-const ApplicationTable = ({ userId, showRejected }: JobTitleProps) => {
+type ApplicationTableProps = {
+  userId: string;
+  activeFilter: (typeof JOB_FILTERS)[number];
+  jobs: Job[];
+  isLoading: boolean;
+  error?: Error;
+  refetch: () => void;
+};
+
+const ApplicationTable = ({
+  userId,
+  activeFilter,
+  jobs,
+  isLoading,
+  error,
+  refetch
+}: ApplicationTableProps) => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const { jobs, error, isLoading, refetch } = useJobs(userId);
 
   let jobList = jobs;
 
-  if (!showRejected) {
-    jobList = jobList.filter(job => job.status !== "rejected")
+  switch (activeFilter) {
+    case "active":
+      jobList = jobList.filter(
+        (job) => job.status === "applied" || job.status === "interviewing"
+      );
+      break;
+    case "applied":
+      jobList = jobList.filter((job) => job.status === "applied");
+      break;
+    case "wishlisted":
+      jobList = jobList.filter((job) => job.status === "wishlist");
+      break;
+    case "interviewing":
+      jobList = jobList.filter((job) => job.status === "interviewing");
+      break;
+    case "offered":
+      jobList = jobList.filter((job) => job.status === "offer");
+      break;
+    case "rejected":
+      jobList = jobList.filter((job) => job.status === "rejected");
+      break;
   }
 
   useEffect(() => {
-    toast.error(error?.message)
-  }, [error])
+    toast.error(error?.message);
+  }, [error]);
+
 
   return (
     <div className="grow w-full flex justify-center items-start overflow-x-auto mt-4">
@@ -71,46 +117,67 @@ const ApplicationTable = ({ userId, showRejected }: JobTitleProps) => {
             jobList.map((job, i) => (
               <tr
                 key={job.id}
-                className={`cursor-pointer}`}
                 onClick={() => setSelectedJob(job)}
               >
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
                   {i + 1}
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
                   {job.title}
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
                   {job.company}
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""} capitalize`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  } capitalize`}
                 >
                   {job.location}
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""} capitalize`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  } capitalize`}
                 >
                   {job.jobType}
                 </td>
                 <td
-                  className={`px-1 py-1 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-1 py-1 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
-                  <div className={`w-full h-full ${STATUS_COLOR_MAP[job.status]} text-gray-800 text-sm px-1 py-1 rounded-md capitalize`}>{job.status}</div>
+                  <div
+                    className={`w-full h-full ${
+                      STATUS_COLOR_MAP[job.status]
+                    } text-gray-800 text-sm px-1 py-1 rounded-md capitalize`}
+                  >
+                    {job.status}
+                  </div>
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
                   {job.createDate}
                 </td>
                 <td
-                  className={`px-2 py-2 text-center border border-gray-100/80 ${i%2===0 ? "bg-gray-100/10" : ""}`}
+                  className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
+                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                  }`}
                 >
                   {job.lastUpdateDate}
                 </td>
@@ -152,20 +219,52 @@ const ApplicationTable = ({ userId, showRejected }: JobTitleProps) => {
 };
 
 const JobsDashboardPage = () => {
-  const [showRejected, setShowRejected] = useState(false);
+  const [activeJobFilter, setActiveJobFilter] =
+    useState<(typeof JOB_FILTERS)[number]>("active");
   const user = useAuth();
+  const {refetchKey} = useApplicationsRefetch();
+  const { jobs, counts, error, isLoading, refetch } = useJobs(user?.uid, refetchKey);
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setActiveJobFilter(e.currentTarget.value);
+  };
 
   return (
     <main className="md:p-5">
-      <div className="w-full py-2 px-4 bg-amber-400">
-        <button
-          className="cursor-pointer text-gray-800 px-4 py-2 border border-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out rounded-lg"
-          onClick={() => setShowRejected(prev => !prev)}
+      <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-400">
+        <div className="flex items-center gap-2">
+          <label className="text-gray-800 text-lg">Filter:</label>
+        <select
+          name="status"
+          value={activeJobFilter}
+          onChange={handleFilterChange}
+          className="w-max border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer"
         >
-          <FontAwesomeIcon icon={showRejected ? faEye : faEyeSlash} size="sm" className="mr-1" />{showRejected ? "Hide Rejected" : "Show Rejected"}
-        </button>
+          {JOB_FILTERS.map((filter) => (
+            <option key={filter} value={filter} className="capitalize">
+              {filter}
+            </option>
+          ))}
+        </select>
+        </div>
+
+        <div className="flex flex-col items-end">
+        <p className="text-gray-800 text-sm">
+          Total Active Applications: {counts?.active}
+        </p>
+        <p className="text-gray-900 text-xs">
+          Total Applications: {counts?.total}
+        </p>
+        </div>
       </div>
-      <ApplicationTable userId={user?.uid ?? ""} showRejected={showRejected} />
+      <ApplicationTable
+        userId={user?.uid ?? ""}
+        activeFilter={activeJobFilter}
+        jobs={jobs}
+        isLoading={isLoading}
+        error={error}
+        refetch={refetch}
+      />
     </main>
   );
 };

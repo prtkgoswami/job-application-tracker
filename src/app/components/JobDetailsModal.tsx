@@ -21,6 +21,7 @@ type JobDetailsModalProps = {
 };
 
 const STATUS_COLOR_MAP = {
+  wishlist: {bgColor: "bg-fuchsia-300", textColor: "text-fuchsia-600"},
   applied: { bgColor: "bg-blue-300", textColor: "text-blue-600" },
   interviewing: { bgColor: "bg-amber-300", textColor: "text-amber-600" },
   rejected: { bgColor: "bg-red-300", textColor: "text-red-600" },
@@ -246,6 +247,7 @@ const JobDetailsModal = ({
                       onChange={handleChange}
                       className="w-full border border-gray-800 text-base text-gray-800 capitalize px-4 py-[11px]"
                     >
+                      <option value="wishlist">wishlist</option>
                       <option value="applied">applied</option>
                       <option value="interviewing">interviewing</option>
                       <option value="rejected">rejected</option>
@@ -313,7 +315,7 @@ const JobDetailsModal = ({
                     <Link href={jobData.link} target="_blank">
                       <FontAwesomeIcon
                         icon={faLink}
-                        className="text-blue-500"
+                        className="text-blue-500 text-2xl"
                       />
                     </Link>
                   </h2>

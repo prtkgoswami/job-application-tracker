@@ -1,7 +1,10 @@
 # Job Tracker
+> **Live URL:** https://job-application-tracker-livid-seven.vercel.app/
 
 A clean and efficient job application tracker built with **Next.js**, **Firebase**, and **Tailwind CSS**.  
 Track roles, save job descriptions, store links, and monitor your application pipeline — all in one simple dashboard.
+
+![Collaborative Slide Editor](https://github.com/prtkgoswami/collaborative-slide-editor/blob/main/public/job_tracker_dashboard.png)
 
 ---
 

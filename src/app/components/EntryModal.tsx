@@ -1,9 +1,10 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useRef } from "react";
 import { toast } from "react-toastify";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { useApplicationsRefetch } from "../contexts/ApplicationContext";
 
 type EntryModalProps = {
   showModal: boolean;
@@ -12,6 +13,10 @@ type EntryModalProps = {
 };
 
 const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const entryModeRef = useRef<"applied" | "wishlist">("applied");
+  const {triggerRefetch} = useApplicationsRefetch();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -38,7 +43,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
       notes,
       lastUpdateDate,
       createDate,
-      status: "applied",
+      status: entryModeRef.current,
     };
 
     try {
@@ -48,12 +53,29 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
         ...payload,
       });
       toast("New Job Added", { type: "success" });
+      triggerRefetch();
       onClose();
     } catch (err) {
       console.error("Could not add Job", (err as Error).message);
       toast("Could not add Job", { type: "error" });
     }
   };
+
+  const handleAppliedClick = () => {
+    if (!formRef.current) {
+      return;
+    }
+    entryModeRef.current = "applied";
+    formRef.current.requestSubmit();
+  }
+
+  const handleWishlistClick = () => {
+    if (!formRef.current) {
+      return;
+    }
+    entryModeRef.current = "wishlist";
+    formRef.current.requestSubmit();
+  }
 
   if (!showModal) {
     return <></>;
@@ -76,6 +98,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
           <form
             className="w-full md:w-4/5 flex flex-col items-center gap-5"
             onSubmit={handleSubmit}
+            ref={formRef}
           >
             <div className="w-full">
               <label className="text-amber-500 uppercase font-semibold">
@@ -174,12 +197,22 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
                 className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
               />
             </div>
-            <button
-              type="submit"
-              className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-8 py-5 md:py-2 rounded-md w-full md:w-1/2"
-            >
-              Submit
-            </button>
+            <div className="grid grid-cols-2 gap-8 w-full">
+              <button
+                type="button"
+                className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-8 py-5 md:py-3 rounded-md w-full"
+                onClick={handleWishlistClick}
+              >
+                Wishlist
+              </button>
+              <button
+                type="button"
+                className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-8 py-5 md:py-3 rounded-md w-full"
+                onClick={handleAppliedClick}
+              >
+                Applied
+              </button>
+            </div>
           </form>
         </div>
       </div>

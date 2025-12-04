@@ -11,8 +11,17 @@ import {
 import { db } from "../lib/firebase";
 import { getDateString } from "../lib/date";
 
+export type CountsType = {
+  total: number;
+  wishlisted: number;
+  active: number;
+  rejected: number;
+  offered: number;
+}
+
 type JobsHookResponse = {
   jobs: Job[];
+  counts: CountsType;
   isLoading: boolean;
   error?: Error;
   refetch: () => void;
@@ -33,7 +42,7 @@ type FirestoreJob = {
   userId: string;
 };
 
-const useJobs = (userId: string | null | undefined): JobsHookResponse => {
+const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHookResponse => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error>();
@@ -93,10 +102,19 @@ const useJobs = (userId: string | null | undefined): JobsHookResponse => {
 
   useEffect(() => {
     void fetchJobs();
-  }, [fetchJobs]);
+  }, [fetchJobs, refetchKey]);
+
+  const counts: CountsType = {
+    total: jobs.length,
+    wishlisted: jobs.filter(jobs => jobs.status === "wishlist").length,
+    active: jobs.filter(job => (job.status === 'applied' || job.status === "interviewing")).length,
+    rejected: jobs.filter(job => job.status === "rejected").length,
+    offered: jobs.filter(job => job.status === "offer").length
+  }
 
   return {
     jobs,
+    counts,
     isLoading,
     error,
     refetch: fetchJobs,

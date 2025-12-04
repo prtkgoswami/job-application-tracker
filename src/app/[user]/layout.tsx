@@ -9,6 +9,7 @@ import MobileMenu from "../components/MobileMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import EntryModal from "../components/EntryModal";
+import { ApplicationsProvider } from "../contexts/ApplicationContext";
 
 export default function RootLayout({
   children,
@@ -63,41 +64,43 @@ export default function RootLayout({
   }
 
   return (
-    <div className="min-h-screen w-full relative p-4 md:grid grid-cols-7 gap-4">
-      <Sidebar
-        onLogout={handleLogout}
-        onNewEntryClick={() => setShowEntryModal(true)}
-      />
+    <ApplicationsProvider>
+      <div className="min-h-screen w-full relative p-4 md:grid grid-cols-7 gap-4">
+        <Sidebar
+          onLogout={handleLogout}
+          onNewEntryClick={() => setShowEntryModal(true)}
+        />
 
-      <header className="md:hidden flex justify-between items-center mb-5">
-        <h2 className="text-xl md:text-2xl text-gray-100">
-          Job Tracker{" "}
-          <span className="hidden md:inline-block">- Job Dashboard</span>
-        </h2>
-        <div className="flex gap-4 md:hidden">
-          <button
-            className="cursor-pointer w-10 aspect-square rounded-md text-gray-50 hover:bg-amber-500 hover:text-gray-900"
-            onClick={handleShowMobileMenu}
-          >
-            <FontAwesomeIcon icon={faBars} size="xl" />
-          </button>
-        </div>
-      </header>
+        <header className="md:hidden flex justify-between items-center mb-5">
+          <h2 className="text-xl md:text-2xl text-gray-100">
+            Job Tracker{" "}
+            <span className="hidden md:inline-block">- Job Dashboard</span>
+          </h2>
+          <div className="flex gap-4 md:hidden">
+            <button
+              className="cursor-pointer w-10 aspect-square rounded-md text-gray-50 hover:bg-amber-500 hover:text-gray-900"
+              onClick={handleShowMobileMenu}
+            >
+              <FontAwesomeIcon icon={faBars} size="xl" />
+            </button>
+          </div>
+        </header>
 
-      <div className="flex flex-col md:col-span-5">{children}</div>
+        <div className="flex flex-col md:col-span-5">{children}</div>
 
-      <MobileMenu
-        showMenu={showMobileMenu}
-        onCloseMobileMenu={handleCloseMobileMenu}
-        onNewEntryClick={() => setShowEntryModal(true)}
-        onLogout={handleLogout}
-      />
+        <MobileMenu
+          showMenu={showMobileMenu}
+          onCloseMobileMenu={handleCloseMobileMenu}
+          onNewEntryClick={() => setShowEntryModal(true)}
+          onLogout={handleLogout}
+        />
 
-      <EntryModal
-        showModal={showEntryModal}
-        userId={user.uid}
-        onClose={() => setShowEntryModal(false)}
-      />
-    </div>
+        <EntryModal
+          showModal={showEntryModal}
+          userId={user.uid}
+          onClose={() => setShowEntryModal(false)}
+        />
+      </div>
+    </ApplicationsProvider>
   );
 }
