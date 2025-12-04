@@ -1,0 +1,17 @@
+// types/job.ts (optional)
+export type JobStatus = "applied" | "interviewing" | "rejected" | "offer";
+
+export type Job = {
+  id: string;
+  title: string;
+  link: string;
+  location?: string;
+  company: string;
+  jobType: "onsite" | "hybrid" | "remote";
+  responsibilities: string;
+  requirements: string;
+  notes?: string;
+  status: JobStatus;
+  createDate: string; // ISO string for UI
+  lastUpdateDate: string; // ISO string for UI
+};
