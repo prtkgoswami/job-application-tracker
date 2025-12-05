@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
+import DashboardFilterModal, {
+  ActiveFilters,
+} from "@/app/components/DashboardFilterModal";
 
 const STATUS_COLOR_MAP = {
   wishlist: "bg-fuchsia-300",
@@ -18,19 +21,9 @@ const STATUS_COLOR_MAP = {
   offer: "bg-green-300",
 };
 
-const JOB_FILTERS = [
-  "all",
-  "active",
-  "applied",
-  "wishlisted",
-  "interviewing",
-  "offered",
-  "rejected",
-];
-
 type ApplicationTableProps = {
   userId: string;
-  activeFilter: (typeof JOB_FILTERS)[number];
+  activeFilters: ActiveFilters;
   jobs: Job[];
   isLoading: boolean;
   error?: Error;
@@ -39,7 +32,7 @@ type ApplicationTableProps = {
 
 const ApplicationTable = ({
   userId,
-  activeFilter,
+  activeFilters,
   jobs,
   isLoading,
   error,
@@ -49,7 +42,7 @@ const ApplicationTable = ({
 
   let jobList = jobs;
 
-  switch (activeFilter) {
+  switch (activeFilters.status) {
     case "active":
       jobList = jobList.filter(
         (job) => job.status === "applied" || job.status === "interviewing"
@@ -72,42 +65,56 @@ const ApplicationTable = ({
       break;
   }
 
+  if (activeFilters.jobType) {
+    jobList = jobList.filter(
+      (job) => job.jobType.toLowerCase() === activeFilters.jobType
+    );
+  }
+
+  if (activeFilters.company) {
+    jobList = jobList.filter((job) => job.company === activeFilters.company);
+  }
+
+  if (activeFilters.location) {
+    jobList = jobList.filter((job) => job.location === activeFilters.location);
+  }
+
   useEffect(() => {
     toast.error(error?.message);
   }, [error]);
 
   return (
-    <div className="grow w-full flex justify-center items-start overflow-x-auto mt-4">
+    <div className="grow w-full flex md:justify-center items-start overflow-x-auto mt-4 px-4 pb-8 md:pb-0 md:px-0">
       <table className="w-full p-5 table-auto border-collapse border border-gray-800/50">
         <thead>
           <tr>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               #
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Title
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Company
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Location
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Type
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Status
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Apply Date
             </th>
-            <th className="px-2 py-2 text-center border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
               Last Updated
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-sm leading-relaxed md:text-base">
           {!isLoading &&
             jobList.map((job, i) => (
               <tr key={job.id} onClick={() => setSelectedJob(job)}>
@@ -211,37 +218,29 @@ const ApplicationTable = ({
 };
 
 const JobsDashboardPage = () => {
-  const [activeJobFilter, setActiveJobFilter] =
-    useState<(typeof JOB_FILTERS)[number]>("active");
+  const [activeJobFilters, setActiveJobFilters] = useState<ActiveFilters>({
+    status: "active",
+    company: "",
+    location: "",
+    jobType: "",
+  });
+  const [showFiltersModal, setShowFiltersModal] = useState(false);
   const user = useAuth();
   const { refetchKey } = useApplicationsRefetch();
-  const { jobs, counts, error, isLoading, refetch } = useJobs(
+  const { jobs, counts, companyList, locationList, error, isLoading, refetch } = useJobs(
     user?.uid,
     refetchKey
   );
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setActiveJobFilter(e.currentTarget.value);
-  };
-
   return (
     <main className="md:p-5">
       <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-400">
-        <div className="flex items-center gap-2">
-          <label className="text-gray-800 text-lg">Filter:</label>
-          <select
-            name="status"
-            value={activeJobFilter}
-            onChange={handleFilterChange}
-            className="w-max border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer"
-          >
-            {JOB_FILTERS.map((filter) => (
-              <option key={filter} value={filter} className="capitalize">
-                {filter}
-              </option>
-            ))}
-          </select>
-        </div>
+        <button
+          className="px-5 py-2 rounded-md cursor-pointer border border-gray-800 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out"
+          onClick={() => setShowFiltersModal(true)}
+        >
+          Show Filters
+        </button>
 
         <div className="hidden md:flex flex-col items-end">
           <p className="text-gray-800 text-sm">
@@ -255,11 +254,20 @@ const JobsDashboardPage = () => {
 
       <ApplicationTable
         userId={user?.uid ?? ""}
-        activeFilter={activeJobFilter}
+        activeFilters={activeJobFilters}
         jobs={jobs}
         isLoading={isLoading}
         error={error}
         refetch={refetch}
+      />
+
+      <DashboardFilterModal
+        isVisible={showFiltersModal}
+        activeFilters={activeJobFilters}
+        companyList={companyList}
+        locationList={locationList}
+        setActiveFilters={setActiveJobFilters}
+        onClose={() => setShowFiltersModal(false)}
       />
     </main>
   );

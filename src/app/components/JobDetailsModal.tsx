@@ -112,6 +112,15 @@ const JobDetailsModal = ({
     setIsInEditMode((prev) => !prev);
   };
 
+  const handleIDClick = async () => {
+    try {
+      await navigator.clipboard.writeText(jobData.id);
+      toast.success("ID Copied to Clipboard");
+    } catch (err) {
+      console.error(`Could Not copy ID(${jobData.id}) to clipboard`);
+    }
+  };
+
   const handleUpdate = () => {
     if (!formRef.current) return;
 
@@ -162,7 +171,7 @@ const JobDetailsModal = ({
             <button
               type="button"
               className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-              style={{height: '60px'}}
+              style={{ height: "60px" }}
               onClick={handleDelete}
             >
               <FontAwesomeIcon icon={faTrash} />
@@ -172,7 +181,7 @@ const JobDetailsModal = ({
                 <button
                   type="button"
                   className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-                  style={{height: '60px'}}
+                  style={{ height: "60px" }}
                   onClick={handleAction}
                 >
                   <FontAwesomeIcon icon={faXmark} />
@@ -181,7 +190,7 @@ const JobDetailsModal = ({
                 <button
                   type="button"
                   className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-                  style={{height: '60px'}}
+                  style={{ height: "60px" }}
                   onClick={handleUpdate}
                 >
                   <FontAwesomeIcon icon={faFloppyDisk} />
@@ -191,7 +200,7 @@ const JobDetailsModal = ({
               <button
                 type="button"
                 className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-                style={{height: '60px'}}
+                style={{ height: "60px" }}
                 onClick={handleAction}
               >
                 <FontAwesomeIcon icon={faPenToSquare} />
@@ -204,7 +213,10 @@ const JobDetailsModal = ({
           <div className="flex justify-end">
             <button
               className="w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 hover:bg-amber-400/60"
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                setIsInEditMode(false);
+              }}
             >
               <FontAwesomeIcon icon={faClose} size="lg" />
             </button>
@@ -221,6 +233,13 @@ const JobDetailsModal = ({
                 onSubmit={handleSubmit}
                 className="w-full md:w-4/5 flex flex-col items-center gap-5"
               >
+                <p
+                  className="text-right text-xs text-amber-600 w-full select-none cursor-pointer"
+                  onClick={handleIDClick}
+                >
+                  JOB ID: {jobData.id}
+                </p>
+
                 <div className="w-full">
                   <label className="text-amber-500 uppercase font-semibold">
                     Job Title
@@ -354,7 +373,7 @@ const JobDetailsModal = ({
             ) : (
               <div className="flex flex-col gap-5 pb-18 text-gray-800">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-3xl">
+                  <h2 className="text-2xl md:text-3xl">
                     {jobData.title}{" "}
                     <Link href={jobData.link} target="_blank">
                       <FontAwesomeIcon
@@ -363,26 +382,28 @@ const JobDetailsModal = ({
                       />
                     </Link>
                   </h2>
-                  <div className="flex h-max gap-3">
-                    <p className="text-lg capitalize">
+
+                  <div className="flex h-max gap-3 text-base md:text-lg capitalize">
+                    <p>
                       <FontAwesomeIcon icon={faBuilding} className="mr-1" />
                       {jobData.company}
                     </p>
                     <div className="h-full border border-gray-300" />
-                    <p className="text-lg capitalize">
+                    <p>
                       <FontAwesomeIcon icon={faLocationDot} className="mr-1" />
                       {jobData.location}
                     </p>
                     <div className="h-full border border-gray-300" />
-                    <p className="text-lg capitalize">{jobData.jobType}</p>
+                    <p>{jobData.jobType}</p>
                   </div>
+
                   <div
                     className={`${
                       STATUS_COLOR_MAP[jobData.status].bgColor
                     } py-2 px-4 flex justify-between items-center rounded-md`}
                   >
                     <p
-                      className={`capitalize ${
+                      className={`text-sm md:text-base capitalize ${
                         STATUS_COLOR_MAP[jobData.status].textColor
                       }`}
                     >
@@ -391,7 +412,7 @@ const JobDetailsModal = ({
                         {jobData.status}
                       </span>
                     </p>
-                    <p className="text-xs" style={{textAlign: "right"}}>
+                    <p className="text-xs" style={{ textAlign: "right" }}>
                       Last Updated On: {jobData.lastUpdateDate}
                     </p>
                   </div>
@@ -400,24 +421,32 @@ const JobDetailsModal = ({
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                     Responsibilities
                   </h4>
-                  <p className="px-4 whitespace-pre-wrap">
+                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
                     {jobData.responsibilities}
                   </p>
                 </div>
-                <div className="flex flex-col gap-2">
+                <div
+                  className={`flex flex-col gap-2 ${
+                    !jobData.notes && "pb-5 md:pb-0"
+                  }`}
+                >
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                     Requirements
                   </h4>
-                  <p className="px-4 whitespace-pre-wrap">
+                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
                     {jobData.requirements}
                   </p>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                    Notes
-                  </h4>
-                  <p className="px-4 whitespace-pre-wrap">{jobData.notes}</p>
-                </div>
+                {jobData.notes && (
+                  <div className="flex flex-col gap-2 pb-5 md:pb-0">
+                    <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                      Notes
+                    </h4>
+                    <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                      {jobData.notes}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>

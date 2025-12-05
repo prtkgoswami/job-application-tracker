@@ -24,7 +24,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
   return (
     <div className="h-screen flex-col justify-between grow gap-2 px-4 py-4 border-r border-gray-50 col-span-2 hidden md:flex">
       <div>
-        <h2 className="px-2 text-2xl font-semibold uppercase mb-5">
+        <h2 className="px-2 text-3xl font-semibold uppercase mb-5 text-amber-400">
           Job Tracker
         </h2>
         <nav className="flex flex-col gap-3">

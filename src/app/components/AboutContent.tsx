@@ -8,12 +8,12 @@ const AboutContent = () => {
         <h1 className="text-center md:text-left text-4xl md:text-5xl uppercase font-semibold text-amber-400">
           Job Tracker
         </h1>
-        <h4 className="text-center md:text-left md:text-lg font-light ">
+        <h4 className="text-center md:text-left text-sm md:text-lg font-light">
           A better way to stay organized in your job search
         </h4>
       </div>
 
-      <div className="flex flex-col gap-8 p-4 md:p-8 text-lg">
+      <div className="flex flex-col gap-8 p-4 md:p-8 text-sm leading-relaxed md:text-lg">
         <div className="flex flex-col gap-4">
           <p>
             Job searching is stressful. Keeping track of roles, links, notes,
@@ -24,7 +24,7 @@ const AboutContent = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
+          <h3 className="text-xl md:text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
             Why this exists?
           </h3>
           <div className="md:px-4 flex flex-col gap-4">
@@ -46,7 +46,7 @@ const AboutContent = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
+          <h3 className="text-xl md:text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
             What it does?
           </h3>
           <div className="md:px-4 flex flex-col gap-4">
@@ -67,7 +67,7 @@ const AboutContent = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
+          <h3 className="text-xl md:text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
             Privacy &amp; Ownership
           </h3>
           <div className="md:px-4 flex flex-col gap-4">
@@ -79,7 +79,7 @@ const AboutContent = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
+          <h3 className="text-xl md:text-2xl text-amber-400 md:px-4 py-2 border-b border-amber-500">
             Thank you for being here
           </h3>
           <div className="md:px-4 flex flex-col gap-4">

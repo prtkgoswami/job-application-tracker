@@ -22,6 +22,8 @@ export type CountsType = {
 type JobsHookResponse = {
   jobs: Job[];
   counts: CountsType;
+  companyList: string[];
+  locationList: string[];
   isLoading: boolean;
   error?: Error;
   refetch: () => void;
@@ -44,6 +46,8 @@ type FirestoreJob = {
 
 const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHookResponse => {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [companyList, setCompanyList] = useState<string[]>([]);
+  const [locationList, setLocationList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error>();
 
@@ -54,6 +58,8 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
     }
 
     setError(undefined);
+    const companySet = new Set<string>([]);
+    const locationSet = new Set<string>([]);
 
     try {
       setIsLoading(true);
@@ -76,6 +82,13 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
           ? getDateString(data.lastUpdateDate.toDate())
           : createDate;
 
+        if (data.company && !companySet.has(data.company)) {
+          companySet.add(data.company)
+        }
+        if (data.location && !locationSet.has(data.location)) {
+          locationSet.add(data.location)
+        }
+
         return {
           id: docSnap.id,
           title: data.title,
@@ -91,6 +104,9 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
           lastUpdateDate,
         };
       });
+
+      setCompanyList(Array.from(companySet))
+      setLocationList(Array.from(locationSet))
       setJobs(nextJobs);
     } catch (err: unknown) {
       console.error("Application Fetch Error", err);
@@ -115,6 +131,8 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
   return {
     jobs,
     counts,
+    companyList,
+    locationList,
     isLoading,
     error,
     refetch: fetchJobs,

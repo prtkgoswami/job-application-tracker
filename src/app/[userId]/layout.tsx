@@ -72,7 +72,7 @@ export default function RootLayout({
         />
 
         <header className="md:hidden flex justify-between items-center mb-5 px-3 py-3">
-          <h2 className="text-xl md:text-2xl text-gray-100">
+          <h2 className="text-2xl md:text-2xl text-amber-400">
             Job Tracker{" "}
             <span className="hidden md:inline-block">- Job Dashboard</span>
           </h2>
