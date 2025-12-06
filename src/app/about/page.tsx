@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import AboutContent from "../components/AboutContent";
-import { useRouter } from "next/navigation";
 
 const AboutPage = () => {
   return (

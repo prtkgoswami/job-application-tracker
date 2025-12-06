@@ -68,6 +68,15 @@ const MobileMenu = ({
         </div>
         <div
           onClick={() => {
+            routeToPage("profile");
+            onCloseMobileMenu();
+          }}
+          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
+        >
+          Profile
+        </div>
+        <div
+          onClick={() => {
             routeToPage("about");
             onCloseMobileMenu();
           }}
@@ -83,7 +92,7 @@ const MobileMenu = ({
           onClick={onNewEntryClick}
         >
           <FontAwesomeIcon icon={faPlus} className="mr-1" />
-          Add Entry
+          New Application
         </button>
         <button
           className="cursor-pointer justify-self-end flex justify-center items-center py-3 rounded-lg text-2xl bg-gray-800 text-amber-400"

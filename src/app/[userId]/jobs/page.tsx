@@ -9,9 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
-import DashboardFilterModal, {
-  ActiveFilters,
-} from "@/app/components/DashboardFilterModal";
+import OptionsModal, { ActiveFilters } from "@/app/components/OptionsModal";
+import useUser from "@/app/hooks/useUser";
 
 const STATUS_COLOR_MAP = {
   wishlist: "bg-fuchsia-300",
@@ -24,6 +23,7 @@ const STATUS_COLOR_MAP = {
 type ApplicationTableProps = {
   userId: string;
   activeFilters: ActiveFilters;
+  archivedApplicationIDs: Set<string>;
   jobs: Job[];
   isLoading: boolean;
   error?: Error;
@@ -33,6 +33,7 @@ type ApplicationTableProps = {
 const ApplicationTable = ({
   userId,
   activeFilters,
+  archivedApplicationIDs,
   jobs,
   isLoading,
   error,
@@ -77,6 +78,10 @@ const ApplicationTable = ({
 
   if (activeFilters.location) {
     jobList = jobList.filter((job) => job.location === activeFilters.location);
+  }
+
+  if (!activeFilters.showArchived) {
+    jobList = jobList.filter((job) => !archivedApplicationIDs.has(job.id));
   }
 
   useEffect(() => {
@@ -223,23 +228,43 @@ const JobsDashboardPage = () => {
     company: "",
     location: "",
     jobType: "",
+    showArchived: false,
   });
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState(false);
   const user = useAuth();
   const { refetchKey } = useApplicationsRefetch();
-  const { jobs, counts, companyList, locationList, error, isLoading, refetch } = useJobs(
-    user?.uid,
-    refetchKey
-  );
+  const {
+    jobs,
+    counts,
+    companyList,
+    locationList,
+    isLoading: isLoadingJobs,
+    error: jobsError,
+    refetch,
+  } = useJobs(user?.uid, refetchKey);
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    error: profileError,
+  } = useUser();
+
+  const archivedApplicationIDs = profile
+    ? jobs.filter(job => {
+        const jobUpdateDate = new Date(job.lastUpdateDate);
+        const archiveDate = new Date(profile?.archiveDate);
+
+        return jobUpdateDate < archiveDate;
+      }).map(job => job.id)
+    : [];
 
   return (
     <main className="md:p-5">
       <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-400">
         <button
           className="px-5 py-2 rounded-md cursor-pointer border border-gray-800 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out"
-          onClick={() => setShowFiltersModal(true)}
+          onClick={() => setShowOptionsModal(true)}
         >
-          Show Filters
+          View Options
         </button>
 
         <div className="hidden md:flex flex-col items-end">
@@ -255,19 +280,21 @@ const JobsDashboardPage = () => {
       <ApplicationTable
         userId={user?.uid ?? ""}
         activeFilters={activeJobFilters}
+        archivedApplicationIDs={new Set(archivedApplicationIDs)}
         jobs={jobs}
-        isLoading={isLoading}
-        error={error}
+        isLoading={isLoadingJobs && isLoadingProfile}
+        error={jobsError ?? profileError}
         refetch={refetch}
       />
 
-      <DashboardFilterModal
-        isVisible={showFiltersModal}
+      <OptionsModal
+        isVisible={showOptionsModal}
         activeFilters={activeJobFilters}
         companyList={companyList}
         locationList={locationList}
+        archivedCount={archivedApplicationIDs.length}
         setActiveFilters={setActiveJobFilters}
-        onClose={() => setShowFiltersModal(false)}
+        onClose={() => setShowOptionsModal(false)}
       />
     </main>
   );

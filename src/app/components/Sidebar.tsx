@@ -22,45 +22,59 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
   };
 
   return (
-    <div className="h-screen flex-col justify-between grow gap-2 px-4 py-4 border-r border-gray-50 col-span-2 hidden md:flex">
+    <div className="h-screen hidden md:flex flex-col justify-between grow gap-2 px-4 py-4 border-r border-gray-50 col-span-2">
       <div>
-        <h2 className="px-2 text-3xl font-semibold uppercase mb-5 text-amber-400">
-          Job Tracker
+        <h2 className="px-1 pt-4 text-3xl font-semibold uppercase mb-5 text-amber-400">
+          Job Trackr
         </h2>
+
+        <h3 className="px-2 text-2xl font-light mb-5 text-amber-500">
+          Hello {user?.displayName?.split(" ")[0]}!
+        </h3>
+
         <nav className="flex flex-col gap-3">
           <div
             onClick={() => {
               routeToPage("jobs");
             }}
-            className="p-2 rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer "
           >
-            Job Dashboard
+            Applications
           </div>
           <div
             onClick={() => {
               routeToPage("analysis");
             }}
-            className="p-2 rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
           >
-            Analysis Dashboard
+            Analysis
+          </div>
+          <div
+            onClick={() => {
+              routeToPage("profile");
+            }}
+            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+          >
+            Profile
           </div>
           <div
             onClick={() => {
               routeToPage("about");
             }}
-            className="p-2 rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
           >
             About
           </div>
         </nav>
       </div>
+
       <div className="w-full flex flex-col gap-3">
         <button
           className="cursor-pointer justify-self-end flex justify-center items-center py-3 rounded-lg bg-amber-400 hover:bg-amber-500 text-gray-800"
           onClick={onNewEntryClick}
         >
           <FontAwesomeIcon icon={faPlus} className="mr-1" />
-          Add Entry
+          New Application
         </button>
         <button
           className="cursor-pointer justify-self-end flex justify-center items-center py-3 rounded-lg bg-amber-400 hover:bg-amber-500 text-gray-800"

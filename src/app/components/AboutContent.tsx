@@ -1,12 +1,13 @@
 import Link from "next/link";
 import React from "react";
+import ClickToCopyText from "./ClickToCopyText";
 
 const AboutContent = () => {
   return (
     <div className="flex flex-col gap-5 md:p-8">
       <div className="flex flex-col gap-2">
         <h1 className="text-center md:text-left text-4xl md:text-5xl uppercase font-semibold text-amber-400">
-          Job Tracker
+          Job Trackr
         </h1>
         <h4 className="text-center md:text-left text-sm md:text-lg font-light">
           A better way to stay organized in your job search
@@ -17,9 +18,9 @@ const AboutContent = () => {
         <div className="flex flex-col gap-4">
           <p>
             Job searching is stressful. Keeping track of roles, links, notes,
-            and interview progress doesn&apos;t have to be. Job Tracker helps
-            you stay on top of your applications with a clean and simple
-            dashboard built to support your job hunt from start to finish.
+            and interview progress doesn&apos;t have to be. Job Trackr helps you
+            stay on top of your applications with a clean and simple dashboard
+            built to support your job hunt from start to finish.
           </p>
         </div>
 
@@ -29,7 +30,7 @@ const AboutContent = () => {
           </h3>
           <div className="md:px-4 flex flex-col gap-4">
             <p>
-              I built Job Tracker because I struggled with spreadsheets,
+              I built Job Trackr because I struggled with spreadsheets,
               bookmarks, and scattered notes. I wanted a tool that:
             </p>
             <ul className="list-disc list-inside marker:text-amber-400">
@@ -39,8 +40,8 @@ const AboutContent = () => {
               <li>Helps visualize progress and keep momentum going</li>
             </ul>
             <p>
-              Job Tracker is designed for anyone who wants a straightforward
-              tool that doesn&apos;t get in the way.
+              Job Trackr is designed for anyone who wants a straightforward tool
+              that doesn&apos;t get in the way.
             </p>
           </div>
         </div>
@@ -50,7 +51,7 @@ const AboutContent = () => {
             What it does?
           </h3>
           <div className="md:px-4 flex flex-col gap-4">
-            <p>With Job Tracker, you can:</p>
+            <p>With Job Trackr, you can:</p>
             <ul className="list-disc list-inside marker:text-amber-400">
               <li>
                 Save job postings with the title, link, and full description
@@ -87,9 +88,17 @@ const AboutContent = () => {
               This project is actively evolving, and I&apos;m excited to
               continue improving it.
             </p>
-            <p>Feedback and suggestions are always welcome!</p>
             <p>
-              If Job Tracker helps even a little in your path to landing your
+              Feedback and suggestions are always welcome! Please email to{" "}
+              <ClickToCopyText
+                textToCopy="jobTrackrApp@gmail.com"
+                successToastMsg="Feedback Email copied"
+              >
+                <i>jobTrackrApp@gmail.com</i>
+              </ClickToCopyText>
+            </p>
+            <p>
+              If Job Trackr helps even a little in your path to landing your
               next role — mission accomplished.
             </p>
           </div>

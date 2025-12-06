@@ -71,9 +71,9 @@ export default function RootLayout({
           onNewEntryClick={() => setShowEntryModal(true)}
         />
 
-        <header className="md:hidden flex justify-between items-center mb-5 px-3 py-3">
+        <header className="md:hidden flex justify-between items-center mb-3 px-3 py-3">
           <h2 className="text-2xl md:text-2xl text-amber-400">
-            Job Tracker{" "}
+            Job Trackr{" "}
             <span className="hidden md:inline-block">- Job Dashboard</span>
           </h2>
           <div className="flex gap-4 md:hidden">

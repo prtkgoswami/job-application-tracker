@@ -3,7 +3,6 @@ import { Job } from "../types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
-  faClose,
   faFloppyDisk,
   faLink,
   faLocationDot,
@@ -15,6 +14,9 @@ import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import Modal from "./Modal";
+import ConfirmDialog from "./ConfirmDialog";
+import ClickToCopyText from "./ClickToCopyText";
 
 type JobDetailsModalProps = {
   userId: string;
@@ -53,6 +55,7 @@ const JobDetailsModal = ({
   const [formData, setFormData] =
     useState<Omit<Job, "id" | "createDate" | "lastUpdateDate">>(INITIAL_DATA);
   const [isInEditMode, setIsInEditMode] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -112,347 +115,344 @@ const JobDetailsModal = ({
     setIsInEditMode((prev) => !prev);
   };
 
-  const handleIDClick = async () => {
-    try {
-      await navigator.clipboard.writeText(jobData.id);
-      toast.success("ID Copied to Clipboard");
-    } catch (err) {
-      console.error(`Could Not copy ID(${jobData.id}) to clipboard`);
-    }
-  };
-
   const handleUpdate = () => {
     if (!formRef.current) return;
 
     formRef.current.requestSubmit();
   };
 
-  return (
-    <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center bg-gray-800/40">
-      <div className="w-full md:w-2/3 bg-gray-100 h-full md:h-170 rounded-lg relative">
-        <div className="w-full absolute bottom-0 left-0 bg-amber-400 px-5 py-4 border-t border-gray-800 flex justify-center items-center">
-          <div className="hidden md:grid grid-cols-4 gap-8 w-4/5">
-            <button
-              type="button"
-              className="cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-red-600/60 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-            {isInEditMode ? (
-              <>
-                <button
-                  type="button"
-                  className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
-                  onClick={handleAction}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="button"
-                  className="cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
-                  onClick={handleUpdate}
-                >
-                  Update
-                </button>
-              </>
-            ) : (
+  const renderFooter = () => {
+    return (
+      <div className="flex justify-center items-center">
+        <div className="hidden md:grid grid-cols-4 gap-8 w-4/5">
+          <button
+            type="button"
+            className="cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-red-600/60 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
+            onClick={() => setShowConfirmDialog(true)}
+          >
+            Delete
+          </button>
+          {isInEditMode ? (
+            <>
               <button
                 type="button"
-                className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
+                className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
                 onClick={handleAction}
               >
-                Edit
+                Cancel
               </button>
-            )}
-          </div>
-          <div className="grid md:hidden grid-cols-4 gap-8 w-4/5">
-            <button
-              type="button"
-              className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-              style={{ height: "60px" }}
-              onClick={handleDelete}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-            {isInEditMode ? (
-              <>
-                <button
-                  type="button"
-                  className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-                  style={{ height: "60px" }}
-                  onClick={handleAction}
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
 
-                <button
-                  type="button"
-                  className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
-                  style={{ height: "60px" }}
-                  onClick={handleUpdate}
-                >
-                  <FontAwesomeIcon icon={faFloppyDisk} />
-                </button>
-              </>
-            ) : (
               <button
                 type="button"
-                className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+                className="cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
+                onClick={handleUpdate}
+              >
+                Update
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
+              onClick={handleAction}
+            >
+              Edit
+            </button>
+          )}
+        </div>
+        <div className="grid md:hidden grid-cols-4 gap-8 w-4/5">
+          <button
+            type="button"
+            className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+            style={{ height: "60px" }}
+            onClick={handleDelete}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+          {isInEditMode ? (
+            <>
+              <button
+                type="button"
+                className="col-start-3 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
                 style={{ height: "60px" }}
                 onClick={handleAction}
               >
-                <FontAwesomeIcon icon={faPenToSquare} />
+                <FontAwesomeIcon icon={faXmark} />
               </button>
-            )}
-          </div>
-        </div>
 
-        <div className="h-full w-full overflow-y-auto p-5 flex flex-col ">
-          <div className="flex justify-end">
-            <button
-              className="w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 hover:bg-amber-400/60"
-              onClick={() => {
-                onClose();
-                setIsInEditMode(false);
-              }}
-            >
-              <FontAwesomeIcon icon={faClose} size="lg" />
-            </button>
-          </div>
-
-          <div
-            className={`flex ${
-              isInEditMode ? "justify-center" : "justify-start"
-            } grow`}
-          >
-            {isInEditMode ? (
-              <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                className="w-full md:w-4/5 flex flex-col items-center gap-5"
+              <button
+                type="button"
+                className="cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+                style={{ height: "60px" }}
+                onClick={handleUpdate}
               >
-                <p
-                  className="text-right text-xs text-amber-600 w-full select-none cursor-pointer"
-                  onClick={handleIDClick}
-                >
-                  JOB ID: {jobData.id}
-                </p>
-
-                <div className="w-full">
-                  <label className="text-amber-500 uppercase font-semibold">
-                    Job Title
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData?.title}
-                    onChange={handleChange}
-                    placeholder="Type here..."
-                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                    required
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="text-amber-500 uppercase font-semibold">
-                    Company
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData?.company}
-                    onChange={handleChange}
-                    placeholder="Paste here..."
-                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                    required
-                  />
-                </div>
-
-                <div className="w-full grid md:grid-cols-2 gap-5">
-                  <div className="w-full">
-                    <label className="text-amber-500 uppercase font-semibold">
-                      Job Link
-                    </label>
-                    <input
-                      type="text"
-                      name="link"
-                      value={formData?.link}
-                      onChange={handleChange}
-                      placeholder="Paste here..."
-                      className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                      required
-                    />
-                  </div>
-                  <div className="w-full">
-                    <label className="text-amber-500 uppercase font-semibold">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={formData?.location}
-                      onChange={handleChange}
-                      placeholder="Paste here..."
-                      className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="w-full grid md:grid-cols-2 gap-5">
-                  <div className="w-full">
-                    <label className="text-amber-500 uppercase font-semibold">
-                      Application Status
-                    </label>
-                    <select
-                      name="status"
-                      value={formData?.status}
-                      onChange={handleChange}
-                      className="w-full border border-gray-800 text-base text-gray-800 capitalize px-4 py-[11px]"
-                    >
-                      <option value="wishlist">wishlist</option>
-                      <option value="applied">applied</option>
-                      <option value="interviewing">interviewing</option>
-                      <option value="rejected">rejected</option>
-                      <option value="offer">offer</option>
-                    </select>
-                  </div>
-                  <div className="w-full">
-                    <label className="text-amber-500 uppercase font-semibold">
-                      Job Type
-                    </label>
-                    <select
-                      name="jobType"
-                      value={formData?.jobType}
-                      onChange={handleChange}
-                      className="w-full border border-gray-800 text-base text-gray-800 capitalize px-4 py-[11px]"
-                    >
-                      <option value="onsite">onsite</option>
-                      <option value="hybrid">hybrid</option>
-                      <option value="remote">remote</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="w-full">
-                  <label className="text-amber-500 uppercase font-semibold">
-                    Responsibilities
-                  </label>
-                  <textarea
-                    name="responsibilities"
-                    value={formData?.responsibilities}
-                    onChange={handleChange}
-                    placeholder="Paste here..."
-                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="text-amber-500 uppercase font-semibold">
-                    Requirements
-                  </label>
-                  <textarea
-                    name="requirements"
-                    value={formData?.requirements}
-                    onChange={handleChange}
-                    placeholder="Paste here..."
-                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
-                  />
-                </div>
-                <div className="grow pb-18 w-full">
-                  <label className="text-amber-500 uppercase font-semibold">
-                    Notes
-                  </label>
-                  <textarea
-                    name="notes"
-                    value={formData?.notes}
-                    onChange={handleChange}
-                    placeholder="Paste here..."
-                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
-                  />
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-col gap-5 pb-18 text-gray-800">
-                <div className="flex flex-col gap-2">
-                  <h2 className="text-2xl md:text-3xl">
-                    {jobData.title}{" "}
-                    <Link href={jobData.link} target="_blank">
-                      <FontAwesomeIcon
-                        icon={faLink}
-                        className="text-blue-500 text-2xl"
-                      />
-                    </Link>
-                  </h2>
-
-                  <div className="flex h-max gap-3 text-base md:text-lg capitalize">
-                    <p>
-                      <FontAwesomeIcon icon={faBuilding} className="mr-1" />
-                      {jobData.company}
-                    </p>
-                    <div className="h-full border border-gray-300" />
-                    <p>
-                      <FontAwesomeIcon icon={faLocationDot} className="mr-1" />
-                      {jobData.location}
-                    </p>
-                    <div className="h-full border border-gray-300" />
-                    <p>{jobData.jobType}</p>
-                  </div>
-
-                  <div
-                    className={`${
-                      STATUS_COLOR_MAP[jobData.status].bgColor
-                    } py-2 px-4 flex justify-between items-center rounded-md`}
-                  >
-                    <p
-                      className={`text-sm md:text-base capitalize ${
-                        STATUS_COLOR_MAP[jobData.status].textColor
-                      }`}
-                    >
-                      Application Status:{" "}
-                      <span className="font-semibold uppercase">
-                        {jobData.status}
-                      </span>
-                    </p>
-                    <p className="text-xs" style={{ textAlign: "right" }}>
-                      Last Updated On: {jobData.lastUpdateDate}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                    Responsibilities
-                  </h4>
-                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
-                    {jobData.responsibilities}
-                  </p>
-                </div>
-                <div
-                  className={`flex flex-col gap-2 ${
-                    !jobData.notes && "pb-5 md:pb-0"
-                  }`}
-                >
-                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                    Requirements
-                  </h4>
-                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
-                    {jobData.requirements}
-                  </p>
-                </div>
-                {jobData.notes && (
-                  <div className="flex flex-col gap-2 pb-5 md:pb-0">
-                    <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                      Notes
-                    </h4>
-                    <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
-                      {jobData.notes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                <FontAwesomeIcon icon={faFloppyDisk} />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="col-start-4 cursor-pointer border-2 border-amber-600 text-gray-800 aspect-square text-2xl rounded-md"
+              style={{ height: "60px" }}
+              onClick={handleAction}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
+          )}
         </div>
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <Modal
+      isVisible={isVisible}
+      modalClasses="md:w-2/3 h-full"
+      bodyClasses="px-5"
+      onClose={() => {
+        setIsInEditMode(false);
+        onClose();
+      }}
+      footer={renderFooter()}
+    >
+      <div className="h-full w-full flex flex-col ">
+        <div
+          className={`flex ${
+            isInEditMode ? "justify-center" : "justify-start"
+          } grow`}
+        >
+          {isInEditMode ? (
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="w-full md:w-4/5 flex flex-col items-center gap-5"
+            >
+              <ClickToCopyText
+                textToCopy={jobData.id}
+                successToastMsg="ID Copied to Clipboard"
+                failureToastMsg={`Could Not copy ID(${jobData.id}) to clipboard`}
+              >
+                <p className="text-right text-xs text-amber-600 w-full select-none cursor-pointer">
+                  JOB ID: {jobData.id}
+                </p>
+              </ClickToCopyText>
+
+              <div className="w-full">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData?.title}
+                  onChange={handleChange}
+                  placeholder="Type here..."
+                  className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                  required
+                />
+              </div>
+              <div className="w-full">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Company
+                </label>
+                <input
+                  type="text"
+                  name="company"
+                  value={formData?.company}
+                  onChange={handleChange}
+                  placeholder="Paste here..."
+                  className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="w-full grid md:grid-cols-2 gap-5">
+                <div className="w-full">
+                  <label className="text-amber-500 uppercase font-semibold">
+                    Job Link
+                  </label>
+                  <input
+                    type="text"
+                    name="link"
+                    value={formData?.link}
+                    onChange={handleChange}
+                    placeholder="Paste here..."
+                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                    required
+                  />
+                </div>
+                <div className="w-full">
+                  <label className="text-amber-500 uppercase font-semibold">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData?.location}
+                    onChange={handleChange}
+                    placeholder="Paste here..."
+                    className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="w-full grid md:grid-cols-2 gap-5">
+                <div className="w-full">
+                  <label className="text-amber-500 uppercase font-semibold">
+                    Application Status
+                  </label>
+                  <select
+                    name="status"
+                    value={formData?.status}
+                    onChange={handleChange}
+                    className="w-full border border-gray-800 text-base text-gray-800 capitalize px-4 py-[11px]"
+                  >
+                    <option value="wishlist">wishlist</option>
+                    <option value="applied">applied</option>
+                    <option value="interviewing">interviewing</option>
+                    <option value="rejected">rejected</option>
+                    <option value="offer">offer</option>
+                  </select>
+                </div>
+                <div className="w-full">
+                  <label className="text-amber-500 uppercase font-semibold">
+                    Job Type
+                  </label>
+                  <select
+                    name="jobType"
+                    value={formData?.jobType}
+                    onChange={handleChange}
+                    className="w-full border border-gray-800 text-base text-gray-800 capitalize px-4 py-[11px]"
+                  >
+                    <option value="onsite">onsite</option>
+                    <option value="hybrid">hybrid</option>
+                    <option value="remote">remote</option>
+                  </select>
+                </div>
+              </div>
+              <div className="w-full">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Responsibilities
+                </label>
+                <textarea
+                  name="responsibilities"
+                  value={formData?.responsibilities}
+                  onChange={handleChange}
+                  placeholder="Paste here..."
+                  className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+                />
+              </div>
+              <div className="w-full">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Requirements
+                </label>
+                <textarea
+                  name="requirements"
+                  value={formData?.requirements}
+                  onChange={handleChange}
+                  placeholder="Paste here..."
+                  className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+                />
+              </div>
+              <div className="grow pb-18 w-full">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Notes
+                </label>
+                <textarea
+                  name="notes"
+                  value={formData?.notes}
+                  onChange={handleChange}
+                  placeholder="Paste here..."
+                  className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+                />
+              </div>
+            </form>
+          ) : (
+            <div className="flex flex-col gap-5 pb-5 text-gray-800">
+              <section className="flex flex-col gap-2">
+                <h2 className="text-2xl md:text-3xl">
+                  {jobData.title}{" "}
+                  <Link href={jobData.link} target="_blank">
+                    <FontAwesomeIcon
+                      icon={faLink}
+                      className="text-blue-500 text-2xl"
+                    />
+                  </Link>
+                </h2>
+
+                <div className="flex h-max gap-3 text-base md:text-lg capitalize">
+                  <p>
+                    <FontAwesomeIcon icon={faBuilding} className="mr-1" />
+                    {jobData.company}
+                  </p>
+                  <div className="h-full border border-gray-300" />
+                  <p>
+                    <FontAwesomeIcon icon={faLocationDot} className="mr-1" />
+                    {jobData.location}
+                  </p>
+                  <div className="h-full border border-gray-300" />
+                  <p>{jobData.jobType}</p>
+                </div>
+
+                <div
+                  className={`${
+                    STATUS_COLOR_MAP[jobData.status].bgColor
+                  } py-2 px-4 flex justify-between items-center rounded-md`}
+                >
+                  <p
+                    className={`text-sm md:text-base capitalize ${
+                      STATUS_COLOR_MAP[jobData.status].textColor
+                    }`}
+                  >
+                    Application Status:{" "}
+                    <span className="font-semibold uppercase">
+                      {jobData.status}
+                    </span>
+                  </p>
+                  <p className="text-xs" style={{ textAlign: "right" }}>
+                    Last Updated On: {jobData.lastUpdateDate}
+                  </p>
+                </div>
+              </section>
+              <section className="flex flex-col gap-2">
+                <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                  Responsibilities
+                </h4>
+                <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                  {jobData.responsibilities}
+                </p>
+              </section>
+              <div className={`flex flex-col gap-2`}>
+                <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                  Requirements
+                </h4>
+                <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                  {jobData.requirements}
+                </p>
+              </div>
+              {jobData.notes && (
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                    Notes
+                  </h4>
+                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                    {jobData.notes}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <ConfirmDialog
+          isVisible={showConfirmDialog}
+          message="Are you sure you want to delete this Application?"
+          description="Deleted Applications cannot be Retrived"
+          onConfirm={handleDelete}
+          onClose={() => setShowConfirmDialog(false)}
+        />
+      </div>
+    </Modal>
   );
 };
 

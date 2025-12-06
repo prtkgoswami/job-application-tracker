@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/app/lib/firebase";
+import { auth, db } from "@/app/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -11,6 +11,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import {
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import PasswordInput from "../components/PasswordInput";
+import { FirebaseError } from "firebase/app";
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 type RegisterFormProps = {
   isLoading: boolean;
@@ -21,6 +29,7 @@ type RegisterFormProps = {
 type LoginFormProps = {
   isLoading: boolean;
   onRegisterClick: () => void;
+  onForgotPasswordClick: () => void;
   onLogin: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
@@ -47,6 +56,7 @@ const RegisterForm = ({
     const confirmPwd = e.target.value;
     const pwd = formRef.current.password.value;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, "confirm-password": _, ...restErrors } = formError;
 
     if (confirmPwd !== pwd) {
@@ -91,10 +101,8 @@ const RegisterForm = ({
           className="px-4 py-2 border-b border-gray-50 w-4/5"
           required
         />
-        <input
-          type="password"
+        <PasswordInput
           name="password"
-          id=""
           placeholder="Password"
           className={`px-4 py-2 w-4/5 ${
             formError && formError.password
@@ -108,10 +116,8 @@ const RegisterForm = ({
             Error:: {formError.password}
           </p>
         )}
-        <input
-          type="password"
+        <PasswordInput
           name="confirm-password"
-          id=""
           placeholder="Confirm Password"
           className={`px-4 py-2 w-4/5 ${
             formError && formError.password
@@ -143,7 +149,12 @@ const RegisterForm = ({
   );
 };
 
-const LoginForm = ({ onRegisterClick, onLogin, isLoading }: LoginFormProps) => {
+const LoginForm = ({
+  onRegisterClick,
+  onLogin,
+  onForgotPasswordClick,
+  isLoading,
+}: LoginFormProps) => {
   return (
     <div className="w-full flex flex-col items-center gap-5">
       <form
@@ -158,10 +169,8 @@ const LoginForm = ({ onRegisterClick, onLogin, isLoading }: LoginFormProps) => {
           className="px-4 py-2 border-b border-gray-50 w-4/5"
           required
         />
-        <input
-          type="password"
+        <PasswordInput
           name="password"
-          id=""
           placeholder="Password"
           className="px-4 py-2 border-b border-gray-50 w-4/5"
           required
@@ -182,6 +191,12 @@ const LoginForm = ({ onRegisterClick, onLogin, isLoading }: LoginFormProps) => {
           Register Here
         </span>
       </div>
+      <div
+        className="text-blue-400 text-sm cursor-pointer"
+        onClick={onForgotPasswordClick}
+      >
+        Forgot Password
+      </div>
     </div>
   );
 };
@@ -190,6 +205,7 @@ const AuthPage = () => {
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const router = useRouter();
 
   const handleLoginClick = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -206,7 +222,15 @@ const AuthPage = () => {
       router.push(`/${userCred.user.uid}/jobs`);
     } catch (err) {
       console.error("Failed to Login", err);
-      toast.error((err as Error).message || "Failed to Login");
+      if (err instanceof FirebaseError) {
+        if (err.code === "auth/invalid-credential") {
+          toast.error("Login Credentials are invalid");
+        } else {
+          toast.error("Failed to Login");
+        }
+      } else {
+          toast.error("Failed to Login");
+        }
     } finally {
       setIsLoading(false);
     }
@@ -233,6 +257,16 @@ const AuthPage = () => {
       if (displayName) {
         await updateProfile(userCred.user, { displayName });
       }
+
+      const userPayload = {
+        name: displayName,
+        email: email,
+        targetApplicationPerDay: 0,
+        archiveDate: serverTimestamp(),
+      };
+      const docRef = doc(db, "users", userCred.user.uid);
+      await setDoc(docRef, userPayload);
+
       router.push(`/${userCred.user.uid}/jobs`);
     } catch (err) {
       console.error("Failed to Register", err);
@@ -273,12 +307,13 @@ const AuthPage = () => {
             <LoginForm
               isLoading={isLoading}
               onRegisterClick={() => setAuthMode("register")}
+              onForgotPasswordClick={() => setShowResetPasswordModal(true)}
               onLogin={handleLoginClick}
             />
           ) : (
             <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center">
               <h3 className="text-green-800/60 uppercase font-semibold text-3xl">
-                Job Tracker
+                Job Trackr
               </h3>
               <h1 className="text-green-800/30 text-8xl uppercase font-bold select-none">
                 Register
@@ -296,7 +331,7 @@ const AuthPage = () => {
           ) : (
             <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center">
               <h3 className="text-blue-800/60 uppercase font-semibold text-3xl">
-                Job Tracker
+                Job Trackr
               </h3>
               <h1 className="text-blue-800/30 text-8xl uppercase font-bold select-none">
                 Login
@@ -325,6 +360,7 @@ const AuthPage = () => {
               <LoginForm
                 isLoading={isLoading}
                 onRegisterClick={() => setAuthMode("register")}
+                onForgotPasswordClick={() => setShowResetPasswordModal(true)}
                 onLogin={handleLoginClick}
               />
             </>
@@ -346,6 +382,11 @@ const AuthPage = () => {
           )}
         </div>
       </div>
+
+      <ForgotPasswordModal
+        isVisible={showResetPasswordModal}
+        onClose={() => setShowResetPasswordModal(false)}
+      />
     </>
   );
 };
