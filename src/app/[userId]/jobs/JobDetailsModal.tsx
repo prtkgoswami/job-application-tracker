@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Job } from "../types/job";
+import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
@@ -11,12 +11,12 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { db } from "@/app/lib/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import Modal from "./Modal";
-import ConfirmDialog from "./ConfirmDialog";
-import ClickToCopyText from "./ClickToCopyText";
+import Modal from "@/app/components/Modal";
+import ConfirmDialog from "@/app/components/ConfirmDialog";
+import ClickToCopyText from "@/app/components/ClickToCopyText";
 
 type JobDetailsModalProps = {
   userId: string;

@@ -8,6 +8,8 @@ type ConfirmDialogProps = {
   title?: string;
   message: string;
   description?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
   onClose: () => void;
   onConfirm?: () => void;
   onCancel?: () => void;
@@ -19,6 +21,8 @@ const ConfirmDialog = ({
   title,
   message,
   description,
+  confirmLabel,
+  cancelLabel,
   onClose,
   onConfirm,
   onCancel,
@@ -60,7 +64,7 @@ const ConfirmDialog = ({
       ref={backdropRef}
     >
       <div
-        className={`min-w-full md:min-w-1/2 w-max bg-gray-800 rounded-lg flex flex-col gap-5 relative overflow-hidden shadow-xl shadow-gray-800 p-5`}
+        className={`min-w-full md:min-w-1/2 w-max bg-gray-800 rounded-lg flex flex-col gap-5 relative overflow-hidden shadow-lg shadow-gray-900 p-5`}
       >
         <section className="flex items-center justify-between gap-4">
           <p className="grow text-xl md:text-2xl font-semibold">{title}</p>
@@ -74,26 +78,25 @@ const ConfirmDialog = ({
           )}
         </section>
 
-        <section className="flex flex-col gap-4 px-2 md:px-5">
+        <section className="flex flex-col items-center gap-4 px-2 md:px-5">
             <p className="text-center text-xl text-amber-400">{message}</p>
             <p className="text-center text-sm md:text-base text-gray-300">{description}</p>
         </section>
 
-        
         <section className="w-full flex justify-between pt-4">
             <button
               type="button"
               className="col-start-4 cursor-pointer border-2 border-gray-400 text-gray-400 hover:bg-amber-400 hover:text-gray-800 hover:border-amber-500 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
               onClick={onCancel ?? onClose}
             >
-              Cancel
+              {cancelLabel ?? "Cancel"}
             </button>
             <button
               type="button"
               className="col-start-4 cursor-pointer border-2 border-amber-500 text-amber-500 hover:bg-amber-400 hover:text-gray-800 transition-colors duration-200 ease-in-out px-8 py-2 rounded-md"
               onClick={onConfirm}
             >
-              Confirm
+              {confirmLabel ?? "Confirm"}
             </button>
         </section>
       </div>

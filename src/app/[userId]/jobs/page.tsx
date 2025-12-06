@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
 import { useAuth } from "@/app/components/AuthProvider";
 import useJobs from "@/app/hooks/useJobs";
-import JobDetailsModal from "@/app/components/JobDetailsModal";
+import JobDetailsModal from "./JobDetailsModal";
 import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
-import OptionsModal, { ActiveFilters } from "@/app/components/OptionsModal";
+import OptionsModal, { ActiveFilters } from "./OptionsModal";
 import useUser from "@/app/hooks/useUser";
 
 const STATUS_COLOR_MAP = {

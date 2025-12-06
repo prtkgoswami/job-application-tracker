@@ -9,6 +9,7 @@ type ModalProps = {
   modalClasses?: string;
   bodyClasses?: string;
   children: ReactNode;
+  theme?: "light" | "dark";
   footer?: React.JSX.Element;
   onClose: () => void;
 };
@@ -20,6 +21,7 @@ const Modal = ({
   children,
   modalClasses,
   bodyClasses,
+  theme = "light",
   footer,
   onClose,
 }: ModalProps) => {
@@ -58,13 +60,13 @@ const Modal = ({
       ref={backdropRef}
     >
       <div
-        className={`w-full bg-gray-100 rounded-lg flex flex-col relative overflow-hidden ${modalClasses}`}
+        className={`w-full ${theme === 'light' ? "bg-gray-100" : "bg-gray-800"} rounded-lg flex flex-col relative overflow-hidden ${modalClasses}`}
       >
         <section className="w-full flex justify-between p-5 pb-0">
           <h3 className="text-2xl text-gray-800">{title}</h3>
           {showCloseButton && (
             <button
-              className="w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 hover:bg-amber-400"
+              className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full ${theme === 'light' ? "text-gray-800 hover:bg-amber-400" : "text-gray-100 hover:bg-amber-600"}`}
               onClick={onClose}
             >
               <FontAwesomeIcon icon={faXmark} size="lg" />
@@ -79,7 +81,7 @@ const Modal = ({
         </section>
 
         {footer && (
-          <section className="w-full bg-amber-400 px-5 py-4 border-t border-gray-800">
+          <section className={`w-full ${theme === 'light' ? "bg-amber-400 border-gray-800" : "bg-amber-600 border-gray-200"} px-5 py-4 border-t`}>
             {footer}
           </section>
         )}

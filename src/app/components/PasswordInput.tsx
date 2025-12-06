@@ -6,7 +6,7 @@ import React, { useState } from "react";
 type PasswordInputProps = {
   value?: string;
   name: string;
-  className: string;
+  className?: string;
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;

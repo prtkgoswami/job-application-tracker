@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import EntryModal from "../components/EntryModal";
 import { ApplicationsProvider } from "../contexts/ApplicationContext";
+import EmailVeificationBlockModal from "../components/EmailVeificationBlockModal";
 
 export default function RootLayout({
   children,
@@ -100,6 +101,8 @@ export default function RootLayout({
           userId={user.uid}
           onClose={() => setShowEntryModal(false)}
         />
+
+        <EmailVeificationBlockModal />
       </div>
     </ApplicationsProvider>
   );
