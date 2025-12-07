@@ -241,7 +241,7 @@ const JobDetailsModal = ({
     <Modal
       isVisible={isVisible}
       modalClasses="md:w-2/3 h-full md:h-[96%]"
-      bodyClasses="px-5"
+      bodyClasses="px-5 flex justify-center w-full"
       onClose={() => {
         setIsInEditMode(false);
         onClose();
@@ -401,7 +401,7 @@ const JobDetailsModal = ({
               </div>
             </form>
           ) : (
-            <div className="flex flex-col gap-5 pb-5 text-gray-800">
+            <div className="flex flex-col gap-5 pb-5 text-gray-800 w-full">
               <section className="flex flex-col gap-2">
                 <h2 className="text-2xl md:text-3xl">
                   {jobData.title}{" "}

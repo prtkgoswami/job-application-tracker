@@ -94,7 +94,7 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
       title="New Application"
       onClose={onClose}
       modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900"
-      bodyClasses="px-5"
+      bodyClasses="px-5 flex justify-center"
       theme="dark"
     >
       <div className="flex justify-center grow h-max py-5">
