@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Modal from "./Modal";
 import { User } from "firebase/auth";
 import Image from "next/image";
@@ -6,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { logAnalyticsEvent } from "../lib/analytics";
 
 type Props = {
   user: User;
@@ -30,15 +32,32 @@ const WelcomeModal = ({
   };
 
   const handleClose = async () => {
+    logAnalyticsEvent("close_welcome_modal", { action: "skip" });
+
+    await markWelcomeSeen();
+    onClose();
+  };
+
+  const handleGoToDashboardClick = async () => {
+    logAnalyticsEvent("close_welcome_modal", { action: "go to dashboard" });
+
     await markWelcomeSeen();
     onClose();
   };
 
   const handleNewApplicationOpen = async () => {
+    logAnalyticsEvent("close_welcome_modal", { action: "new application" });
+
     await markWelcomeSeen();
     onClose();
     onOpenNewApplication();
   };
+
+  useEffect(() => {
+    if (isVisible) {
+      logAnalyticsEvent("show_welcome_modal");
+    }
+  }, [isVisible]);
 
   return (
     <Modal
@@ -131,7 +150,7 @@ const WelcomeModal = ({
             <p className="text-center text-xs text-gray-200 md:hidden">OR</p>
             <button
               className="px-4 py-4 md:py-2 border-2 border-amber-500 text-amber-400 hover:bg-amber-400 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-lg cursor-pointer"
-              onClick={handleClose}
+              onClick={handleGoToDashboardClick}
             >
               Go to Dashboard
             </button>

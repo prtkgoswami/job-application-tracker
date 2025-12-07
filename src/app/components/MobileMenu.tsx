@@ -62,7 +62,7 @@ const MobileMenu = ({
             routeToPage("analysis");
             onCloseMobileMenu();
           }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
+          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer hidden"
         >
           Analysis Dashboard
         </div>

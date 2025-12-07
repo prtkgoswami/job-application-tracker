@@ -1,6 +1,8 @@
+"use client"
 import Link from "next/link";
 import React from "react";
 import ClickToCopyText from "./ClickToCopyText";
+import { logAnalyticsEvent } from "../lib/analytics";
 
 const AboutContent = () => {
   return (
@@ -93,6 +95,9 @@ const AboutContent = () => {
               <ClickToCopyText
                 textToCopy="jobTrackrApp@gmail.com"
                 successToastMsg="Feedback Email copied"
+                onClick={() => {
+                  logAnalyticsEvent("feedback_email_clicked")
+                }}
               >
                 <i>jobTrackrApp@gmail.com</i>
               </ClickToCopyText>

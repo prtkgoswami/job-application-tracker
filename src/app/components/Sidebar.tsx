@@ -45,7 +45,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
             onClick={() => {
               routeToPage("analysis");
             }}
-            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+            className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer hidden"
           >
             Analysis
           </div>

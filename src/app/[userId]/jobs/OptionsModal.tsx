@@ -3,6 +3,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Modal from "@/app/components/Modal";
+import { logAnalyticsEvent } from "@/app/lib/analytics";
 
 const JOB_STATUS_FILTERS = [
   "active",
@@ -69,6 +70,13 @@ const OptionsModal = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setActiveFilters(filterValues);
+
+    // Analytics
+    logAnalyticsEvent("filter_applications", {
+      "filter_keys": Object.keys(filterValues).join(','),
+      "filter_values": Object.values(filterValues).join(',')
+    })
+
     onClose();
   };
 
@@ -82,7 +90,7 @@ const OptionsModal = ({
       title="View Options"
       onClose={onClose}
       modalClasses="md:w-3/7 h-max flex flex-col gap-5 items-center"
-      bodyClasses="px-3"
+      bodyClasses="px-3 flex justify-center"
     >
       <div className="w-full md:w-3/4 pb-8">
         <form

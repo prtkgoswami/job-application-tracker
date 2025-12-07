@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useRef, useState } from "react";
 import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,6 +18,8 @@ import Link from "next/link";
 import Modal from "@/app/components/Modal";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import ClickToCopyText from "@/app/components/ClickToCopyText";
+import { logAnalyticsEvent } from "@/app/lib/analytics";
+import { getDifferenceFromNow } from "@/app/lib/date";
 
 type JobDetailsModalProps = {
   userId: string;
@@ -89,6 +92,28 @@ const JobDetailsModal = ({
         lastUpdateDate: serverTimestamp(),
       });
       toast.success("Successfully updated Application");
+
+      // Analytics
+      if (jobData.status !== formData.status) {
+        logAnalyticsEvent("application_status_updated", {
+          "job_id": jobData.id,
+          "old_status": jobData.status,
+          "new_status": formData.status
+        })
+      } else {
+         logAnalyticsEvent("application_details_updated", {
+          "job_id": jobData.id,
+          "has_link_changed": jobData.link !== formData.link,
+          "has_title_changed": jobData.title !== formData.title,
+          "has_location_changed": jobData.location !== formData.location,
+          "has_company_changed": jobData.company !== formData.company,
+          "has_job_type_changed": jobData.jobType !== formData.jobType,
+          "has_responsibilities_changed": jobData.responsibilities !== formData.responsibilities,
+          "has_requirements_changed": jobData.requirements !== formData.requirements,
+          "has_notes_changed": jobData.notes !== formData.notes,
+        })
+      }
+
       setIsInEditMode(false);
       refetchData();
       onClose();
@@ -103,6 +128,14 @@ const JobDetailsModal = ({
       const ref = doc(db, "jobs", jobData.id);
       await deleteDoc(ref);
       toast.success("Successfully deleted Application");
+
+      // Analytics
+      logAnalyticsEvent("application_entry_deleted", {
+        "old_status": jobData.status,
+        "time_in_previous_stage": Math.floor(getDifferenceFromNow(new Date(jobData.lastUpdateDate)) / (1000 * 3600 * 24)),
+        "time_since_created": Math.floor(getDifferenceFromNow(new Date(jobData.createDate)) / (1000 * 3600 * 24)),
+      })
+
       refetchData();
       onClose();
     } catch (err) {
@@ -207,7 +240,7 @@ const JobDetailsModal = ({
   return (
     <Modal
       isVisible={isVisible}
-      modalClasses="md:w-2/3 h-full"
+      modalClasses="md:w-2/3 h-full md:h-[96%]"
       bodyClasses="px-5"
       onClose={() => {
         setIsInEditMode(false);

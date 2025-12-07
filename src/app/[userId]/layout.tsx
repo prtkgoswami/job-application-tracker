@@ -8,11 +8,12 @@ import Sidebar from "../components/Sidebar";
 import MobileMenu from "../components/MobileMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import EntryModal from "../components/EntryModal";
+import NewApplicationModal from "../components/NewApplicationModal";
 import { ApplicationsProvider } from "../contexts/ApplicationContext";
 import EmailVerificationBlockModal from "../components/EmailVerificationBlockModal";
 import useUser from "../hooks/useUser";
 import WelcomeModal from "../components/WelcomeModal";
+import { unsetAnalyticsUserId } from "../lib/analytics";
 
 export default function RootLayout({
   children,
@@ -22,7 +23,7 @@ export default function RootLayout({
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showNewEntryModal, setNewShowEntryModal] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const router = useRouter();
   const { data: profileData, isLoading: isLoadingProfile } = useUser();
@@ -37,6 +38,7 @@ export default function RootLayout({
 
   const handleLogout = async () => {
     await signOut(auth);
+    unsetAnalyticsUserId();
     router.push("/auth");
   };
 
@@ -90,7 +92,7 @@ export default function RootLayout({
       <div className="min-h-screen w-full relative md:grid grid-cols-9 gap-4">
         <Sidebar
           onLogout={handleLogout}
-          onNewEntryClick={() => setShowEntryModal(true)}
+          onNewEntryClick={() => setNewShowEntryModal(true)}
         />
 
         <header className="md:hidden flex justify-between items-center mb-3 px-3 py-3">
@@ -115,14 +117,14 @@ export default function RootLayout({
         <MobileMenu
           showMenu={showMobileMenu}
           onCloseMobileMenu={handleCloseMobileMenu}
-          onNewEntryClick={() => setShowEntryModal(true)}
+          onNewEntryClick={() => setNewShowEntryModal(true)}
           onLogout={handleLogout}
         />
 
-        <EntryModal
-          showModal={showEntryModal}
+        <NewApplicationModal
+          showModal={showNewEntryModal}
           userId={user.uid}
-          onClose={() => setShowEntryModal(false)}
+          onClose={() => setNewShowEntryModal(false)}
         />
 
         <EmailVerificationBlockModal />
@@ -131,7 +133,7 @@ export default function RootLayout({
           user={user}
           isVisible={showWelcomeModal}
           onClose={() => setShowWelcomeModal(false)}
-          onOpenNewApplication={() => setShowEntryModal(true)}
+          onOpenNewApplication={() => setNewShowEntryModal(true)}
         />
       </div>
     </ApplicationsProvider>

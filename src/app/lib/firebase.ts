@@ -1,3 +1,4 @@
+"use client"
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
@@ -19,11 +20,15 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-export let analytics: ReturnType<typeof getAnalytics> | null = null;
+let analytics: ReturnType<typeof getAnalytics> | null = null;
 
 // Prevent SSR errors by checking if browser environment supports analytics
 if (typeof window !== "undefined") {
   isSupported().then((yes) => {
-    if (yes) analytics = getAnalytics(app);
+    if (yes) {
+      analytics = getAnalytics(app);
+    }
   });
 }
+
+export {analytics};

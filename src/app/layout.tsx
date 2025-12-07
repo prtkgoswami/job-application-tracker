@@ -5,6 +5,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { ToastContainer } from "react-toastify";
 import AuthProvider from "./components/AuthProvider";
+import PageViewAnalyticsProvider from "./components/PageViewAnalyticsProvider";
 config.autoAddCss = false;
 
 const geistSans = Geist({
@@ -19,7 +20,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Job Trackr",
-  description: "Track every job you apply to and stay organized throughout your job search. Manage links, notes, and application status with a clear dashboard that keeps your progress visible.",
+  description:
+    "Track every job you apply to and stay organized throughout your job search. Manage links, notes, and application status with a clear dashboard that keeps your progress visible.",
 };
 
 export default function RootLayout({
@@ -32,7 +34,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <PageViewAnalyticsProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </PageViewAnalyticsProvider>
         <ToastContainer />
       </body>
     </html>

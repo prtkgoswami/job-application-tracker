@@ -7,6 +7,7 @@ type Props = {
   textToCopy: string;
   successToastMsg?: string;
   failureToastMsg?: string;
+  onClick?: () => void;
 };
 
 const ClickToCopyText = ({
@@ -14,6 +15,7 @@ const ClickToCopyText = ({
   textToCopy,
   successToastMsg,
   failureToastMsg,
+  onClick
 }: Props) => {
   const handleClick = async () => {
     try {
@@ -24,6 +26,7 @@ const ClickToCopyText = ({
     catch (_err) {
       console.error(failureToastMsg ?? `Could not Copy Text to Clipboard`);
     }
+    onClick?.();
   };
   return <span className="cursor-pointer w-full" onClick={handleClick}>{children}</span>;
 };

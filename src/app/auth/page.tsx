@@ -12,15 +12,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-import {
-  doc,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import { logAnalyticsEvent, setAnalyticsUserId } from "../lib/analytics";
+import { getDifferenceFromNow } from "../lib/date";
 
 const AuthPage = () => {
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
@@ -41,6 +39,21 @@ const AuthPage = () => {
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
       toast.success("User logged in");
+
+      // Analytics
+      setAnalyticsUserId(userCred.user.uid);
+      logAnalyticsEvent("user_returned", {
+        days_since_last_visit: userCred.user.metadata.lastSignInTime
+          ? Math.floor(
+              getDifferenceFromNow(
+                new Date(userCred.user.metadata.lastSignInTime)
+              ) /
+                (1000 * 3600 * 24)
+            )
+          : "unknown",
+        timestamp: serverTimestamp(),
+      });
+
       router.push(`/${userCred.user.uid}/jobs`);
     } catch (err) {
       console.error("Failed to Login", err);
@@ -51,8 +64,8 @@ const AuthPage = () => {
           toast.error("Failed to Login");
         }
       } else {
-          toast.error("Failed to Login");
-        }
+        toast.error("Failed to Login");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -88,12 +101,19 @@ const AuthPage = () => {
         email: email,
         targetApplicationPerDay: 0,
         archiveDate: serverTimestamp(),
-        hasSeenWelcome: false
+        hasSeenWelcome: false,
       };
       const docRef = doc(db, "users", user.uid);
       await setDoc(docRef, userPayload);
 
       toast.success("User successfully Registerred");
+
+      // Analytics
+      setAnalyticsUserId(user.uid);
+      logAnalyticsEvent("account_created", {
+        signup_method: "email",
+        timestamp: serverTimestamp(),
+      });
 
       router.push(`/${user.uid}/jobs`);
     } catch (err) {

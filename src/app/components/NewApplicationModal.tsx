@@ -1,17 +1,19 @@
+"use client"
 import React, { useRef } from "react";
 import { toast } from "react-toastify";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useApplicationsRefetch } from "../contexts/ApplicationContext";
 import Modal from "./Modal";
+import { logAnalyticsEvent } from "../lib/analytics";
 
-type EntryModalProps = {
+type NewApplicationModalProps = {
   showModal: boolean;
   userId: string;
   onClose: () => void;
 };
 
-const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
+const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const entryModeRef = useRef<"applied" | "wishlist">("applied");
   const { triggerRefetch } = useApplicationsRefetch();
@@ -52,6 +54,12 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
         ...payload,
       });
       toast("New Job Added", { type: "success" });
+
+      // Analytics
+      logAnalyticsEvent("application_entry_created", {
+        status: payload.status
+      })
+
       triggerRefetch();
       onClose();
     } catch (err) {
@@ -85,8 +93,9 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
       isVisible={showModal}
       title="New Application"
       onClose={onClose}
-      modalClasses="md:w-2/3 h-full"
+      modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900"
       bodyClasses="px-5"
+      theme="dark"
     >
       <div className="flex justify-center grow h-max py-5">
         <form
@@ -102,7 +111,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
               type="text"
               name="job-title"
               placeholder="Type here..."
-              className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
               required
             />
           </div>
@@ -115,7 +124,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
                 type="text"
                 name="job-link"
                 placeholder="Paste here..."
-                className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
                 required
               />
             </div>
@@ -127,7 +136,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
                 type="text"
                 name="company"
                 placeholder="Type here..."
-                className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
                 required
               />
             </div>
@@ -141,7 +150,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
                 type="text"
                 name="location"
                 placeholder="Type here..."
-                className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
+                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
                 required
               />
             </div>
@@ -151,13 +160,13 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
               </label>
               <select
                 name="job-type"
-                className="capitalize w-full border border-gray-800 px-4 py-[11px] text-gray-800"
+                className="capitalize w-full border bg-gray-200 px-4 py-[11px] text-gray-800"
                 required
                 defaultValue="onsite"
               >
-                <option value="onsite">onsite</option>
-                <option value="hybrid">hybrid</option>
-                <option value="remote">remote</option>
+                <option value="onsite" className="bg-gray-100 text-gray-800">onsite</option>
+                <option value="hybrid" className="bg-gray-100 text-gray-800">hybrid</option>
+                <option value="remote" className="bg-gray-100 text-gray-800">remote</option>
               </select>
             </div>
           </div>
@@ -168,7 +177,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
             <textarea
               name="job-responsibilities"
               placeholder="Paste here..."
-              className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
             />
           </div>
           <div className="w-full">
@@ -178,7 +187,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
             <textarea
               name="job-requirements"
               placeholder="Paste here..."
-              className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
             />
           </div>
           <div className="pb-5 w-full">
@@ -188,7 +197,7 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
             <textarea
               name="job-notes"
               placeholder="Paste here..."
-              className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
             />
           </div>
           <div className="grid grid-cols-2 gap-8 w-full">
@@ -213,4 +222,4 @@ const EntryModal = ({ showModal, userId, onClose }: EntryModalProps) => {
   );
 };
 
-export default EntryModal;
+export default NewApplicationModal;
