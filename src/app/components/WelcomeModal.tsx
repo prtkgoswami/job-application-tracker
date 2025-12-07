@@ -87,7 +87,7 @@ const WelcomeModal = ({
         <div className="w-full px-5 md:px-10 py-8 flex flex-col gap-8">
           <section>
             <h2 className="text-2xl md:text-3xl font-semibold text-amber-400">
-              Welcome to Job Trackr
+              Welcome to JobTrackr
             </h2>
             <h4 className="text-sm md:text-base font-light text-gray-100 leading-relaxed">
               A clean, focused space to organize your job search and stay on top

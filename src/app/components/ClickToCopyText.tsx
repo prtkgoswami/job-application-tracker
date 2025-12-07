@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 type Props = {
   children: ReactNode;
+  className?: string;
   textToCopy: string;
   successToastMsg?: string;
   failureToastMsg?: string;
@@ -12,6 +13,7 @@ type Props = {
 
 const ClickToCopyText = ({
   children,
+  className,
   textToCopy,
   successToastMsg,
   failureToastMsg,
@@ -21,14 +23,14 @@ const ClickToCopyText = ({
     try {
       await navigator.clipboard.writeText(textToCopy);
       toast.success(successToastMsg ?? "Text Copied to Clipboard");
-    } 
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     catch (_err) {
       console.error(failureToastMsg ?? `Could not Copy Text to Clipboard`);
     }
     onClick?.();
   };
-  return <span className="cursor-pointer w-full" onClick={handleClick}>{children}</span>;
+  return <span className={`cursor-pointer w-full ${className}`} onClick={handleClick}>{children}</span>;
 };
 
 export default ClickToCopyText;

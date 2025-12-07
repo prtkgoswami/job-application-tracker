@@ -35,7 +35,7 @@ const PasswordInput = ({
   return (
     <div className={`flex gap-2 ${className}`}>
       <input
-        className="grow focus-visible:outline-none"
+        className="px-4 py-2 grow focus-visible:outline-none"
         type={isPwdVisible ? "text" : "password"}
         name={name}
         value={value}

@@ -59,7 +59,7 @@ const RegisterForm = ({
           name="first-name"
           id=""
           placeholder="First Name"
-          className="px-4 py-2 border-b border-gray-50 w-4/5"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
           required
         />
         <input
@@ -67,7 +67,7 @@ const RegisterForm = ({
           name="last-name"
           id=""
           placeholder="Last Name"
-          className="px-4 py-2 border-b border-gray-50 w-4/5"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
           required
         />
         <input
@@ -75,17 +75,18 @@ const RegisterForm = ({
           name="email"
           id=""
           placeholder="Email"
-          className="px-4 py-2 border-b border-gray-50 w-4/5"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
           required
         />
         <PasswordInput
           name="password"
           placeholder="Password"
-          className={`px-4 py-2 w-4/5 ${
+          className={`w-4/5 ${
             formError && formError.password
               ? "border border-red-500"
               : "border-b border-gray-50"
           }`}
+          autocomplete="new-password"
           required
         />
         {Object.keys(formError).includes("password") && (
@@ -96,12 +97,13 @@ const RegisterForm = ({
         <PasswordInput
           name="confirm-password"
           placeholder="Confirm Password"
-          className={`px-4 py-2 w-4/5 ${
+          className={`w-4/5 ${
             formError && formError.password
               ? "border border-red-500"
               : "border-b border-gray-50"
           }`}
           required
+          autocomplete="new-password"
           onBlur={handleConfirmPasswordChange}
         />
         {Object.keys(formError).includes("confirm-password") && (
@@ -111,7 +113,7 @@ const RegisterForm = ({
         )}
         <button
           type="submit"
-          className="mt-5 w-full px-5 py-3 cursor-pointer border-2 border-gray-50 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
+          className="mt-5 w-full px-5 py-3 font-semibold cursor-pointer border-2 border-gray-50 hover:bg-amber-400 hover:border-amber-500 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
         >
           Register {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
         </button>

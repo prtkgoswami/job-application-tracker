@@ -124,7 +124,7 @@ const ChangePasswordSection = ({user}: Props) => {
                     <div className="flex flex-col gap-1 w-full">
                       <PasswordInput
                         name="currPassword"
-                        className={`px-3 py-2 border ${
+                        className={`pr-2 border ${
                           passwordChangeErrors["currPassword"]
                             ? "border-red-500"
                             : "border-gray-100/40"
@@ -146,7 +146,7 @@ const ChangePasswordSection = ({user}: Props) => {
                     <div className="flex flex-col gap-1 w-full">
                       <PasswordInput
                         name="newPassword"
-                        className={`px-3 py-2 border ${
+                        className={`pr-2 border ${
                           passwordChangeErrors["newPwd"]
                             ? "border-red-500"
                             : "border-gray-100/40"
@@ -168,7 +168,7 @@ const ChangePasswordSection = ({user}: Props) => {
                     <div className="flex flex-col gap-1 w-full">
                       <PasswordInput
                         name="confirmPassword"
-                        className={`px-3 py-2 border ${
+                        className={`pr-2 border ${
                           passwordChangeErrors["confirmPwd"]
                             ? "border-red-500"
                             : "border-gray-100/40"

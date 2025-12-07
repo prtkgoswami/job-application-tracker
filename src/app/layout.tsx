@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Job Trackr",
+  title: "JobTrackr",
   description:
     "Track every job you apply to and stay organized throughout your job search. Manage links, notes, and application status with a clear dashboard that keeps your progress visible.",
 };

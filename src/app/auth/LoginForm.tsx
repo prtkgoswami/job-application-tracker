@@ -28,18 +28,18 @@ const LoginForm = ({
           name="email"
           id=""
           placeholder="Email"
-          className="px-4 py-2 border-b border-gray-50 w-4/5"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
           required
         />
         <PasswordInput
           name="password"
           placeholder="Password"
-          className="px-4 py-2 border-b border-gray-50 w-4/5"
+          className="border-b border-gray-50 w-4/5"
           required
         />
         <button
           type="submit"
-          className="mt-5 px-5 py-3 w-full cursor-pointer border-2 border-gray-50 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
+          className="mt-5 px-5 py-3 w-full font-semibold cursor-pointer border-2 border-gray-50 hover:bg-amber-400 hover:border-amber-500 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
         >
           Login {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
         </button>

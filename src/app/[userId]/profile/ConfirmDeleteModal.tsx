@@ -109,7 +109,6 @@ const ConfirmDeleteModal = ({ isVisible, user, onClose }: Props) => {
     <>
       <Modal
         isVisible={isVisible}
-        title="Danger"
         modalClasses="w-full md:w-1/2 shadow-lg shadow-gray-900"
         theme="dark"
         onClose={onClose}
@@ -120,25 +119,25 @@ const ConfirmDeleteModal = ({ isVisible, user, onClose }: Props) => {
             className="text-red-500 animate-pulse"
             size="5x"
           />
-          <h2 className="text-amber-500 text-3xl font-medium leading-relaxed mt-5">
+          <h2 className="text-amber-500 text-3xl font-medium leading-relaxed mt-5 text-center">
             All Data will be Deleted Permanently
           </h2>
           <h4 className="text-gray-400 text-lg font-medium leading-relaxed text-center">
             Your account and all job data will be permanently deleted. This
             action cannot be undone.
           </h4>
-          <div className="flex flex-col items-center gap-5 mt-8 w-2/3">
+          <div className="flex flex-col items-center gap-5 mt-8 w-full md:w-2/3">
             <PasswordInput
               name="user-password"
               placeholder="Enter your Password to Delete"
               autocomplete="new-password"
-              className="text-lg border-b border-gray-400 px-4 py-2 w-full"
+              className="pr-2 text-lg border-b border-gray-400 w-full"
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
             />
             <button
               type="button"
-              className="px-4 py-2 text-gray-800 bg-amber-400 disabled:bg-gray-400 hover:bg-amber-500 text-lg cursor-pointer uppercase w-40 rounded-lg"
+              className="px-4 py-2 text-gray-800 bg-amber-400 disabled:bg-gray-400 hover:bg-amber-500 text-lg cursor-pointer font-semibold w-40 rounded-lg"
               onClick={() => setShowFeedback(true)}
               disabled={password.length === 0}
             >

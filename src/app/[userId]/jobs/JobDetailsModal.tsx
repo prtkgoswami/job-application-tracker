@@ -4,6 +4,7 @@ import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBuilding,
+  faCopy,
   faFloppyDisk,
   faLink,
   faLocationDot,
@@ -265,8 +266,8 @@ const JobDetailsModal = ({
                 successToastMsg="ID Copied to Clipboard"
                 failureToastMsg={`Could Not copy ID(${jobData.id}) to clipboard`}
               >
-                <p className="text-right text-xs text-amber-600 w-full select-none cursor-pointer">
-                  JOB ID: {jobData.id}
+                <p className="text-right text-xs font-semibold text-amber-600 w-full select-none cursor-pointer">
+                  JOB ID: {jobData.id} <FontAwesomeIcon icon={faCopy} size="lg" />
                 </p>
               </ClickToCopyText>
 

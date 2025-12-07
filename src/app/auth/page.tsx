@@ -20,12 +20,30 @@ import RegisterForm from "./RegisterForm";
 import { logAnalyticsEvent, setAnalyticsUserId } from "../lib/analytics";
 import { getDifferenceFromNow } from "../lib/date";
 
+const LOGIN_SUBTITLES = [
+  "Continue your job search journey",
+  "Your next opportunity is waiting",
+  "Pick up right where you left off",
+  "Your career progress awaits",
+  "Let's keep the momentum going",
+  "Your applications are waiting",
+];
+const REGISTER_SUBTITLES = [
+  "Start tracking your job applications today",
+  "Organize your job search in one place",
+  "Your dream job journey begins here",
+  "Track applications, stay organized, land your dream job",
+  "Take control of your job hunt today",
+  "Never lose track of an opportunity again",
+];
+
 const AuthPage = () => {
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const router = useRouter();
+  const randomIndex = Math.floor(Math.random() * LOGIN_SUBTITLES.length);
 
   const handleLoginClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,13 +177,16 @@ const AuthPage = () => {
               onLogin={handleLoginClick}
             />
           ) : (
-            <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center">
-              <h3 className="text-green-800/60 uppercase font-semibold text-3xl">
-                Job Trackr
+            <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center px-8">
+              <h3 className="text-green-800/60 font-semibold text-4xl mb-5">
+                JobTrackr
               </h3>
-              <h1 className="text-green-800/30 text-8xl uppercase font-bold select-none">
-                Register
+              <h1 className="text-green-800/40 text-6xl uppercase font-bold select-none text-center">
+                Let's Get Started
               </h1>
+              <h4 className="text-green-800/60 text-3xl font-extralight select-none text-center">
+                {REGISTER_SUBTITLES[randomIndex]}
+              </h4>
             </div>
           )}
         </div>
@@ -177,13 +198,16 @@ const AuthPage = () => {
               onRegister={handleRegisterClick}
             />
           ) : (
-            <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center">
-              <h3 className="text-blue-800/60 uppercase font-semibold text-3xl">
-                Job Trackr
+            <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center px-8">
+              <h3 className="text-blue-800/60 font-semibold text-4xl mb-5">
+                JobTrackr
               </h3>
-              <h1 className="text-blue-800/30 text-8xl uppercase font-bold select-none">
-                Login
+              <h1 className="text-blue-800/40 text-6xl uppercase font-bold select-none text-center">
+                Welcome Back
               </h1>
+              <h4 className="text-blue-800/60 text-3xl font-extralight select-none text-center">
+                {LOGIN_SUBTITLES[randomIndex]}
+              </h4>
             </div>
           )}
         </div>

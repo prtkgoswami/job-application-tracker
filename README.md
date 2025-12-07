@@ -1,4 +1,4 @@
-# Job Trackr
+# JobTrackr
 > **Live URL:** https://job-application-tracker-livid-seven.vercel.app/
 
 A clean and efficient job application tracker built with **Next.js**, **Firebase**, and **Tailwind CSS**.  

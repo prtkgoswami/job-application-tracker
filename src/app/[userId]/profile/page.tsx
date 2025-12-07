@@ -5,6 +5,7 @@ import { getDateInputString } from "@/app/lib/date";
 import { db } from "@/app/lib/firebase";
 import { User as UserType } from "@/app/types/user";
 import {
+  faCopy,
   faFloppyDisk,
   faPen,
   faSpinner,
@@ -120,9 +121,10 @@ const ProfilePageContent = ({
               successToastMsg="User ID copied to Clipboard"
               failureToastMsg="Could not copy User ID to Clipboard"
             >
-              <p className="px-3 py-2 border text-gray-100/60 border-gray-100/40 focus-visible:outline-none focus-visible:border-amber-400 w-full">
-                {profileData.uid}
-              </p>
+              <div className="px-3 py-2 border text-gray-100/60 border-gray-100/40 focus-visible:outline-none focus-visible:border-amber-400 w-full flex justify-between">
+                <p>{profileData.uid}</p>
+                <FontAwesomeIcon icon={faCopy} size="lg" />
+              </div>
             </ClickToCopyText>
           </>
           <>
