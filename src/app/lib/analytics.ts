@@ -20,5 +20,5 @@ export const logAnalyticsEvent = (
 ) => {
   if (!analytics) return;
 
-  logEvent(analytics, name, {...params, debug_mode: 1});
+  logEvent(analytics, name, params);
 };
