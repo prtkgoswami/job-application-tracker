@@ -19,6 +19,7 @@ type FirestoreUser = {
   password: string;
   archiveDate: Timestamp;
   targetApplicationPerDay: number;
+  hasSeenWelcome: boolean;
 };
 
 const useUser = (): UserHookResponse => {

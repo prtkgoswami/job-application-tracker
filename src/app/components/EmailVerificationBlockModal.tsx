@@ -4,7 +4,7 @@ import Modal from "@/app/components/Modal";
 import { sendEmailVerification } from "firebase/auth";
 import { toast } from "react-toastify";
 
-const EmailVeificationBlockModal = () => {
+const EmailVerificationBlockModal = () => {
   const user = useAuth();
 
   if (!user || user?.emailVerified) return <></>;
@@ -54,4 +54,4 @@ const EmailVeificationBlockModal = () => {
   );
 };
 
-export default EmailVeificationBlockModal;
+export default EmailVerificationBlockModal;

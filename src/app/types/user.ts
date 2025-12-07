@@ -4,5 +4,5 @@ export type User = {
     email: string;
     archiveDate: string;
     targetApplicationPerDay: number;
-
+    hasSeenWelcome: boolean;
 }

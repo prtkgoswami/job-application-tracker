@@ -10,7 +10,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import EntryModal from "../components/EntryModal";
 import { ApplicationsProvider } from "../contexts/ApplicationContext";
-import EmailVeificationBlockModal from "../components/EmailVeificationBlockModal";
+import EmailVerificationBlockModal from "../components/EmailVerificationBlockModal";
+import useUser from "../hooks/useUser";
+import WelcomeModal from "../components/WelcomeModal";
 
 export default function RootLayout({
   children,
@@ -21,7 +23,9 @@ export default function RootLayout({
   const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const router = useRouter();
+  const { data: profileData, isLoading: isLoadingProfile } = useUser();
 
   const handleShowMobileMenu = () => {
     setShowMobileMenu(true);
@@ -49,12 +53,29 @@ export default function RootLayout({
     return () => unsubscribe();
   }, [router]);
 
+  useEffect(() => {
+    if (profileData && !profileData.hasSeenWelcome) {
+      setShowWelcomeModal(true);
+    }
+  }, [profileData])
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen w-full flex flex-col justify-center items-center">
         <FontAwesomeIcon icon={faSpinner} spin size="5x" />
         <h2 className="text-3xl text-gray-200 animate-pulse mt-8">
           Checking User Auth ...
+        </h2>
+      </div>
+    );
+  }
+
+  if (isLoadingProfile) {
+    return (
+      <div className="min-h-screen w-full flex flex-col justify-center items-center">
+        <FontAwesomeIcon icon={faSpinner} spin size="5x" />
+        <h2 className="text-3xl text-gray-200 animate-pulse mt-8">
+          Fetching Profile ...
         </h2>
       </div>
     );
@@ -87,7 +108,9 @@ export default function RootLayout({
           </div>
         </header>
 
-        <div className="flex flex-col md:col-span-7 h-screen overflow-auto">{children}</div>
+        <div className="flex flex-col md:col-span-7 h-screen overflow-auto">
+          {children}
+        </div>
 
         <MobileMenu
           showMenu={showMobileMenu}
@@ -102,7 +125,14 @@ export default function RootLayout({
           onClose={() => setShowEntryModal(false)}
         />
 
-        <EmailVeificationBlockModal />
+        <EmailVerificationBlockModal />
+
+        <WelcomeModal
+          user={user}
+          isVisible={showWelcomeModal}
+          onClose={() => setShowWelcomeModal(false)}
+          onOpenNewApplication={() => setShowEntryModal(true)}
+        />
       </div>
     </ApplicationsProvider>
   );

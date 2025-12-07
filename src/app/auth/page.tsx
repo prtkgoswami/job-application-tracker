@@ -88,6 +88,7 @@ const AuthPage = () => {
         email: email,
         targetApplicationPerDay: 0,
         archiveDate: serverTimestamp(),
+        hasSeenWelcome: false
       };
       const docRef = doc(db, "users", user.uid);
       await setDoc(docRef, userPayload);
