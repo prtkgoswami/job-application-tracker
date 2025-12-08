@@ -1,21 +1,32 @@
-"use client"
+"use client";
 import Link from "next/link";
 import React from "react";
 import ClickToCopyText from "./ClickToCopyText";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 const AboutContent = () => {
   return (
     <div className="flex flex-col gap-5 md:p-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-center md:text-left text-4xl md:text-5xl font-semibold text-amber-400">
-          JobTrackr
-        </h1>
-        <h4 className="text-center md:text-left text-sm md:text-lg font-light">
-          A better way to stay organized in your job search
-        </h4>
+      <div className="flex gap-4">
+        <div className="h-26 aspect-square relative">
+          <Image
+            src="/jobTrackr_logo.png"
+            alt="JobTrackr Logo"
+            fill
+            className="object-contain"
+          />
+        </div>
+        <div className="flex flex-col gap-2 justify-center">
+          <h1 className="text-center md:text-left text-4xl md:text-5xl font-semibold text-amber-400">
+            JobTrackr
+          </h1>
+          <h4 className="text-center md:text-left text-sm md:text-lg font-light">
+            A better way to stay organized in your job search
+          </h4>
+        </div>
       </div>
 
       <div className="flex flex-col gap-8 p-4 md:p-8 text-sm leading-relaxed md:text-lg">
@@ -98,15 +109,17 @@ const AboutContent = () => {
                 textToCopy="jobTrackrApp@gmail.com"
                 successToastMsg="Feedback Email copied"
                 onClick={() => {
-                  logAnalyticsEvent("feedback_email_clicked")
+                  logAnalyticsEvent("feedback_email_clicked");
                 }}
               >
-                <i className="text-amber-400">jobTrackrApp@gmail.com <FontAwesomeIcon icon={faCopy} /></i>
+                <i className="text-amber-400">
+                  jobTrackrApp@gmail.com <FontAwesomeIcon icon={faCopy} />
+                </i>
               </ClickToCopyText>
             </p>
             <p>
-              If JobTrackr helps even a little in your path to landing your
-              next role — mission accomplished.
+              If JobTrackr helps even a little in your path to landing your next
+              role — mission accomplished.
             </p>
           </div>
         </div>
