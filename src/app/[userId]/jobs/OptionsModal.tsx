@@ -188,12 +188,12 @@ const OptionsModal = ({
           {companyList && companyList.length > 0 && (
             <>
               <label className="text-gray-800 md:col-span-2">Company:</label>
-              <div className="flex gap-1 items-center md:col-span-3">
+              <div className="flex gap-1 items-center md:col-span-3 max-w-full">
                 <select
                   name="company"
                   value={filterValues.company}
                   onChange={handleFilterChange}
-                  className="border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer grow text-sm md:text-base"
+                  className="border bg-gray-100 border-gray-800 rounded-md text-gray-800 capitalize px-4 py-2 cursor-pointer grow text-sm md:text-base w-full"
                 >
                   <option value="" className="capitalize">
                     all

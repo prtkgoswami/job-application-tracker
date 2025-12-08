@@ -1,8 +1,9 @@
-"use client"
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Job } from "@/app/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAsterisk,
   faBuilding,
   faCopy,
   faFloppyDisk,
@@ -97,22 +98,24 @@ const JobDetailsModal = ({
       // Analytics
       if (jobData.status !== formData.status) {
         logAnalyticsEvent("application_status_updated", {
-          "job_id": jobData.id,
-          "old_status": jobData.status,
-          "new_status": formData.status
-        })
+          job_id: jobData.id,
+          old_status: jobData.status,
+          new_status: formData.status,
+        });
       } else {
-         logAnalyticsEvent("application_details_updated", {
-          "job_id": jobData.id,
-          "has_link_changed": jobData.link !== formData.link,
-          "has_title_changed": jobData.title !== formData.title,
-          "has_location_changed": jobData.location !== formData.location,
-          "has_company_changed": jobData.company !== formData.company,
-          "has_job_type_changed": jobData.jobType !== formData.jobType,
-          "has_responsibilities_changed": jobData.responsibilities !== formData.responsibilities,
-          "has_requirements_changed": jobData.requirements !== formData.requirements,
-          "has_notes_changed": jobData.notes !== formData.notes,
-        })
+        logAnalyticsEvent("application_details_updated", {
+          job_id: jobData.id,
+          has_link_changed: jobData.link !== formData.link,
+          has_title_changed: jobData.title !== formData.title,
+          has_location_changed: jobData.location !== formData.location,
+          has_company_changed: jobData.company !== formData.company,
+          has_job_type_changed: jobData.jobType !== formData.jobType,
+          has_responsibilities_changed:
+            jobData.responsibilities !== formData.responsibilities,
+          has_requirements_changed:
+            jobData.requirements !== formData.requirements,
+          has_notes_changed: jobData.notes !== formData.notes,
+        });
       }
 
       setIsInEditMode(false);
@@ -132,10 +135,16 @@ const JobDetailsModal = ({
 
       // Analytics
       logAnalyticsEvent("application_entry_deleted", {
-        "old_status": jobData.status,
-        "time_in_previous_stage": Math.floor(getDifferenceFromNow(new Date(jobData.lastUpdateDate)) / (1000 * 3600 * 24)),
-        "time_since_created": Math.floor(getDifferenceFromNow(new Date(jobData.createDate)) / (1000 * 3600 * 24)),
-      })
+        old_status: jobData.status,
+        time_in_previous_stage: Math.floor(
+          getDifferenceFromNow(new Date(jobData.lastUpdateDate)) /
+            (1000 * 3600 * 24)
+        ),
+        time_since_created: Math.floor(
+          getDifferenceFromNow(new Date(jobData.createDate)) /
+            (1000 * 3600 * 24)
+        ),
+      });
 
       refetchData();
       onClose();
@@ -267,13 +276,14 @@ const JobDetailsModal = ({
                 failureToastMsg={`Could Not copy ID(${jobData.id}) to clipboard`}
               >
                 <p className="text-right text-xs font-semibold text-amber-600 w-full select-none cursor-pointer">
-                  JOB ID: {jobData.id} <FontAwesomeIcon icon={faCopy} size="lg" />
+                  JOB ID: {jobData.id}{" "}
+                  <FontAwesomeIcon icon={faCopy} size="lg" />
                 </p>
               </ClickToCopyText>
 
               <div className="w-full">
-                <label className="text-amber-500 uppercase font-semibold">
-                  Job Title
+                <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+                  Job Title <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-500" />
                 </label>
                 <input
                   type="text"
@@ -286,8 +296,8 @@ const JobDetailsModal = ({
                 />
               </div>
               <div className="w-full">
-                <label className="text-amber-500 uppercase font-semibold">
-                  Company
+                <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+                  Company <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-500" />
                 </label>
                 <input
                   type="text"
@@ -312,7 +322,6 @@ const JobDetailsModal = ({
                     onChange={handleChange}
                     placeholder="Paste here..."
                     className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                    required
                   />
                 </div>
                 <div className="w-full">
@@ -326,7 +335,6 @@ const JobDetailsModal = ({
                     onChange={handleChange}
                     placeholder="Paste here..."
                     className="w-full border border-gray-800 px-4 py-2 text-gray-800 focus-visible:outline-none"
-                    required
                   />
                 </div>
               </div>
@@ -406,12 +414,14 @@ const JobDetailsModal = ({
               <section className="flex flex-col gap-2">
                 <h2 className="text-2xl md:text-3xl">
                   {jobData.title}{" "}
-                  <Link href={jobData.link} target="_blank">
-                    <FontAwesomeIcon
-                      icon={faLink}
-                      className="text-blue-500 text-2xl"
-                    />
-                  </Link>
+                  {jobData.link && jobData.link !== "#" && (
+                    <Link href={jobData.link} target="_blank">
+                      <FontAwesomeIcon
+                        icon={faLink}
+                        className="text-blue-500 text-2xl"
+                      />
+                    </Link>
+                  )}
                 </h2>
 
                 <div className="flex h-max gap-3 text-base md:text-lg capitalize">

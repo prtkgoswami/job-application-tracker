@@ -105,8 +105,14 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
         };
       });
 
-      setCompanyList(Array.from(companySet))
-      setLocationList(Array.from(locationSet))
+      const listOfCompanies = Array.from(companySet);
+      const listOfLocations = Array.from(locationSet);
+
+      listOfCompanies.sort();
+      listOfLocations.sort();
+
+      setCompanyList(listOfCompanies)
+      setLocationList(listOfLocations)
       setJobs(nextJobs);
     } catch (err: unknown) {
       console.error("Application Fetch Error", err);

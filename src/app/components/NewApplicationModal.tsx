@@ -6,6 +6,8 @@ import { db } from "../lib/firebase";
 import { useApplicationsRefetch } from "../contexts/ApplicationContext";
 import Modal from "./Modal";
 import { logAnalyticsEvent } from "../lib/analytics";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
 
 type NewApplicationModalProps = {
   showModal: boolean;
@@ -104,8 +106,8 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
           ref={formRef}
         >
           <div className="w-full">
-            <label className="text-amber-500 uppercase font-semibold">
-              Job Title
+            <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+              Job Title <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-700" />
             </label>
             <input
               type="text"
@@ -125,12 +127,11 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
                 name="job-link"
                 placeholder="Paste here..."
                 className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
-                required
               />
             </div>
             <div className="w-full">
-              <label className="text-amber-500 uppercase font-semibold">
-                Company
+              <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+                Company <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-700" />
               </label>
               <input
                 type="text"
@@ -151,7 +152,6 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
                 name="location"
                 placeholder="Type here..."
                 className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
-                required
               />
             </div>
             <div className="w-full">
@@ -161,7 +161,6 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
               <select
                 name="job-type"
                 className="capitalize w-full border bg-gray-200 px-4 py-[11px] text-gray-800"
-                required
                 defaultValue="onsite"
               >
                 <option value="onsite" className="bg-gray-100 text-gray-800">onsite</option>
