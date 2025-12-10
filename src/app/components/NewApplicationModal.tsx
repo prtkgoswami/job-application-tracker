@@ -96,10 +96,10 @@ const NewApplicationModal = ({
   };
 
   useEffect(() => {
-    if(showModal) {
-      setShowNotesSection(false)
+    if (showModal) {
+      setShowNotesSection(false);
     }
-  }, [showModal])
+  }, [showModal]);
 
   if (!showModal) {
     return <></>;
@@ -246,12 +246,17 @@ const NewApplicationModal = ({
                 Notes
               </label>
             </div>
-            <div className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${showNotesSecton ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}`}>
-            <textarea
-              name="job-notes"
-              placeholder="Paste here..."
-              className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
-            /></div>
+            <div
+              className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${
+                showNotesSecton ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <textarea
+                name="job-notes"
+                placeholder="Paste here..."
+                className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-8 w-full">
             <button

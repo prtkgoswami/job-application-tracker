@@ -59,7 +59,7 @@ export default function RootLayout({
     if (profileData && !profileData.hasSeenWelcome) {
       setShowWelcomeModal(true);
     }
-  }, [profileData])
+  }, [profileData]);
 
   if (isCheckingAuth) {
     return (
@@ -89,12 +89,13 @@ export default function RootLayout({
 
   return (
     <ApplicationsProvider>
-      <div className="min-h-screen w-full relative md:grid grid-cols-9 gap-4">
+      <div className="min-h-screen w-full relative flex flex-col md:flex-row gap-1">
         <Sidebar
           onLogout={handleLogout}
           onNewEntryClick={() => setNewShowEntryModal(true)}
         />
 
+        {/* Mobile-Only Header */}
         <header className="md:hidden flex justify-between items-center mb-3 px-3 py-3">
           <h2 className="text-2xl md:text-2xl text-amber-400">
             JobTrackr{" "}
@@ -110,7 +111,7 @@ export default function RootLayout({
           </div>
         </header>
 
-        <div className="flex flex-col md:col-span-7 h-screen overflow-auto">
+        <div className="flex flex-col w-full h-screen overflow-auto">
           {children}
         </div>
 
