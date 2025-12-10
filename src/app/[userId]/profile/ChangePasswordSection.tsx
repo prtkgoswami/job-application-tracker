@@ -1,6 +1,12 @@
 "use client";
 import PasswordInput from "@/components/PasswordInput";
 import {
+  faCaretDown,
+  faCaretLeft,
+  faCaretRight,
+  faCaretUp,
+  faMinus,
+  faPlus,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,16 +21,17 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 type Props = {
-    user: User;
-}
+  user: User;
+};
 
-const ChangePasswordSection = ({user}: Props) => {
+const ChangePasswordSection = ({ user }: Props) => {
   const [passwordChangeErrors, setPasswordChangeErrors] = useState<{
     currPassword?: string;
     newPwd?: string;
     confirmPwd?: string;
   }>({});
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handlePasswordChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,8 +49,8 @@ const ChangePasswordSection = ({user}: Props) => {
       confirmPwd?: string;
     } = {};
 
-    if(!user || !user.email) {
-        return;
+    if (!user || !user.email) {
+      return;
     }
 
     if (!currPassword) {
@@ -77,10 +84,7 @@ const ChangePasswordSection = ({user}: Props) => {
 
     try {
       setIsChangingPassword(true);
-      const cred = EmailAuthProvider.credential(
-        user.email,
-        currPassword
-      );
+      const cred = EmailAuthProvider.credential(user.email, currPassword);
       await reauthenticateWithCredential(user, cred);
 
       await updatePassword(user, newPwd);
@@ -108,97 +112,109 @@ const ChangePasswordSection = ({user}: Props) => {
   };
 
   return (
-    <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5">
-                <h4 className="text-base md:text-lg uppercase font-light mb-5">
-                  Change Password
-                </h4>
-                <form
-                  className="flex flex-col md:grid grid-cols-2 items-start gap-y-4"
-                  onSubmit={handlePasswordChange}
-                  autoComplete="off"
-                >
-                  <>
-                    <p className="text-base md:text-lg text-amber-400 pt-2">
-                      Current Password
-                    </p>
-                    <div className="flex flex-col gap-1 w-full">
-                      <PasswordInput
-                        name="currPassword"
-                        className={`pr-2 border ${
-                          passwordChangeErrors["currPassword"]
-                            ? "border-red-500"
-                            : "border-gray-100/40"
-                        }`}
-                        autocomplete="new-password"
-                      />
-                      {passwordChangeErrors["currPassword"] && (
-                        <p className="text-right text-xs text-red-500">
-                          {passwordChangeErrors["currPassword"]}
-                        </p>
-                      )}
-                    </div>
-                  </>
-    
-                  <>
-                    <p className="text-base md:text-lg text-amber-400 pt-2">
-                      New Password
-                    </p>
-                    <div className="flex flex-col gap-1 w-full">
-                      <PasswordInput
-                        name="newPassword"
-                        className={`pr-2 border ${
-                          passwordChangeErrors["newPwd"]
-                            ? "border-red-500"
-                            : "border-gray-100/40"
-                        }`}
-                        autocomplete="new-password"
-                      />
-                      {passwordChangeErrors["newPwd"] && (
-                        <p className="text-right text-xs text-red-500">
-                          {passwordChangeErrors["newPwd"]}
-                        </p>
-                      )}
-                    </div>
-                  </>
-    
-                  <>
-                    <p className="text-base md:text-lg text-amber-400 pt-2">
-                      Confirm Password
-                    </p>
-                    <div className="flex flex-col gap-1 w-full">
-                      <PasswordInput
-                        name="confirmPassword"
-                        className={`pr-2 border ${
-                          passwordChangeErrors["confirmPwd"]
-                            ? "border-red-500"
-                            : "border-gray-100/40"
-                        }`}
-                        autocomplete="new-password"
-                      />
-                      {passwordChangeErrors["confirmPwd"] && (
-                        <p className="text-right text-xs text-red-500">
-                          {passwordChangeErrors["confirmPwd"]}
-                        </p>
-                      )}
-                    </div>
-                  </>
-    
-                  <div className="col-span-2 flex justify-center md:justify-end mt-5 w-full">
-                    <button
-                      type="submit"
-                      className="px-8 py-2 bg-amber-400 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
-                      disabled={isChangingPassword}
-                    >
-                      {isChangingPassword ? (
-                        <FontAwesomeIcon icon={faSpinner} spin />
-                      ) : (
-                        "Change Password"
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </div>
-  )
-}
+    <div className="md:col-span-2 rounded-xl mt-5">
+      <div
+        className="flex justify-between items-center cursor-pointer"
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
+        <h4 className="text-base md:text-lg text-amber-400 font-light mb-5">
+          Change Password
+        </h4>
+        <FontAwesomeIcon icon={isExpanded ? faCaretUp : faCaretDown} size="lg" />
+      </div>
+      <div
+        className={`overflow-hidden transition-[max-height,opacity] duration-200 px-4 ease-in-out ${
+          isExpanded ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <form
+          className="flex flex-col md:grid grid-cols-2 items-start gap-y-4"
+          onSubmit={handlePasswordChange}
+          autoComplete="off"
+        >
+          <>
+            <p className="text-base md:text-lg text-amber-400 pt-2">
+              Current Password
+            </p>
+            <div className="flex flex-col gap-1 w-full">
+              <PasswordInput
+                name="currPassword"
+                className={`pr-2 border ${
+                  passwordChangeErrors["currPassword"]
+                    ? "border-red-500"
+                    : "border-gray-100/40"
+                }`}
+                autocomplete="new-password"
+              />
+              {passwordChangeErrors["currPassword"] && (
+                <p className="text-right text-xs text-red-500">
+                  {passwordChangeErrors["currPassword"]}
+                </p>
+              )}
+            </div>
+          </>
 
-export default ChangePasswordSection
+          <>
+            <p className="text-base md:text-lg text-amber-400 pt-2">
+              New Password
+            </p>
+            <div className="flex flex-col gap-1 w-full">
+              <PasswordInput
+                name="newPassword"
+                className={`pr-2 border ${
+                  passwordChangeErrors["newPwd"]
+                    ? "border-red-500"
+                    : "border-gray-100/40"
+                }`}
+                autocomplete="new-password"
+              />
+              {passwordChangeErrors["newPwd"] && (
+                <p className="text-right text-xs text-red-500">
+                  {passwordChangeErrors["newPwd"]}
+                </p>
+              )}
+            </div>
+          </>
+
+          <>
+            <p className="text-base md:text-lg text-amber-400 pt-2">
+              Confirm Password
+            </p>
+            <div className="flex flex-col gap-1 w-full">
+              <PasswordInput
+                name="confirmPassword"
+                className={`pr-2 border ${
+                  passwordChangeErrors["confirmPwd"]
+                    ? "border-red-500"
+                    : "border-gray-100/40"
+                }`}
+                autocomplete="new-password"
+              />
+              {passwordChangeErrors["confirmPwd"] && (
+                <p className="text-right text-xs text-red-500">
+                  {passwordChangeErrors["confirmPwd"]}
+                </p>
+              )}
+            </div>
+          </>
+
+          <div className="col-span-2 flex justify-center md:justify-end mt-5 w-full">
+            <button
+              type="submit"
+              className="px-8 py-2 bg-amber-400 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
+              disabled={isChangingPassword}
+            >
+              {isChangingPassword ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                "Change Password"
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ChangePasswordSection;

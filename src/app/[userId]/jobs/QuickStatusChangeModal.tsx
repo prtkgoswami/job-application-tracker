@@ -4,6 +4,7 @@ import { Job } from "@/types/job";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { logAnalyticsEvent } from "@/lib/analytics";
 
 type Props = {
   activeApplicationId: string;
@@ -32,6 +33,13 @@ const QuickStatusChangeModal = ({
       });
 
       toast.success("Application Status Changed");
+
+      logAnalyticsEvent("application_quick_status_change", {
+        job_id: activeApplicationId,
+        old_status: activeApplication.status,
+        new_status: activeStatus
+      })
+
       onClose();
       refetch();
     } catch (err) {
@@ -43,6 +51,9 @@ const QuickStatusChangeModal = ({
   useEffect(() => {
     if (activeApplicationId && activeApplication) {
       setActiveStatus(activeApplication.status);
+      logAnalyticsEvent("application_quick_status_change_show", {
+        job_id: activeApplicationId
+      })
     }
   }, [activeApplicationId, activeApplication]);
 

@@ -1,25 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth, db } from "@lib/firebase";
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import { auth } from "@lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import { logAnalyticsEvent, setAnalyticsUserId } from "@lib/analytics";
-import { getDifferenceFromNow } from "@lib/date";
 import Image from "next/image";
+import { loginWithEmailPassword, registerWithEmailPassword } from "@lib/auth";
+import { signInWithGoogle } from "@lib/googleAuth";
 
 const LOGIN_SUBTITLES = [
   "Continue your job search journey",
@@ -46,39 +39,36 @@ const AuthPage = () => {
   const router = useRouter();
   const randomIndex = Math.floor(Math.random() * LOGIN_SUBTITLES.length);
 
-  const handleLoginClick = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    const email = String(formData.get("email") || "");
-    const password = String(formData.get("password") || "");
-
-    setIsLoading(true);
+  const handleLoginClick = async (
+    mode: "email" | "google",
+    payload?: { email: string; password: string }
+  ) => {
+    if (mode === "email") {
+      setIsLoading(true);
+    }
 
     try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      toast.success("User logged in");
+      let user: User | null = null;
 
-      // Analytics
-      setAnalyticsUserId(userCred.user.uid);
-      logAnalyticsEvent("user_returned", {
-        days_since_last_visit: userCred.user.metadata.lastSignInTime
-          ? Math.floor(
-              getDifferenceFromNow(
-                new Date(userCred.user.metadata.lastSignInTime)
-              ) /
-                (1000 * 3600 * 24)
-            )
-          : "unknown",
-        timestamp: serverTimestamp(),
-      });
+      if (mode === "email" && payload) {
+        const { email, password } = payload;
+        user = await loginWithEmailPassword(email, password);
+      } else {
+        user = await signInWithGoogle();
+      }
 
-      router.push(`/${userCred.user.uid}/jobs`);
+      if (!user) {
+        throw new Error("User Not Found");
+      }
+
+      router.push(`/${user.uid}/jobs`);
     } catch (err) {
       console.error("Failed to Login", err);
       if (err instanceof FirebaseError) {
         if (err.code === "auth/invalid-credential") {
           toast.error("Login Credentials are invalid");
+        } else if (err.code === "auth/popup-closed-by-user") {
+          //  Do nothing
         } else {
           toast.error("Failed to Login");
         }
@@ -86,58 +76,55 @@ const AuthPage = () => {
         toast.error("Failed to Login");
       }
     } finally {
-      setIsLoading(false);
+      if (mode === "email") {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleRegisterClick = async (e: React.FormEvent<HTMLFormElement>) => {
-    const formData = new FormData(e.currentTarget);
-
-    const firstName = String(formData.get("first-name") || "");
-    const lastName = String(formData.get("last-name") || "");
-    const email = String(formData.get("email") || "");
-    const password = String(formData.get("password") || "");
-
+  const handleRegisterClick = async (
+    mode: "email" | "google",
+    payload?: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+    }
+  ) => {
     setIsLoading(true);
 
     try {
-      const userCred = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCred.user;
+      let user: User | null = null;
 
-      await sendEmailVerification(user);
-
-      const displayName = `${firstName} ${lastName}`.trim();
-      if (displayName) {
-        await updateProfile(user, { displayName });
+      if (mode === "email" && payload) {
+        const { firstName, lastName, email, password } = payload;
+        user = await registerWithEmailPassword(
+          firstName,
+          lastName,
+          email,
+          password
+        );
+      } else if (mode === "google") {
+        user = await signInWithGoogle();
       }
 
-      const userPayload = {
-        name: displayName,
-        email: email,
-        targetApplicationPerDay: 0,
-        archiveDate: serverTimestamp(),
-        hasSeenWelcome: false,
-      };
-      const docRef = doc(db, "users", user.uid);
-      await setDoc(docRef, userPayload);
+      if (!user) {
+        throw new Error("User could not be created");
+      }
 
       toast.success("User successfully Registerred");
-
-      // Analytics
-      setAnalyticsUserId(user.uid);
-      logAnalyticsEvent("account_created", {
-        signup_method: "email",
-        timestamp: serverTimestamp(),
-      });
-
       router.push(`/${user.uid}/jobs`);
     } catch (err) {
       console.error("Failed to Register", err);
+      if (err instanceof FirebaseError) {
+        if (err.code === "auth/popup-closed-by-user") {
+          //  Do nothing
+        } else {
       toast.error((err as Error).message || "Failed to Register");
+        }
+      } else {
+      toast.error("Failed to Register");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -178,9 +165,6 @@ const AuthPage = () => {
           />
         </div>
         <div className="absolute left-0 top-0 w-full h-full flex flex-col gap-3 justify-center items-center px-8 z-20">
-          {/* <h3 className="text-gray-800 text-shadow-lg text-shadow-amber-600 font-semibold text-6xl mb-8">
-            JobTrackr
-          </h3> */}
           <h1 className="text-gray-800 text-shadow-lg text-shadow-amber-600 text-6xl uppercase font-bold select-none text-center mb-5">
             {authMode === "login" ? "Welcome Back" : "Let's Get Started"}
           </h1>
@@ -199,7 +183,7 @@ const AuthPage = () => {
       <div className="hidden md:grid grid-cols-2 min-h-screen relative">
         <div>
           <LoginForm
-            isLoading={isLoading}
+            isLoading={authMode === "login" && isLoading}
             onRegisterClick={() => setAuthMode("register")}
             onForgotPasswordClick={() => setShowResetPasswordModal(true)}
             onLogin={handleLoginClick}
@@ -207,7 +191,7 @@ const AuthPage = () => {
         </div>
         <div>
           <RegisterForm
-            isLoading={isLoading}
+            isLoading={authMode === "register" && isLoading}
             onLoginClick={() => setAuthMode("login")}
             onRegister={handleRegisterClick}
           />
@@ -225,7 +209,7 @@ const AuthPage = () => {
         <div className="w-full h-full grow flex flex-col justify-center items-center">
           {authMode === "login" && (
             <LoginForm
-              isLoading={isLoading}
+              isLoading={authMode === "login" && isLoading}
               onRegisterClick={() => setAuthMode("register")}
               onForgotPasswordClick={() => setShowResetPasswordModal(true)}
               onLogin={handleLoginClick}
@@ -233,7 +217,7 @@ const AuthPage = () => {
           )}
           {authMode === "register" && (
             <RegisterForm
-              isLoading={isLoading}
+              isLoading={authMode === "register" && isLoading}
               onLoginClick={() => setAuthMode("login")}
               onRegister={handleRegisterClick}
             />

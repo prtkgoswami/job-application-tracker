@@ -1,12 +1,13 @@
 "use client";
 import Modal from "@/components/Modal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FormDataType } from "./NewApplicationModal";
 import { JobType } from "@/types/job";
 import { z } from "zod";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
+import { logAnalyticsEvent } from "@/lib/analytics";
 
 type Props = {
   isVisible: boolean;
@@ -82,6 +83,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       const json: InputJson = JSON.parse(importJson);
 
       const validated = InputJsonSchema.parse(json);
+      console.log("JSON validated", validated)
 
       const data: FormDataType = {
         "job-title": json.title ?? "",
@@ -104,17 +106,24 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
             )
             .trim() ?? "",
       };
-      console.log(data);
 
       setJson(data);
+
+      logAnalyticsEvent("application_entry_quick_import_successful");
       toast.success("JSON Imported Successfully");
       handleClose();
     } catch (err) {
       console.error("Error", err);
       if (err instanceof SyntaxError) {
         toast.error("Invalid JSON format");
+        logAnalyticsEvent("application_entry_quick_import_failed", {
+          reason: "invalid format",
+        });
       } else {
         toast.error("Invalid job schema");
+        logAnalyticsEvent("application_entry_quick_import_failed", {
+          reason: "invalid schema",
+        });
       }
     }
   };
@@ -127,6 +136,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       const json = JSON.parse(importJson);
 
       const validated = InputJsonSchema.parse(json);
+      console.log("JSON validated", validated)
 
       setImportJson(JSON.stringify(json, null, 2));
     } catch (err) {
@@ -138,6 +148,12 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (isVisible) {
+      logAnalyticsEvent("application_entry_quick_import_show");
+    }
+  }, [isVisible]);
 
   return (
     <Modal

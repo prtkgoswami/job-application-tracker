@@ -39,7 +39,7 @@ const useUser = (): UserHookResponse => {
       setData({
         ...userData,
         uid,
-        archiveDate: getDateString(userData?.archiveDate.toDate()),
+        archiveDate: getDateString(userData?.archiveDate.toDate() ?? Date.now()),
       });
     } catch (err) {
       console.error("Failed to fetch profile data", err);
