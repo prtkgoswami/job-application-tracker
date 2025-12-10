@@ -11,13 +11,16 @@ import { toast } from "react-toastify";
 import { useApplicationsRefetch } from "@/app/contexts/ApplicationContext";
 import OptionsModal, { ActiveFilters } from "./OptionsModal";
 import useUser from "@/app/hooks/useUser";
+import QuickStatusChangeModal from "./QuickStatusChangeModal";
 
 const STATUS_COLOR_MAP = {
-  wishlist: "bg-fuchsia-300",
-  applied: "bg-blue-300",
-  interviewing: "bg-amber-300",
-  rejected: "bg-red-300",
-  offer: "bg-green-300",
+  wishlist:
+    "bg-fuchsia-300 hover:bg-fuchsia-400 text-fuchsia-700 border-fuchsia-600",
+  applied: "bg-blue-300 hover:bg-blue-400 text-blue-700 border-blue-600",
+  interviewing:
+    "bg-amber-300 hover:bg-amber-400 text-amber-700 border-amber-600",
+  rejected: "bg-red-300 hover:bg-red-400 text-red-700 border-red-600",
+  offered: "bg-green-300 hover:bg-green-400 text-green-700 border-green-600",
 };
 
 type ApplicationTableProps = {
@@ -27,6 +30,7 @@ type ApplicationTableProps = {
   jobs: Job[];
   isLoading: boolean;
   error?: Error;
+  onStatusClick: (id: string) => void;
   refetch: () => void;
 };
 
@@ -37,6 +41,7 @@ const ApplicationTable = ({
   jobs,
   isLoading,
   error,
+  onStatusClick,
   refetch,
 }: ApplicationTableProps) => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -59,7 +64,7 @@ const ApplicationTable = ({
       jobList = jobList.filter((job) => job.status === "interviewing");
       break;
     case "offered":
-      jobList = jobList.filter((job) => job.status === "offer");
+      jobList = jobList.filter((job) => job.status === "offered");
       break;
     case "rejected":
       jobList = jobList.filter((job) => job.status === "rejected");
@@ -82,6 +87,11 @@ const ApplicationTable = ({
 
   if (!activeFilters.showArchived) {
     jobList = jobList.filter((job) => !archivedApplicationIDs.has(job.id));
+  }
+
+  const handleStatusClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    onStatusClick(id)
   }
 
   useEffect(() => {
@@ -163,13 +173,15 @@ const ApplicationTable = ({
                     i % 2 === 0 ? "bg-gray-100/10" : ""
                   }`}
                 >
-                  <div
-                    className={`w-full h-full ${
+                  <button
+                    type="button"
+                    className={`w-full h-full border ${
                       STATUS_COLOR_MAP[job.status]
-                    } text-gray-800 text-sm px-1 py-1 rounded-md capitalize`}
+                    } text-sm px-4 py-1 rounded-md capitalize cursor-pointer`}
+                    onClick={(e) => handleStatusClick(e, job.id)}
                   >
                     {job.status}
-                  </div>
+                  </button>
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
@@ -231,6 +243,7 @@ const JobsDashboardPage = () => {
     showArchived: false,
   });
   const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const [statusQuickChangeId, setStatusQuickChangeId] = useState("");
   const user = useAuth();
   const { refetchKey } = useApplicationsRefetch();
   const {
@@ -249,13 +262,19 @@ const JobsDashboardPage = () => {
   } = useUser();
 
   const archivedApplicationIDs = profile
-    ? jobs.filter(job => {
-        const jobUpdateDate = new Date(job.lastUpdateDate);
-        const archiveDate = new Date(profile?.archiveDate);
+    ? jobs
+        .filter((job) => {
+          const jobUpdateDate = new Date(job.lastUpdateDate);
+          const archiveDate = new Date(profile?.archiveDate);
 
-        return jobUpdateDate < archiveDate;
-      }).map(job => job.id)
+          return jobUpdateDate < archiveDate;
+        })
+        .map((job) => job.id)
     : [];
+
+  const handleStatusClick = (id: string) => {
+    setStatusQuickChangeId(id);
+  };
 
   return (
     <main className="md:p-5">
@@ -285,6 +304,7 @@ const JobsDashboardPage = () => {
         isLoading={isLoadingJobs && isLoadingProfile}
         error={jobsError ?? profileError}
         refetch={refetch}
+        onStatusClick={handleStatusClick}
       />
 
       <OptionsModal
@@ -295,6 +315,15 @@ const JobsDashboardPage = () => {
         archivedCount={archivedApplicationIDs.length}
         setActiveFilters={setActiveJobFilters}
         onClose={() => setShowOptionsModal(false)}
+      />
+
+      <QuickStatusChangeModal
+        activeApplicationId={statusQuickChangeId}
+        activeApplication={
+          jobs.filter(({ id }) => id === statusQuickChangeId)[0]
+        }
+        refetch={refetch}
+        onClose={() => setStatusQuickChangeId("")}
       />
     </main>
   );

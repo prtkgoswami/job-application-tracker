@@ -131,7 +131,7 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
     wishlisted: jobs.filter(jobs => jobs.status === "wishlist").length,
     active: jobs.filter(job => (job.status === 'applied' || job.status === "interviewing")).length,
     rejected: jobs.filter(job => job.status === "rejected").length,
-    offered: jobs.filter(job => job.status === "offer").length
+    offered: jobs.filter(job => job.status === "offered").length
   }
 
   return {

@@ -13,7 +13,7 @@ Track roles, save job descriptions, store links, and monitor your application pi
 - 🔐 User Authentication (Firebase Auth)
 - 🗂️ Track job title, link, description, and status
 - 🔄 Real-time updates using Firestore
-- 📌 Status tracking (Applied → Interviewing → Offer → Rejected)
+- 📌 Status tracking (Applied → Interviewing → offered → Rejected)
 - 📝 Rich job description storage with preserved formatting
 - 📱 Responsive and clean UI with Tailwind CSS
 - 🚀 Fully client-side with cloud persistence

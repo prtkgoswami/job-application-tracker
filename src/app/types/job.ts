@@ -1,5 +1,5 @@
 // types/job.ts (optional)
-export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offer";
+export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered";
 
 export type Job = {
   id: string;

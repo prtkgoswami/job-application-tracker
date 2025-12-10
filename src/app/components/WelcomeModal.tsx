@@ -103,7 +103,7 @@ const WelcomeModal = ({
               <li>Save job postings with title, link, and description</li>
               <li>
                 Track status as you move from wishlist → applied → interviewing
-                → offer
+                → offered
               </li>
               <li>See when you last updated each application</li>
               <li>Keep everything private and tied to your account</li>
