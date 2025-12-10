@@ -46,6 +46,9 @@ const QuickStatusChangeModal = ({
     }
   }, [activeApplicationId, activeApplication]);
 
+  if (!activeApplication)
+    return <></>
+
   return (
     <Modal
       isVisible={!!activeApplicationId}
@@ -69,8 +72,9 @@ const QuickStatusChangeModal = ({
           </button>
         ))}
         <button
-          className="text-xl cursor-pointer bg-amber-400 hover:bg-amber-500 text-gray-800 px-4 py-4 rounded-xl mt-5"
+          className="text-xl cursor-pointer disabled:cursor-not-allowed bg-amber-400 disabled:bg-gray-200 hover:bg-amber-500 text-gray-800 px-4 py-4 rounded-xl mt-5"
           onClick={handleSubmitClick}
+          disabled={activeApplication.status === activeStatus || !activeStatus}
         >
           Change Status
         </button>
