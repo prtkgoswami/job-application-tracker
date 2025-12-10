@@ -1,5 +1,5 @@
-"use client"
-import React, { useRef } from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -7,7 +7,11 @@ import { useApplicationsRefetch } from "../contexts/ApplicationContext";
 import Modal from "./Modal";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAsterisk,
+  faChevronDown,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 type NewApplicationModalProps = {
   showModal: boolean;
@@ -15,7 +19,12 @@ type NewApplicationModalProps = {
   onClose: () => void;
 };
 
-const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModalProps) => {
+const NewApplicationModal = ({
+  showModal,
+  userId,
+  onClose,
+}: NewApplicationModalProps) => {
+  const [showNotesSecton, setShowNotesSection] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const entryModeRef = useRef<"applied" | "wishlist">("applied");
   const { triggerRefetch } = useApplicationsRefetch();
@@ -59,8 +68,8 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
 
       // Analytics
       logAnalyticsEvent("application_entry_created", {
-        status: payload.status
-      })
+        status: payload.status,
+      });
 
       triggerRefetch();
       onClose();
@@ -86,6 +95,12 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
     formRef.current.requestSubmit();
   };
 
+  useEffect(() => {
+    if(showModal) {
+      setShowNotesSection(false)
+    }
+  }, [showModal])
+
   if (!showModal) {
     return <></>;
   }
@@ -106,9 +121,16 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
           ref={formRef}
         >
           <div className="w-full">
-            <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-              Job Title <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-700" />
-            </label>
+            <div className="py-2">
+              <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+                Job Title{" "}
+                <FontAwesomeIcon
+                  icon={faAsterisk}
+                  size="xs"
+                  className="text-rose-700"
+                />
+              </label>
+            </div>
             <input
               type="text"
               name="job-title"
@@ -119,9 +141,11 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
           </div>
           <div className="w-full grid grid-cols-2 gap-5">
             <div className="w-full">
-              <label className="text-amber-500 uppercase font-semibold">
-                Job Link
-              </label>
+              <div className="py-2">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Job Link
+                </label>
+              </div>
               <input
                 type="text"
                 name="job-link"
@@ -130,9 +154,16 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
               />
             </div>
             <div className="w-full">
-              <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-                Company <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-700" />
-              </label>
+              <div className="py-2">
+                <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
+                  Company{" "}
+                  <FontAwesomeIcon
+                    icon={faAsterisk}
+                    size="xs"
+                    className="text-rose-700"
+                  />
+                </label>
+              </div>
               <input
                 type="text"
                 name="company"
@@ -144,9 +175,11 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
           </div>
           <div className="w-full grid grid-cols-2 gap-5">
             <div className="w-full">
-              <label className="text-amber-500 uppercase font-semibold">
-                Location
-              </label>
+              <div className="py-2">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Location
+                </label>
+              </div>
               <input
                 type="text"
                 name="location"
@@ -155,24 +188,34 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
               />
             </div>
             <div className="w-full">
-              <label className="text-amber-500 uppercase font-semibold">
-                Job Type
-              </label>
+              <div className="py-2">
+                <label className="text-amber-500 uppercase font-semibold">
+                  Job Type
+                </label>
+              </div>
               <select
                 name="job-type"
                 className="capitalize w-full border bg-gray-200 px-4 py-[11px] text-gray-800"
                 defaultValue="onsite"
               >
-                <option value="onsite" className="bg-gray-100 text-gray-800">onsite</option>
-                <option value="hybrid" className="bg-gray-100 text-gray-800">hybrid</option>
-                <option value="remote" className="bg-gray-100 text-gray-800">remote</option>
+                <option value="onsite" className="bg-gray-100 text-gray-800">
+                  onsite
+                </option>
+                <option value="hybrid" className="bg-gray-100 text-gray-800">
+                  hybrid
+                </option>
+                <option value="remote" className="bg-gray-100 text-gray-800">
+                  remote
+                </option>
               </select>
             </div>
           </div>
           <div className="w-full">
-            <label className="text-amber-500 uppercase font-semibold">
-              Responsibilities
-            </label>
+            <div className="py-2">
+              <label className="text-amber-500 uppercase font-semibold">
+                Responsibilities
+              </label>
+            </div>
             <textarea
               name="job-responsibilities"
               placeholder="Paste here..."
@@ -180,9 +223,11 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
             />
           </div>
           <div className="w-full">
-            <label className="text-amber-500 uppercase font-semibold">
-              Requirements
-            </label>
+            <div className="py-2">
+              <label className="text-amber-500 uppercase font-semibold">
+                Requirements
+              </label>
+            </div>
             <textarea
               name="job-requirements"
               placeholder="Paste here..."
@@ -190,14 +235,23 @@ const NewApplicationModal = ({ showModal, userId, onClose }: NewApplicationModal
             />
           </div>
           <div className="pb-5 w-full">
-            <label className="text-amber-500 uppercase font-semibold">
-              Notes
-            </label>
+            <div
+              className="flex gap-2 items-center py-2 cursor-pointer"
+              onClick={() => setShowNotesSection((prev) => !prev)}
+            >
+              <FontAwesomeIcon
+                icon={showNotesSecton ? faChevronDown : faChevronRight}
+              />
+              <label className="text-amber-500 uppercase font-semibold">
+                Notes
+              </label>
+            </div>
+            <div className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${showNotesSecton ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}`}>
             <textarea
               name="job-notes"
               placeholder="Paste here..."
-              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
-            />
+              className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
+            /></div>
           </div>
           <div className="grid grid-cols-2 gap-8 w-full">
             <button
