@@ -44,7 +44,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
       <div className="h-full flex flex-col items-center justify-between py-5 bg-zinc-950 border-r border-amber-500">
         <button
           type="button"
-          className={`w-12 h-12 z-80 rounded-lg text-center bg-amber-500 hover:bg-amber-400 text-gray-800 transition-all duration-200 ease-in-out cursor-pointer py-1`}
+          className={`w-12 h-12 rounded-lg text-center bg-amber-500 hover:bg-amber-400 text-gray-800 transition-all duration-200 ease-in-out cursor-pointer py-1`}
           onClick={() => setIsExpanded((prev) => !prev)}
         >
           <FontAwesomeIcon icon={isExpanded ? faAnglesLeft : faAnglesRight} />
