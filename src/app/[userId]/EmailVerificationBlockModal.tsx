@@ -1,6 +1,6 @@
 "use client";
-import { useAuth } from "@/app/components/AuthProvider";
-import Modal from "@/app/components/Modal";
+import { useAuth } from "@app/AuthProvider";
+import Modal from "@components/Modal";
 import { sendEmailVerification } from "firebase/auth";
 import { toast } from "react-toastify";
 

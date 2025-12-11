@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
-import PasswordInput from "@/app/components/PasswordInput";
-import Modal from "@/app/components/Modal";
+import PasswordInput from "@/components/PasswordInput";
+import Modal from "@/components/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -18,13 +18,13 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { db } from "@/app/lib/firebase";
+import { db } from "@/lib/firebase";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 import DeleteFeedbackModal, { Feedback } from "./DeleteFeedbackModal";
-import { logAnalyticsEvent } from "@/app/lib/analytics";
-import { getDifferenceFromNow } from "@/app/lib/date";
+import { logAnalyticsEvent } from "@/lib/analytics";
+import { getDifferenceFromNow } from "@/lib/date";
 
 type Props = {
   isVisible: boolean;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Job, JobStatus } from "../types/job";
+import { Job, JobStatus } from "@/types/job";
 import {
   collection,
   getDocs,
@@ -8,8 +8,8 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { getDateString } from "../lib/date";
+import { db } from "@lib/firebase";
+import { getDateString } from "@lib/date";
 
 export type CountsType = {
   total: number;

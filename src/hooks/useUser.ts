@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { User as UserType } from "../types/user";
-import { useAuth } from "../components/AuthProvider";
+import { User as UserType } from "@/types/user";
+import { useAuth } from "@app/AuthProvider";
 import { doc, getDoc, Timestamp } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { getDateString } from "../lib/date";
+import { db } from "@lib/firebase";
+import { getDateString } from "@lib/date";
 import { User } from "firebase/auth";
 
 type UserHookResponse = {

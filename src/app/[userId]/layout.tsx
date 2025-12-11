@@ -2,18 +2,18 @@
 
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { auth } from "../lib/firebase";
+import { auth } from "@lib/firebase";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/Sidebar";
-import MobileMenu from "../components/MobileMenu";
+import Sidebar from "./Sidebar";
+import MobileMenu from "./MobileMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import NewApplicationModal from "../components/NewApplicationModal";
-import { ApplicationsProvider } from "../contexts/ApplicationContext";
-import EmailVerificationBlockModal from "../components/EmailVerificationBlockModal";
-import useUser from "../hooks/useUser";
-import WelcomeModal from "../components/WelcomeModal";
-import { unsetAnalyticsUserId } from "../lib/analytics";
+import NewApplicationModal from "./NewApplicationModal";
+import { ApplicationsProvider } from "@contexts/ApplicationContext";
+import EmailVerificationBlockModal from "./EmailVerificationBlockModal";
+import useUser from "@hooks/useUser";
+import WelcomeModal from "./WelcomeModal";
+import { unsetAnalyticsUserId } from "@lib/analytics";
 
 export default function RootLayout({
   children,

@@ -4,8 +4,8 @@ import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { ToastContainer } from "react-toastify";
-import AuthProvider from "./components/AuthProvider";
-import PageViewAnalyticsProvider from "./components/PageViewAnalyticsProvider";
+import AuthProvider from "./AuthProvider";
+import PageViewAnalyticsProvider from "./PageViewAnalyticsProvider";
 config.autoAddCss = false;
 
 const geistSans = Geist({

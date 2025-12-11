@@ -2,15 +2,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { useApplicationsRefetch } from "../contexts/ApplicationContext";
-import Modal from "./Modal";
-import { logAnalyticsEvent } from "../lib/analytics";
+import { db } from "@lib/firebase";
+import { useApplicationsRefetch } from "@contexts/ApplicationContext";
+import Modal from "@components/Modal";
+import { logAnalyticsEvent } from "@lib/analytics";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAsterisk,
   faChevronDown,
   faChevronRight,
+  faFloppyDisk,
+  faHeart,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 type NewApplicationModalProps = {
@@ -24,8 +27,9 @@ const NewApplicationModal = ({
   userId,
   onClose,
 }: NewApplicationModalProps) => {
-  const [showNotesSecton, setShowNotesSection] = useState(false);
+  const [showNotesSection, setShowNotesSection] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const notesRef = useRef<HTMLTextAreaElement>(null);
   const entryModeRef = useRef<"applied" | "wishlist">("applied");
   const { triggerRefetch } = useApplicationsRefetch();
 
@@ -95,11 +99,43 @@ const NewApplicationModal = ({
     formRef.current.requestSubmit();
   };
 
+  const header = (
+    <div className="w-full flex justify-between items-center p-5 pb-3">
+      <h3 className={`text-2xl text-gray-100`}>New <span className="hidden md:block">Application</span></h3>
+      <div className="flex gap-3">
+        <button
+          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+          onClick={handleAppliedClick}
+        >
+          <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
+        </button>
+        <button
+          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+          onClick={handleWishlistClick}
+        >
+          <FontAwesomeIcon icon={faHeart} size="lg" />
+        </button>
+        <button
+          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+          onClick={onClose}
+        >
+          <FontAwesomeIcon icon={faXmark} size="lg" />
+        </button>
+      </div>
+    </div>
+  );
+
   useEffect(() => {
     if (showModal) {
       setShowNotesSection(false);
     }
   }, [showModal]);
+
+  useEffect(() => {
+    if (showNotesSection) {
+      notesRef.current?.focus();
+    }
+  }, [showNotesSection]);
 
   if (!showModal) {
     return <></>;
@@ -108,13 +144,14 @@ const NewApplicationModal = ({
   return (
     <Modal
       isVisible={showModal}
-      title="New Application"
+      // title="New Application"
       onClose={onClose}
       modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900"
       bodyClasses="px-5 flex justify-center"
       theme="dark"
+      header={header}
     >
-      <div className="flex justify-center grow h-max py-5">
+      <div className="flex justify-center grow h-max pt-2 pb-5">
         <form
           className="w-full md:w-4/5 flex flex-col items-center gap-5"
           onSubmit={handleSubmit}
@@ -240,7 +277,7 @@ const NewApplicationModal = ({
               onClick={() => setShowNotesSection((prev) => !prev)}
             >
               <FontAwesomeIcon
-                icon={showNotesSecton ? faChevronDown : faChevronRight}
+                icon={showNotesSection ? faChevronDown : faChevronRight}
               />
               <label className="text-amber-500 uppercase font-semibold">
                 Notes
@@ -248,16 +285,18 @@ const NewApplicationModal = ({
             </div>
             <div
               className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${
-                showNotesSecton ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+                showNotesSection ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
               }`}
             >
               <textarea
+                ref={notesRef}
                 name="job-notes"
                 placeholder="Paste here..."
                 className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
               />
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-8 w-full">
             <button
               type="button"

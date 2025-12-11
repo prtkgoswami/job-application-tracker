@@ -1,9 +1,9 @@
 "use client";
-import ClickToCopyText from "@/app/components/ClickToCopyText";
-import useUser from "@/app/hooks/useUser";
-import { getDateInputString } from "@/app/lib/date";
-import { db } from "@/app/lib/firebase";
-import { User as UserType } from "@/app/types/user";
+import ClickToCopyText from "@/components/ClickToCopyText";
+import useUser from "@/hooks/useUser";
+import { getDateInputString } from "@/lib/date";
+import { db } from "@/lib/firebase";
+import { User as UserType } from "@/types/user";
 import {
   faCopy,
   faFloppyDisk,

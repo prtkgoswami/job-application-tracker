@@ -1,5 +1,5 @@
 "use client";
-import PasswordInput from "@/app/components/PasswordInput";
+import PasswordInput from "@/components/PasswordInput";
 import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";

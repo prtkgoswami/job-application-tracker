@@ -6,7 +6,7 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "../AuthProvider";
 
 type MobileMenuProps = {
   showMenu: boolean;
@@ -89,7 +89,10 @@ const MobileMenu = ({
       <div className="grow w-full flex flex-col justify-end gap-3">
         <button
           className="cursor-pointer justify-self-end flex justify-center items-center py-3 rounded-lg text-2xl bg-gray-800 text-amber-400"
-          onClick={onNewEntryClick}
+          onClick={() => {
+            onNewEntryClick();
+            onCloseMobileMenu();
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="mr-1" />
           New Application

@@ -10,6 +10,7 @@ type ModalProps = {
   hasBackdropPadding?: boolean;
   modalClasses?: string;
   bodyClasses?: string;
+  header?: ReactNode;
   children: ReactNode;
   theme?: "light" | "dark";
   footer?: React.JSX.Element;
@@ -22,6 +23,7 @@ const Modal = ({
   hideHeader = false,
   showCloseButton = true,
   hasBackdropPadding = true,
+  header,
   children,
   modalClasses,
   bodyClasses,
@@ -59,7 +61,7 @@ const Modal = ({
 
   return (
     <div
-      className={`absolute top-0 left-0 h-full w-full flex justify-center items-center bg-gray-800/40 ${
+      className={`absolute top-0 left-0 h-full max-h-screen w-full flex justify-center items-center bg-gray-800/40 ${
         hasBackdropPadding ? "px-3" : ""
       }`}
       onClick={handleBackdropClick}
@@ -71,26 +73,28 @@ const Modal = ({
         } rounded-lg flex flex-col relative overflow-hidden ${modalClasses}`}
       >
         {!hideHeader && (
-          <section className="w-full flex justify-between p-5 pb-0">
-            <h3
-              className={`text-2xl ${
-                theme === "light" ? "text-gray-800" : "text-gray-100"
-              }`}
-            >
-              {title}
-            </h3>
-            {showCloseButton && (
-              <button
-                className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full ${
-                  theme === "light"
-                    ? "text-gray-800 hover:bg-amber-400"
-                    : "text-gray-100 hover:bg-amber-600"
+          <section className="w-full">
+            {header ?? <div className="w-full flex justify-between items-center p-5 pb-3">
+              <h3
+                className={`text-2xl ${
+                  theme === "light" ? "text-gray-800" : "text-gray-100"
                 }`}
-                onClick={onClose}
               >
-                <FontAwesomeIcon icon={faXmark} size="lg" />
-              </button>
-            )}
+                {title}
+              </h3>
+              {showCloseButton && (
+                <button
+                  className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full ${
+                    theme === "light"
+                      ? "text-gray-800 hover:bg-amber-400"
+                      : "text-gray-100 hover:bg-amber-600"
+                  }`}
+                  onClick={onClose}
+                >
+                  <FontAwesomeIcon icon={faXmark} size="lg" />
+                </button>
+              )}
+            </div>}
           </section>
         )}
 
@@ -103,7 +107,7 @@ const Modal = ({
             className={`w-full ${
               theme === "light"
                 ? "bg-amber-400 border-gray-800"
-                : "bg-amber-600 border-gray-200"
+                : "bg-amber-400 border-gray-200"
             } px-5 py-4 border-t`}
           >
             {footer}

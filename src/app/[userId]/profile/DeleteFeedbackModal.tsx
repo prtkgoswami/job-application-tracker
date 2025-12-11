@@ -1,4 +1,4 @@
-import Modal from '@/app/components/Modal';
+import Modal from '@/components/Modal';
 import React, { useState } from 'react'
 
 export type Feedback = {

@@ -1,6 +1,6 @@
-import Modal from "@/app/components/Modal";
-import { db } from "@/app/lib/firebase";
-import { Job } from "@/app/types/job";
+import Modal from "@components/Modal";
+import { db } from "@lib/firebase";
+import { Job } from "@/types/job";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth, db } from "@/app/lib/firebase";
+import { auth, db } from "@lib/firebase";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -17,8 +17,8 @@ import { FirebaseError } from "firebase/app";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import { logAnalyticsEvent, setAnalyticsUserId } from "../lib/analytics";
-import { getDifferenceFromNow } from "../lib/date";
+import { logAnalyticsEvent, setAnalyticsUserId } from "@lib/analytics";
+import { getDifferenceFromNow } from "@lib/date";
 
 const LOGIN_SUBTITLES = [
   "Continue your job search journey",

@@ -6,8 +6,8 @@ import {
   faArrowRightFromBracket,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
-import { useAuth } from "./AuthProvider";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "../AuthProvider";
 
 type SidebarProps = {
   onLogout: () => void;
@@ -17,12 +17,16 @@ type SidebarProps = {
 const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
+  const pathName = usePathname();
   const user = useAuth();
   const userId = user?.uid;
 
   const routeToPage = (route: string) => {
     router.push(`/${userId}/${route}`);
   };
+
+  const pathItems = pathName.split('/');
+  const page = pathItems[pathItems.length - 1];
 
   return (
     <div
@@ -41,8 +45,18 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
           } border-r border-gray-50 w-70 bg-zinc-950 shadow-xl shadow-zinc-900`}
         >
           <div>
-            <div className={`mb-5 flex items-center ${isExpanded ? "justify-between" : " justify-start"}`}>
-              {isExpanded && <h3 className="text-4xl text-amber-500 select-none">JobTrackr</h3>}
+            <div
+              className={`mb-5 flex items-center ${
+                isExpanded ? "justify-between" : " justify-start"
+              }`}
+            >
+              {isExpanded && (
+                <h3 className={`text-4xl text-amber-500 select-none transition-opacity duration-200 ease-in-out ${
+                  isExpanded ? "opacity-100" : "opacity-0"
+                }`}>
+                  JobTrackr
+                </h3>
+              )}
               <button
                 type="button"
                 className={`w-12 h-12 z-80 rounded-lg text-center bg-amber-400 hover:bg-amber-500 text-gray-800 transition-all duration-200 ease-in-out cursor-pointer py-1`}
@@ -55,7 +69,11 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
             </div>
 
             {isExpanded && (
-              <>
+              <div
+                className={`transition-opacity duration-200 ease-in-out ${
+                  isExpanded ? "opacity-100" : "opacity-0"
+                }`}
+              >
                 <h3 className="px-2 text-2xl font-light mb-5 text-amber-500">
                   Hello {user?.displayName?.split(" ")[0]}!
                 </h3>
@@ -65,7 +83,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
                     onClick={() => {
                       routeToPage("jobs");
                     }}
-                    className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer "
+                    className={`p-2 text-lg rounded-md select-none ${ page === "jobs" ? "border-2 border-amber-500 text-amber-500" : "cursor-pointer hover:bg-amber-500  hover:text-gray-900"} transition-colors duration-200 ease-in-out`}
                   >
                     Applications
                   </div>
@@ -73,7 +91,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
                     onClick={() => {
                       routeToPage("analysis");
                     }}
-                    className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer hidden"
+                    className={`p-2 text-lg rounded-md select-none ${ page === "analysis" ? "border-2 border-amber-500 text-amber-500" : "cursor-pointer hover:bg-amber-500  hover:text-gray-900"} transition-colors duration-200 ease-in-out cursor-pointer hidden`}
                   >
                     Analysis
                   </div>
@@ -81,7 +99,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
                     onClick={() => {
                       routeToPage("profile");
                     }}
-                    className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+                    className={`p-2 text-lg rounded-md select-none ${ page === "profile" ? "border-2 border-amber-500 text-amber-500" : "cursor-pointer hover:bg-amber-500  hover:text-gray-900"} transition-colors duration-200 ease-in-out cursor-pointer`}
                   >
                     Profile
                   </div>
@@ -89,12 +107,12 @@ const Sidebar = ({ onLogout, onNewEntryClick }: SidebarProps) => {
                     onClick={() => {
                       routeToPage("about");
                     }}
-                    className="p-2 text-lg rounded-md hover:bg-amber-500 hover:text-gray-900 transition-colors duration-200 ease-in-out cursor-pointer"
+                    className={`p-2 text-lg rounded-md select-none ${ page === "about" ? "border-2 border-amber-500 text-amber-500" : "cursor-pointer hover:bg-amber-500  hover:text-gray-900"} transition-colors duration-200 ease-in-out cursor-pointer`}
                   >
                     About
                   </div>
                 </nav>
-              </>
+              </div>
             )}
           </div>
 

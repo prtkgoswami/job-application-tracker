@@ -2,8 +2,8 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import Modal from "@/app/components/Modal";
-import { logAnalyticsEvent } from "@/app/lib/analytics";
+import Modal from "@components/Modal";
+import { logAnalyticsEvent } from "@lib/analytics";
 
 const JOB_STATUS_FILTERS = [
   "active",
