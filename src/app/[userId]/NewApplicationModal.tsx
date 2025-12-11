@@ -15,6 +15,8 @@ import {
   faHeart,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import Tooltip from "@/components/Tooltip";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type NewApplicationModalProps = {
   showModal: boolean;
@@ -28,10 +30,32 @@ const NewApplicationModal = ({
   onClose,
 }: NewApplicationModalProps) => {
   const [showNotesSection, setShowNotesSection] = useState(false);
+  const [showCloseWarning, setShowCloseWarning] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const entryModeRef = useRef<"applied" | "wishlist">("applied");
   const { triggerRefetch } = useApplicationsRefetch();
+
+  const isFormFilled = () => {
+    if (!formRef.current) return false;
+    const formData = new FormData(formRef.current);
+
+    let filled = false;
+    formData.entries().forEach(([key, val]) => {
+      if (key !== "job-type") {
+        filled = filled || !!val;
+      }
+    });
+    return filled;
+  };
+
+  const handleClose = () => {
+    if (isFormFilled()) {
+      setShowCloseWarning(true);
+    } else {
+      onClose();
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,26 +125,34 @@ const NewApplicationModal = ({
 
   const header = (
     <div className="w-full flex justify-between items-center p-5 pb-3">
-      <h3 className={`text-2xl text-gray-100`}>New <span className="hidden md:block">Application</span></h3>
+      <h3 className={`text-2xl text-gray-100`}>
+        New <span className="hidden md:inline-block">Application</span>
+      </h3>
       <div className="flex gap-3">
-        <button
-          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-          onClick={handleAppliedClick}
-        >
-          <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
-        </button>
-        <button
-          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-          onClick={handleWishlistClick}
-        >
-          <FontAwesomeIcon icon={faHeart} size="lg" />
-        </button>
-        <button
-          className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-          onClick={onClose}
-        >
-          <FontAwesomeIcon icon={faXmark} size="lg" />
-        </button>
+        <Tooltip content="Apply" position="bottom">
+          <button
+            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+            onClick={handleAppliedClick}
+          >
+            <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Wishlist" position="bottom">
+          <button
+            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+            onClick={handleWishlistClick}
+          >
+            <FontAwesomeIcon icon={faHeart} size="lg" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Close" position="bottom">
+          <button
+            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
+            onClick={handleClose}
+          >
+            <FontAwesomeIcon icon={faXmark} size="lg" />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
@@ -144,8 +176,7 @@ const NewApplicationModal = ({
   return (
     <Modal
       isVisible={showModal}
-      // title="New Application"
-      onClose={onClose}
+      onClose={handleClose}
       modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900"
       bodyClasses="px-5 flex justify-center"
       theme="dark"
@@ -315,6 +346,17 @@ const NewApplicationModal = ({
           </div>
         </form>
       </div>
+
+      <ConfirmDialog
+        isVisible={showCloseWarning}
+        onClose={() => setShowCloseWarning(false)}
+        onConfirm={() => {
+          setShowCloseWarning(false);
+          onClose();
+        }}
+        message="Are you sure you want to Close this Application?"
+        description="Looks like you have some unsaved data"
+      />
     </Modal>
   );
 };

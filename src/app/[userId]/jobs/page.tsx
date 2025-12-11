@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@app/AuthProvider";
 import useJobs from "@hooks/useJobs";
 import { useApplicationsRefetch } from "@contexts/ApplicationContext";
@@ -8,6 +8,7 @@ import useUser from "@hooks/useUser";
 import QuickStatusChangeModal from "./QuickStatusChangeModal";
 import ApplicationTable from "./ApplicationTable";
 import "./style.css";
+import { useSearchParams } from "next/navigation";
 
 const JobsDashboardPage = () => {
   const [activeJobFilters, setActiveJobFilters] = useState<ActiveFilters>({
@@ -21,6 +22,8 @@ const JobsDashboardPage = () => {
   const [statusQuickChangeId, setStatusQuickChangeId] = useState("");
   const user = useAuth();
   const { refetchKey } = useApplicationsRefetch();
+  const searchParams = useSearchParams();
+  const defaultStatus = searchParams.get("status");
   const {
     jobs,
     counts,
@@ -51,11 +54,18 @@ const JobsDashboardPage = () => {
     setStatusQuickChangeId(id);
   };
 
+  useEffect(() => {
+    if (defaultStatus) {
+      console.log("Setting status", defaultStatus)
+      setActiveJobFilters((prev) => ({ ...prev, status: defaultStatus }));
+    }
+  }, [defaultStatus]);
+
   return (
     <main className="md:p-5">
-      <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-400">
+      <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-500">
         <button
-          className="px-5 py-2 rounded-md cursor-pointer border border-gray-800 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out"
+          className="px-5 py-2 rounded-md cursor-pointer border border-gray-800 text-gray-800 hover:bg-amber-400 transition-colors duration-200 ease-in-out"
           onClick={() => setShowOptionsModal(true)}
         >
           View Options
@@ -63,7 +73,7 @@ const JobsDashboardPage = () => {
 
         <div className="hidden md:flex flex-col items-end">
           <p className="text-gray-800 text-sm">
-            Total Active Applications: {counts?.active}
+            Active Applications: {counts?.active}
           </p>
           <p className="text-gray-900 text-xs">
             Total Applications: {counts?.total}

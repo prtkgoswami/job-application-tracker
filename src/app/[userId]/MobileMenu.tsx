@@ -29,12 +29,12 @@ const MobileMenu = ({
     router.push(`/${userId}/${route}`);
   };
 
-  if (!showMenu) {
-    return <></>;
-  }
-
   return (
-    <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4 bg-amber-400">
+    <div
+      className={`absolute top-0 left-0 w-full h-screen overflow-hidden flex flex-col bg-amber-400 ${
+        showMenu ? "max-h-screen opacity-100 p-4" : "max-h-0 opacity-0"
+      } transition-[max-height,opacity] duration-200 ease-in-out`}
+    >
       <div className="flex flex-row-reverse">
         <button
           className="text-gray-900 cursor-pointer"
