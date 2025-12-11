@@ -19,6 +19,7 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import { logAnalyticsEvent, setAnalyticsUserId } from "@lib/analytics";
 import { getDifferenceFromNow } from "@lib/date";
+import Image from "next/image";
 
 const LOGIN_SUBTITLES = [
   "Continue your job search journey",
@@ -165,92 +166,77 @@ const AuthPage = () => {
     );
   }
 
+  const renderCover = (authMode: "login" | "register") => {
+    return (
+      <div className={`w-full h-full relative`}>
+        <div className="w-full h-full relative">
+          <Image
+            src="/auth_bg.jpg"
+            alt="Auth Page Background"
+            fill
+            className="object-cover object-center"
+          />
+        </div>
+        <div className="absolute left-0 top-0 w-full h-full flex flex-col gap-3 justify-center items-center px-8 z-20">
+          {/* <h3 className="text-gray-800 text-shadow-lg text-shadow-amber-600 font-semibold text-6xl mb-8">
+            JobTrackr
+          </h3> */}
+          <h1 className="text-gray-800 text-shadow-lg text-shadow-amber-600 text-6xl uppercase font-bold select-none text-center mb-5">
+            {authMode === "login" ? "Welcome Back" : "Let's Get Started"}
+          </h1>
+          <h4 className="text-gray-800 text-3xl font-extralight select-none text-center text-shadow-lg text-shadow-amber-600">
+            {authMode === "login"
+              ? LOGIN_SUBTITLES[randomIndex]
+              : REGISTER_SUBTITLES[randomIndex]}
+          </h4>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
-      <div className="hidden md:grid grid-cols-2 min-h-screen">
-        <div className="w-full h-full flex justify-center items-center">
-          {authMode === "login" ? (
+      <div className="hidden md:grid grid-cols-2 min-h-screen relative">
+        <div>
+          <LoginForm
+            isLoading={isLoading}
+            onRegisterClick={() => setAuthMode("register")}
+            onForgotPasswordClick={() => setShowResetPasswordModal(true)}
+            onLogin={handleLoginClick}
+          />
+        </div>
+        <div>
+          <RegisterForm
+            isLoading={isLoading}
+            onLoginClick={() => setAuthMode("login")}
+            onRegister={handleRegisterClick}
+          />
+        </div>
+        <div
+          className={`absolute top-0 left-0 w-1/2 h-full transition-transform duration-500 bg-amber-500 ease-out ${
+            authMode === "login" ? "translate-x-full" : "translate-x-0"
+          }`}
+        >
+          {renderCover(authMode)}
+        </div>
+      </div>
+
+      <div className="md:hidden min-h-screen flex flex-col p-5">
+        <div className="w-full h-full grow flex flex-col justify-center items-center">
+          {authMode === "login" && (
             <LoginForm
               isLoading={isLoading}
               onRegisterClick={() => setAuthMode("register")}
               onForgotPasswordClick={() => setShowResetPasswordModal(true)}
               onLogin={handleLoginClick}
             />
-          ) : (
-            <div className="w-full h-full bg-green-300 flex flex-col gap-2 justify-center items-center px-8">
-              <h3 className="text-green-800/60 font-semibold text-4xl mb-5">
-                JobTrackr
-              </h3>
-              <h1 className="text-green-800/40 text-6xl uppercase font-bold select-none text-center">
-                Let's Get Started
-              </h1>
-              <h4 className="text-green-800/60 text-3xl font-extralight select-none text-center">
-                {REGISTER_SUBTITLES[randomIndex]}
-              </h4>
-            </div>
           )}
-        </div>
-        <div className="w-full h-full flex justify-center items-center">
-          {authMode === "register" ? (
+          {authMode === "register" && (
             <RegisterForm
               isLoading={isLoading}
               onLoginClick={() => setAuthMode("login")}
               onRegister={handleRegisterClick}
             />
-          ) : (
-            <div className="w-full h-full bg-blue-300 flex flex-col gap-2 justify-center items-center px-8">
-              <h3 className="text-blue-800/60 font-semibold text-4xl mb-5">
-                JobTrackr
-              </h3>
-              <h1 className="text-blue-800/40 text-6xl uppercase font-bold select-none text-center">
-                Welcome Back
-              </h1>
-              <h4 className="text-blue-800/60 text-3xl font-extralight select-none text-center">
-                {LOGIN_SUBTITLES[randomIndex]}
-              </h4>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="md:hidden min-h-screen flex flex-col p-5">
-        <div className="w-full h-full grow flex flex-col justify-center items-center">
-          <h1
-            className="text-4xl uppercase font-semibold text-amber-400 text-center"
-            style={{ paddingBottom: "30px", lineHeight: "60px" }}
-          >
-            Job Application Tracker
-          </h1>
-          {authMode === "login" && (
-            <>
-              <h3
-                className="uppercase text-2xl font-semibold text-gray-100/50"
-                style={{ paddingBottom: "30px" }}
-              >
-                Login
-              </h3>
-              <LoginForm
-                isLoading={isLoading}
-                onRegisterClick={() => setAuthMode("register")}
-                onForgotPasswordClick={() => setShowResetPasswordModal(true)}
-                onLogin={handleLoginClick}
-              />
-            </>
-          )}
-          {authMode === "register" && (
-            <>
-              <h3
-                className="uppercase text-2xl font-semibold text-gray-100/50"
-                style={{ paddingBottom: "30px" }}
-              >
-                Register
-              </h3>
-              <RegisterForm
-                isLoading={isLoading}
-                onLoginClick={() => setAuthMode("login")}
-                onRegister={handleRegisterClick}
-              />
-            </>
           )}
         </div>
       </div>

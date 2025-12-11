@@ -7,10 +7,11 @@ type PasswordInputProps = {
   value?: string;
   name: string;
   className?: string;
+  focusClassNames?: string;
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;
-  autocomplete?: React. HTMLInputAutoCompleteAttribute;
+  autocomplete?: React.HTMLInputAutoCompleteAttribute;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
@@ -19,21 +20,23 @@ const PasswordInput = ({
   value,
   name,
   className,
+  focusClassNames,
   disabled = false,
   required = false,
   placeholder,
   autocomplete,
   onChange,
-  onBlur
+  onBlur,
 }: PasswordInputProps) => {
   const [isPwdVisible, setIsPwdVisible] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
 
   const togglePwdVisible = () => {
     setIsPwdVisible((prev) => !prev);
   };
 
   return (
-    <div className={`flex gap-2 ${className}`}>
+    <div className={`flex gap-2 ${className} ${hasFocus ? focusClassNames : ""}`}>
       <input
         className="px-4 py-2 grow focus-visible:outline-none"
         type={isPwdVisible ? "text" : "password"}
@@ -44,9 +47,17 @@ const PasswordInput = ({
         placeholder={placeholder}
         autoComplete={autocomplete}
         onChange={onChange}
-        onBlur={onBlur}
+        onBlur={(e) => {
+          onBlur?.(e);
+          setHasFocus(false);
+        }}
+        onFocus={() => setHasFocus(true)}
       />
-      <button type="button" className="cursor-pointer text-gray-100/60" onClick={togglePwdVisible}>
+      <button
+        type="button"
+        className="cursor-pointer text-gray-100/60"
+        onClick={togglePwdVisible}
+      >
         <FontAwesomeIcon icon={isPwdVisible ? faEyeSlash : faEye} />
       </button>
     </div>

@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import PasswordInput from "@components/PasswordInput";
+import Link from "next/link";
 
 type RegisterFormProps = {
   isLoading: boolean;
@@ -48,7 +49,17 @@ const RegisterForm = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center gap-5">
+    <div className="w-full h-full flex flex-col items-center grow">
+      <div className="w-full grow flex flex-col items-center gap-5 justify-center">
+      <h3 className="text-amber-500 font-extralight text-6xl md:mb-5">
+        JobTrackr
+      </h3>
+      <h3
+        className="uppercase text-2xl font-extralight text-cyan-500 md:hidden"
+        style={{ paddingBottom: "30px" }}
+      >
+        Register
+      </h3>
       <form
         className="flex flex-col items-center gap-4 w-full md:w-3/5"
         onSubmit={handleRegisterClick}
@@ -59,7 +70,7 @@ const RegisterForm = ({
           name="first-name"
           id=""
           placeholder="First Name"
-          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none focus:border-cyan-500"
           required
         />
         <input
@@ -67,7 +78,7 @@ const RegisterForm = ({
           name="last-name"
           id=""
           placeholder="Last Name"
-          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none focus:border-cyan-500"
           required
         />
         <input
@@ -75,7 +86,7 @@ const RegisterForm = ({
           name="email"
           id=""
           placeholder="Email"
-          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none"
+          className="px-4 py-2 border-b border-gray-50 w-4/5 focus-within:outline-none focus:border-cyan-500"
           required
         />
         <PasswordInput
@@ -86,6 +97,7 @@ const RegisterForm = ({
               ? "border border-red-500"
               : "border-b border-gray-50"
           }`}
+          focusClassNames="border-cyan-500!"
           autocomplete="new-password"
           required
         />
@@ -102,6 +114,7 @@ const RegisterForm = ({
               ? "border border-red-500"
               : "border-b border-gray-50"
           }`}
+          focusClassNames="border-cyan-500!"
           required
           autocomplete="new-password"
           onBlur={handleConfirmPasswordChange}
@@ -113,16 +126,26 @@ const RegisterForm = ({
         )}
         <button
           type="submit"
-          className="mt-5 w-full px-5 py-3 font-semibold cursor-pointer border-2 border-gray-50 hover:bg-amber-400 hover:border-amber-500 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
+          className="mt-5 w-full px-5 py-3 font-semibold cursor-pointer border-2 border-cyan-500 hover:bg-amber-400 hover:border-cyan-500 hover:text-gray-800 transition-colors duration-200 ease-in-out rounded-md"
         >
           Register {isLoading && <FontAwesomeIcon icon={faSpinner} spin />}
         </button>
       </form>
       <div className="text-sm text-gray-200">
         Already Registerred?{" "}
-        <span className="text-blue-400 cursor-pointer" onClick={onLoginClick}>
+        <span className="text-cyan-500 cursor-pointer" onClick={onLoginClick}>
           Login Here
         </span>
+      </div>
+      </div>
+      <div className="flex justify-center gap-2 text-sm h-max items-center text-gray-100 border-t-2 border-amber-500 w-full md:w-[70%] pt-4 md:pb-4 mt-5 md:mt-2 justify-self-end">
+        <Link href="/about" className="hover:text-cyan-500">
+          About Us
+        </Link>
+        <div className="h-1 aspect-square rounded-full bg-amber-500" />
+        <Link href="/privacy" className="hover:text-cyan-500">
+          Privacy Policy
+        </Link>
       </div>
     </div>
   );

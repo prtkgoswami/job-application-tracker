@@ -10,8 +10,8 @@ import Image from "next/image";
 const AboutContent = () => {
   return (
     <div className="flex flex-col gap-5 md:p-8">
-      <div className="flex gap-4">
-        <div className="h-26 aspect-square relative">
+      <div className="flex flex-row-reverse md:flex-row gap-4 px-4 md:px-0">
+        <div className="h-20 md:h-26 aspect-square relative">
           <Image
             src="/jobTrackr_logo.png"
             alt="JobTrackr Logo"
@@ -19,11 +19,11 @@ const AboutContent = () => {
             className="object-contain"
           />
         </div>
-        <div className="flex flex-col gap-2 justify-center">
-          <h1 className="text-center md:text-left text-4xl md:text-5xl font-semibold text-amber-400">
+        <div className="flex flex-col gap-2 md:justify-center">
+          <h1 className="text-left text-4xl md:text-5xl font-semibold text-amber-400">
             JobTrackr
           </h1>
-          <h4 className="text-center md:text-left text-sm md:text-lg font-light">
+          <h4 className="text-left text-sm md:text-lg font-light">
             A better way to stay organized in your job search
           </h4>
         </div>
