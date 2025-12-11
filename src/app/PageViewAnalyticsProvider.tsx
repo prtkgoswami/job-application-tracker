@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { logAnalyticsEvent } from "@/app/lib/analytics";
+import { logAnalyticsEvent } from "@lib/analytics";
 import { useAuth } from "./AuthProvider";
 
 const PageViewAnalyticsProvider = ({

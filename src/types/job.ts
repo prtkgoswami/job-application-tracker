@@ -1,4 +1,3 @@
-// types/job.ts (optional)
 export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered";
 
 export type Job = {

@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect } from "react";
-import Modal from "./Modal";
+import Modal from "@components/Modal"
 import { User } from "firebase/auth";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../lib/firebase";
-import { logAnalyticsEvent } from "../lib/analytics";
+import { db } from "@lib/firebase";
+import { logAnalyticsEvent } from "@lib/analytics";
 
 type Props = {
   user: User;

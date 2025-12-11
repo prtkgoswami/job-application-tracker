@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Modal from "../components/Modal";
+import Modal from "@components/Modal";
 import { toast } from "react-toastify";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "@lib/firebase";
 import { FirebaseError } from "firebase/app";
 
 type ForgotPasswordModalProps = {

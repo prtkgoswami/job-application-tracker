@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React from "react";
 import ClickToCopyText from "./ClickToCopyText";
-import { logAnalyticsEvent } from "../lib/analytics";
+import { logAnalyticsEvent } from "@lib/analytics";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";

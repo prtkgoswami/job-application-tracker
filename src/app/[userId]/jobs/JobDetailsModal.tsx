@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Job } from "@/app/types/job";
+import { Job } from "@/types/job";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAsterisk,
@@ -14,14 +14,14 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { db } from "@/app/lib/firebase";
+import { db } from "@lib/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import Modal from "@/app/components/Modal";
-import ConfirmDialog from "@/app/components/ConfirmDialog";
-import ClickToCopyText from "@/app/components/ClickToCopyText";
-import { logAnalyticsEvent } from "@/app/lib/analytics";
-import { getDifferenceFromNow } from "@/app/lib/date";
+import Modal from "@components/Modal";
+import ConfirmDialog from "@components/ConfirmDialog";
+import ClickToCopyText from "@components/ClickToCopyText";
+import { logAnalyticsEvent } from "@lib/analytics";
+import { getDifferenceFromNow } from "@lib/date";
 
 type JobDetailsModalProps = {
   userId: string;
@@ -283,7 +283,12 @@ const JobDetailsModal = ({
 
               <div className="w-full">
                 <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-                  Job Title <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-500" />
+                  Job Title{" "}
+                  <FontAwesomeIcon
+                    icon={faAsterisk}
+                    size="xs"
+                    className="text-rose-500"
+                  />
                 </label>
                 <input
                   type="text"
@@ -297,7 +302,12 @@ const JobDetailsModal = ({
               </div>
               <div className="w-full">
                 <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-                  Company <FontAwesomeIcon icon={faAsterisk} size="xs" className="text-rose-500" />
+                  Company{" "}
+                  <FontAwesomeIcon
+                    icon={faAsterisk}
+                    size="xs"
+                    className="text-rose-500"
+                  />
                 </label>
                 <input
                   type="text"
@@ -429,11 +439,18 @@ const JobDetailsModal = ({
                     <FontAwesomeIcon icon={faBuilding} className="mr-1" />
                     {jobData.company}
                   </p>
-                  <div className="h-full border border-gray-300" />
-                  <p>
-                    <FontAwesomeIcon icon={faLocationDot} className="mr-1" />
-                    {jobData.location}
-                  </p>
+                  {jobData.location && (
+                    <>
+                      <div className="h-full border border-gray-300" />
+                      <p>
+                        <FontAwesomeIcon
+                          icon={faLocationDot}
+                          className="mr-1"
+                        />
+                        {jobData.location}
+                      </p>
+                    </>
+                  )}
                   <div className="h-full border border-gray-300" />
                   <p>{jobData.jobType}</p>
                 </div>
@@ -458,22 +475,22 @@ const JobDetailsModal = ({
                   </p>
                 </div>
               </section>
-              <section className="flex flex-col gap-2">
+              {jobData.responsibilities && <section className="flex flex-col gap-2">
                 <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                   Responsibilities
                 </h4>
                 <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
                   {jobData.responsibilities}
                 </p>
-              </section>
-              <div className={`flex flex-col gap-2`}>
+              </section>}
+              {jobData.requirements && <div className={`flex flex-col gap-2`}>
                 <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
                   Requirements
                 </h4>
                 <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
                   {jobData.requirements}
                 </p>
-              </div>
+              </div>}
               {jobData.notes && (
                 <div className="flex flex-col gap-2">
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
