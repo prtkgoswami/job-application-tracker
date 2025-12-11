@@ -4,7 +4,6 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth } from "@lib/firebase";
 import { useRouter } from "next/navigation";
-import Sidebar from "./Sidebar";
 import MobileMenu from "./MobileMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +13,15 @@ import EmailVerificationBlockModal from "./EmailVerificationBlockModal";
 import useUser from "@hooks/useUser";
 import WelcomeModal from "./WelcomeModal";
 import { unsetAnalyticsUserId } from "@lib/analytics";
+import Sidebar from "./Sidebar";
+
+export const MENU_OPTIONS = [
+  {name: "Applications", route:"jobs", hidden: false},
+  {name: "Analysis", route:"analysis", hidden: true},
+  {name: "Profile", route:"profile", hidden: false},
+  {name: "About", route:"about", hidden: false},
+  {name: "Privacy", route:"privacy", hidden: false},
+]
 
 export default function RootLayout({
   children,
@@ -89,7 +97,7 @@ export default function RootLayout({
 
   return (
     <ApplicationsProvider>
-      <div className="min-h-screen w-full relative flex flex-col md:flex-row gap-1">
+      <div className="h-screen w-full relative flex flex-col md:flex-row gap-1">
         <Sidebar
           onLogout={handleLogout}
           onNewEntryClick={() => setNewShowEntryModal(true)}

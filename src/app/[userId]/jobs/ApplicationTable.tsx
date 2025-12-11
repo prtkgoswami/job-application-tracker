@@ -96,28 +96,28 @@ const ApplicationTable = ({
       <table className="w-full p-5 table-auto border-collapse border border-gray-800/50">
         <thead>
           <tr>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               #
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Title
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Company
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Location
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Type
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Status
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Apply Date
             </th>
-            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80">
+            <th className="px-2 py-2 text-center font-semibold border border-gray-100/80 text-amber-500">
               Last Updated
             </th>
           </tr>
@@ -128,42 +128,42 @@ const ApplicationTable = ({
               <tr key={job.id} onClick={() => setSelectedJob(job)}>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   {i + 1}
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   {job.title}
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   {job.company}
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   } capitalize`}
                 >
                   {job.location || <span className="text-gray-400">--</span>}
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   } capitalize`}
                 >
                   {job.jobType}
                 </td>
                 <td
                   className={`px-1 py-1 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   <button
@@ -178,14 +178,14 @@ const ApplicationTable = ({
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   {job.createDate}
                 </td>
                 <td
                   className={`px-2 py-2 text-center border cursor-pointer border-gray-100/80 ${
-                    i % 2 === 0 ? "bg-gray-100/10" : ""
+                    i % 2 === 0 ? "bg-amber-50/10" : ""
                   }`}
                 >
                   {job.lastUpdateDate}
