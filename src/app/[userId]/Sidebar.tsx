@@ -81,7 +81,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
       </div>
 
       <div
-        className={`absolute top-0 h-full left-19 bg-amber-500 ${
+        className={`absolute top-0 h-full left-19 bg-amber-500 z-60 ${
           isExpanded ? "w-80 opacity-100" : "w-0 opacity-0"
         } transition-[width,opacity] duration-200 ease-in-out border-r-2 border-gray-800 ${
           !isExpanded ? "overflow-hidden" : ""

@@ -61,7 +61,7 @@ const ProfilePageContent = ({
   };
 
   return (
-    <div className="w-full px-5 py-5 md:p-10 flex flex-col items-center gap-8 md:gap-15">
+    <div className="w-full px-5 py-5 md:p-10 flex flex-col items-center gap-5 md:gap-15">
       <div className="w-full flex justify-between items-center">
         <h1 className="uppercase text-2xl md:text-3xl font-light text-amber-400">
           Profile

@@ -31,7 +31,7 @@ const MobileMenu = ({
 
   return (
     <div
-      className={`absolute top-0 left-0 w-full h-screen overflow-hidden flex flex-col bg-amber-400 ${
+      className={`absolute top-0 left-0 w-full z-100 h-screen overflow-hidden flex flex-col bg-amber-400 ${
         showMenu ? "max-h-screen opacity-100 p-4" : "max-h-0 opacity-0"
       } transition-[max-height,opacity] duration-200 ease-in-out`}
     >
