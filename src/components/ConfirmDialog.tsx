@@ -59,7 +59,7 @@ const ConfirmDialog = ({
 
   return (
     <div
-      className="absolute top-0 left-0 h-full w-full flex justify-center items-center bg-transparent px-3"
+      className="absolute top-0 left-0 h-full w-full flex justify-center items-center bg-transparent z-90 px-3"
       onClick={handleBackdropClick}
       ref={backdropRef}
     >

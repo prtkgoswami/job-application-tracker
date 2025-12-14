@@ -61,7 +61,7 @@ const Modal = ({
 
   return (
     <div
-      className={`absolute top-0 left-0 h-full max-h-screen w-full flex justify-center items-center bg-gray-800/40 ${
+      className={`absolute top-0 left-0 h-full max-h-screen w-full flex justify-center items-center bg-gray-800/40 z-80 ${
         hasBackdropPadding ? "px-3" : ""
       }`}
       onClick={handleBackdropClick}

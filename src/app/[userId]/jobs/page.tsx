@@ -62,7 +62,7 @@ const JobsDashboardPage = () => {
   }, [defaultStatus]);
 
   return (
-    <main className="md:p-5">
+    <main className="md:p-5 h-full flex flex-col">
       <div className="w-full flex justify-between items-center py-2 px-4 bg-amber-500">
         <button
           className="px-5 py-2 rounded-md cursor-pointer border border-gray-800 text-gray-800 hover:bg-amber-400 transition-colors duration-200 ease-in-out"
