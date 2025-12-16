@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Job, JobStatus } from "@/types/job";
+import { Job, JobStatus, JobType } from "@/types/job";
 import {
   collection,
   getDocs,
@@ -34,7 +34,7 @@ type FirestoreJob = {
   link: string;
   location?: string;
   company: string;
-  jobType: "onsite" | "hybrid" | "remote";
+  jobType: JobType;
   responsibilities: string;
   requirements: string;
   notes?: string;

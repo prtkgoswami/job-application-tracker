@@ -17,6 +17,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from "@/components/Tooltip";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Link from "next/link";
+import JsonImportModal from "./JsonImportModal";
+import { JobType } from "@/types/job";
 
 type NewApplicationModalProps = {
   showModal: boolean;
@@ -24,13 +27,37 @@ type NewApplicationModalProps = {
   onClose: () => void;
 };
 
+export type FormDataType = {
+  "job-title": string;
+  "job-link": string;
+  company: string;
+  location: string;
+  "job-type": JobType;
+  "job-responsibilities": string;
+  "job-requirements": string;
+  "job-notes": string;
+};
+
+const EMPTY_DATA: FormDataType = {
+  "job-title": "",
+  "job-link": "",
+  company: "",
+  location: "",
+  "job-type": "onsite",
+  "job-responsibilities": "",
+  "job-requirements": "",
+  "job-notes": "",
+};
+
 const NewApplicationModal = ({
   showModal,
   userId,
   onClose,
 }: NewApplicationModalProps) => {
+  const [showJsonImport, setShowJsonImport] = useState(false);
   const [showNotesSection, setShowNotesSection] = useState(false);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
+  const [formData, setFormData] = useState<FormDataType>(EMPTY_DATA);
   const formRef = useRef<HTMLFormElement>(null);
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const entryModeRef = useRef<"applied" | "wishlist">("applied");
@@ -59,16 +86,15 @@ const NewApplicationModal = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const title = String(formData.get("job-title") ?? "");
-    const link = String(formData.get("job-link") ?? "");
-    const company = String(formData.get("company") ?? "");
-    const location = String(formData.get("location") ?? "");
-    const jobType = String(formData.get("job-type") ?? "");
-    const responsibilities = String(formData.get("job-responsibilities") ?? "");
-    const requirements = String(formData.get("job-requirements") ?? "");
-    const notes = String(formData.get("job-notes") ?? "");
+    const title = String(formData["job-title"] ?? "");
+    const link = String(formData["job-link"] ?? "");
+    const company = String(formData["company"] ?? "");
+    const location = String(formData["location"] ?? "");
+    const jobType = String(formData["job-type"] ?? "onsite");
+    const responsibilities = String(formData["job-responsibilities"] ?? "");
+    const requirements = String(formData["job-requirements"] ?? "");
+    const notes = String(formData["job-notes"] ?? "");
     const lastUpdateDate = serverTimestamp();
     const createDate = serverTimestamp();
 
@@ -100,6 +126,7 @@ const NewApplicationModal = ({
       });
 
       triggerRefetch();
+      setFormData(EMPTY_DATA);
       onClose();
     } catch (err) {
       console.error("Could not add Job", (err as Error).message);
@@ -177,12 +204,37 @@ const NewApplicationModal = ({
     <Modal
       isVisible={showModal}
       onClose={handleClose}
-      modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900"
-      bodyClasses="px-5 flex justify-center"
+      modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900 border-2 border-slate-700"
+      bodyClasses="px-5 flex flex-col items-center"
       theme="dark"
       header={header}
     >
-      <div className="flex justify-center grow h-max pt-2 pb-5">
+      <div className="flex w-full md:w-4/5 flex-col gap-2 my-4 border border-gray-200/60 rounded-lg p-3">
+        <div className="flex justify-between items-center">
+          <p className="text-lg text-amber-400 font-semibold">
+            Import Fields from JSON
+          </p>
+          <button
+            type="button"
+            className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-max"
+            onClick={() => setShowJsonImport(true)}
+          >
+            Import JSON
+          </button>
+        </div>
+        <p>
+          Easy import from a JSON object like one from{" "}
+          <Link
+            href="https://github.com/prtkgoswami/job-parse"
+            target="_blank"
+            className="pb-0.5 border-b border-amber-400 text-amber-400 hover:text-amber-500"
+          >
+            JobParse
+          </Link>
+        </p>
+      </div>
+
+      <div className="flex w-full justify-center grow h-max pt-2 pb-5">
         <form
           className="w-full md:w-4/5 flex flex-col items-center gap-5"
           onSubmit={handleSubmit}
@@ -205,6 +257,13 @@ const NewApplicationModal = ({
               placeholder="Type here..."
               className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
               required
+              value={formData["job-title"]}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  "job-title": e.target.value,
+                }))
+              }
             />
           </div>
           <div className="w-full grid grid-cols-2 gap-5">
@@ -219,6 +278,13 @@ const NewApplicationModal = ({
                 name="job-link"
                 placeholder="Paste here..."
                 className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
+                value={formData["job-link"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "job-link": e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="w-full">
@@ -238,6 +304,10 @@ const NewApplicationModal = ({
                 placeholder="Type here..."
                 className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
                 required
+                value={formData["company"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, company: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -253,6 +323,10 @@ const NewApplicationModal = ({
                 name="location"
                 placeholder="Type here..."
                 className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
+                value={formData["location"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, location: e.target.value }))
+                }
               />
             </div>
             <div className="w-full">
@@ -265,6 +339,13 @@ const NewApplicationModal = ({
                 name="job-type"
                 className="capitalize w-full border bg-gray-200 px-4 py-[11px] text-gray-800"
                 defaultValue="onsite"
+                value={formData["job-type"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "job-type": e.target.value as JobType,
+                  }))
+                }
               >
                 <option value="onsite" className="bg-gray-100 text-gray-800">
                   onsite
@@ -288,6 +369,13 @@ const NewApplicationModal = ({
               name="job-responsibilities"
               placeholder="Paste here..."
               className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              value={formData["job-responsibilities"]}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  "job-responsibilities": e.target.value,
+                }))
+              }
             />
           </div>
           <div className="w-full">
@@ -300,6 +388,13 @@ const NewApplicationModal = ({
               name="job-requirements"
               placeholder="Paste here..."
               className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              value={formData["job-requirements"]}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  "job-requirements": e.target.value,
+                }))
+              }
             />
           </div>
           <div className="pb-5 w-full">
@@ -324,6 +419,13 @@ const NewApplicationModal = ({
                 name="job-notes"
                 placeholder="Paste here..."
                 className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
+                value={formData["job-notes"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "job-notes": e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
@@ -352,10 +454,17 @@ const NewApplicationModal = ({
         onClose={() => setShowCloseWarning(false)}
         onConfirm={() => {
           setShowCloseWarning(false);
+          setFormData(EMPTY_DATA);
           onClose();
         }}
         message="Are you sure you want to Close this Application?"
         description="Looks like you have some unsaved data"
+      />
+
+      <JsonImportModal
+        isVisible={showJsonImport}
+        onClose={() => setShowJsonImport(false)}
+        setJson={setFormData}
       />
     </Modal>
   );
