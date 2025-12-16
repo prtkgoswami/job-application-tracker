@@ -1,12 +1,14 @@
 export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered";
 
+export type JobType = "onsite" | "hybrid" | "remote";
+
 export type Job = {
   id: string;
   title: string;
   link: string;
   location?: string;
   company: string;
-  jobType: "onsite" | "hybrid" | "remote";
+  jobType: JobType;
   responsibilities: string;
   requirements: string;
   notes?: string;
