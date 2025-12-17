@@ -8,7 +8,6 @@ import {
   faArrowRightFromBracket,
   faAsterisk,
   faCaretRight,
-  faMinus,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { MENU_OPTIONS } from "./layout";
@@ -34,7 +33,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
     if (new Set(["about", "privacy"]).has(route)) {
       router.push(`/${route}`);
     } else {
-      router.push(`/${userId}/${route}?${params}`);
+      router.push(`/${userId}/${route}?${params ?? ""}`);
     }
     setIsExpanded(false);
   };

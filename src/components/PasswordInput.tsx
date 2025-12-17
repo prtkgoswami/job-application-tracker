@@ -8,6 +8,7 @@ type PasswordInputProps = {
   name: string;
   className?: string;
   focusClassNames?: string;
+  buttonClassNames?: string;
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;
@@ -21,6 +22,7 @@ const PasswordInput = ({
   name,
   className,
   focusClassNames,
+  buttonClassNames,
   disabled = false,
   required = false,
   placeholder,
@@ -55,7 +57,7 @@ const PasswordInput = ({
       />
       <button
         type="button"
-        className="cursor-pointer text-gray-100/60"
+        className={`cursor-pointer ${buttonClassNames ?? "text-gray-100/60"}`}
         onClick={togglePwdVisible}
       >
         <FontAwesomeIcon icon={isPwdVisible ? faEyeSlash : faEye} />

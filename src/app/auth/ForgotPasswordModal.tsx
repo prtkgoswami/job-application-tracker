@@ -50,7 +50,7 @@ const ForgotPasswordModal = ({
   }, [isVisible, onClose]);
 
   return (
-    <Modal isVisible={isVisible} onClose={onClose} modalClasses="md:w-1/2" theme="dark">
+    <Modal isVisible={isVisible} onClose={onClose} modalClasses="md:w-1/2 border-2 border-slate-700" theme="dark">
       <div className="flex flex-col items-center gap-2 p-5 pt-0 w-full">
         <p className="text-3xl text-amber-400 font-extralight">Forgot Password?</p>
         <p className="text-lg text-gray-200 text-center">We can send you a Reset Password link in your email.</p>

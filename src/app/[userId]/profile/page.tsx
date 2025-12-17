@@ -6,6 +6,7 @@ import { db } from "@/lib/firebase";
 import { User as UserType } from "@/types/user";
 import {
   faCopy,
+  faEnvelope,
   faFloppyDisk,
   faPen,
   faSpinner,
@@ -18,6 +19,9 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import ChangePasswordSection from "./ChangePasswordSection";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import LinkingModal from "./LinkingModal";
+import Tooltip from "@/components/Tooltip";
 
 const ProfilePageContent = ({
   initialData,
@@ -29,6 +33,9 @@ const ProfilePageContent = ({
   const [profileData, setProfileData] = useState<UserType>(initialData);
   const [inEditMode, setInEditMode] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [linkMode, setLinkMode] = useState<"emailPassword" | "google" | null>(
+    null
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,6 +66,12 @@ const ProfilePageContent = ({
       toast.error("Failed to save Profile");
     }
   };
+
+  const providers = user.providerData;
+  const isEmailChecked =
+    providers.filter((p) => p.providerId === "password").length > 0;
+  const isGoogleChecked =
+    providers.filter((p) => p.providerId === "google.com").length > 0;
 
   return (
     <div className="w-full px-5 py-5 md:p-10 flex flex-col items-center gap-5 md:gap-15">
@@ -141,7 +154,9 @@ const ProfilePageContent = ({
           <>
             <div className="text-base md:text-lg text-amber-400 flex items-center">
               Email{" "}
-              {user.emailVerified && <span className="text-sm text-green-400 ml-1">(Verified)</span>}
+              {user.emailVerified && (
+                <span className="text-sm text-green-400 ml-1">(Verified)</span>
+              )}
             </div>
             <input
               type="text"
@@ -154,6 +169,32 @@ const ProfilePageContent = ({
           </>
 
           <ChangePasswordSection user={user} />
+
+          <>
+            <div className="text-base md:text-lg text-amber-400 flex items-center">
+              Link Accounts
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Tooltip content="Link with Email" position="top">
+                <button
+                  className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
+                  onClick={() => setLinkMode("emailPassword")}
+                  disabled={isEmailChecked}
+                >
+                  <FontAwesomeIcon icon={faEnvelope} size="xl" />
+                </button>
+              </Tooltip>
+              <Tooltip content="Link with Google" position="top">
+                <button
+                  className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
+                  onClick={() => setLinkMode("google")}
+                  disabled={isGoogleChecked}
+                >
+                  <FontAwesomeIcon icon={faGoogle} size="xl" />
+                </button>
+              </Tooltip>
+            </div>
+          </>
 
           <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5 grid grid-cols-2 items-center">
             <div className="flex flex-col gap-1">
@@ -226,6 +267,8 @@ const ProfilePageContent = ({
         user={user}
         onClose={() => setShowConfirmDelete(false)}
       />
+
+      <LinkingModal linkMode={linkMode} onClose={() => setLinkMode(null)} />
     </div>
   );
 };
