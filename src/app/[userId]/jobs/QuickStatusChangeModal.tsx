@@ -1,7 +1,7 @@
 import Modal from "@components/Modal";
 import { db } from "@lib/firebase";
 import { Job } from "@/types/job";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { logAnalyticsEvent } from "@/lib/analytics";
@@ -19,7 +19,7 @@ const QuickStatusChangeModal = ({
   activeApplicationId,
   activeApplication,
   onClose,
-  refetch
+  refetch,
 }: Props) => {
   const [activeStatus, setActiveStatus] = useState("");
 
@@ -30,6 +30,7 @@ const QuickStatusChangeModal = ({
       const docRef = doc(db, "jobs", activeApplicationId);
       updateDoc(docRef, {
         status: activeStatus,
+        lastUpdateDate: serverTimestamp(),
       });
 
       toast.success("Application Status Changed");
@@ -37,8 +38,8 @@ const QuickStatusChangeModal = ({
       logAnalyticsEvent("application_quick_status_change", {
         job_id: activeApplicationId,
         old_status: activeApplication.status,
-        new_status: activeStatus
-      })
+        new_status: activeStatus,
+      });
 
       onClose();
       refetch();
@@ -52,13 +53,12 @@ const QuickStatusChangeModal = ({
     if (activeApplicationId && activeApplication) {
       setActiveStatus(activeApplication.status);
       logAnalyticsEvent("application_quick_status_change_show", {
-        job_id: activeApplicationId
-      })
+        job_id: activeApplicationId,
+      });
     }
   }, [activeApplicationId, activeApplication]);
 
-  if (!activeApplication)
-    return <></>
+  if (!activeApplication) return <></>;
 
   return (
     <Modal
