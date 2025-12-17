@@ -174,12 +174,12 @@ const ProfilePageContent = ({
             <div className="text-base md:text-lg text-amber-400 flex items-center">
               Link Accounts
             </div>
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-3 justify-start md:justify-end">
               <Tooltip content="Link with Email" position="top">
                 <button
                   className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
                   onClick={() => setLinkMode("emailPassword")}
-                  disabled={isEmailChecked}
+                  // disabled={isEmailChecked}
                 >
                   <FontAwesomeIcon icon={faEnvelope} size="xl" />
                 </button>
@@ -188,7 +188,7 @@ const ProfilePageContent = ({
                 <button
                   className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
                   onClick={() => setLinkMode("google")}
-                  disabled={isGoogleChecked}
+                  // disabled={isGoogleChecked}
                 >
                   <FontAwesomeIcon icon={faGoogle} size="xl" />
                 </button>
@@ -196,7 +196,7 @@ const ProfilePageContent = ({
             </div>
           </>
 
-          <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5 grid grid-cols-2 items-center">
+          <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5 grid grid-rows-2 md:grid-cols-2 gap-3 items-center">
             <div className="flex flex-col gap-1">
               <p className="text-base md:text-lg text-amber-400 pt-2">
                 Delete Account

@@ -103,7 +103,7 @@ const RegisterForm = ({
           onSubmit={handleRegisterClick}
           ref={formRef}
         >
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4 w-full items-center">
             <input
               type="text"
               name="first-name"
@@ -178,7 +178,7 @@ const RegisterForm = ({
           </span>
         </div>
 
-        <div className="w-1/2 flex gap-2 items-center text-xs">
+        <div className="w-[90%] md:w-1/2 flex gap-2 items-center text-xs">
           <div className="flex-1 border border-gray-400 h-0" />
         </div>
 

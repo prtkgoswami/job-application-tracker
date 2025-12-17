@@ -121,14 +121,14 @@ const LinkingModal = ({ linkMode, onClose }: Props) => {
         </h3>
       )}
       {linkMode === "emailPassword" && (
-        <div className="flex flex-col items-center gap-8 mb-4">
+        <div className="flex flex-col items-center gap-8 md:mb-4">
           <h3 className="text-2xl text-gray-800 text-center mb-2">
             Are you sure you want to link your Email & Password?
           </h3>
 
-          <div className="flex flex-col gap-6 items-center border-2 border-gray-300 text-gray-800 text-left rounded-lg pt-5 py-8 w-5/6">
+          <div className="flex flex-col gap-6 items-center border-2 border-gray-300 text-gray-800 text-left rounded-lg pt-5 py-8 w-full md:w-5/6">
             <p className="text-lg">Set a password of choice</p>
-            <div className="w-[80%]">
+            <div className="w-[90%] md:w-[80%]">
               <p className="w-full flex items-start">
                 Password{" "}
                 <FontAwesomeIcon
@@ -160,7 +160,7 @@ const LinkingModal = ({ linkMode, onClose }: Props) => {
                 </p>
               )}
             </div>
-            <div className="w-[80%]">
+            <div className="w-[90%] md:w-[80%]">
               <p className="w-full flex items-start">
                 Confirm Password{" "}
                 <FontAwesomeIcon
@@ -196,10 +196,10 @@ const LinkingModal = ({ linkMode, onClose }: Props) => {
           </div>
         </div>
       )}
-      <div className="flex justify-end gap-4">
+      <div className="flex flex-col md:flex-row justify-end gap-4 w-[80%]">
         <button
           type="button"
-          className="px-8 py-2 bg-amber-400 disabled:bg-gray-300 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer disabled:cursor-not-allowed"
+          className="px-8 py-4 md:py-2 w-full bg-amber-400 disabled:bg-gray-300 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer disabled:cursor-not-allowed"
           onClick={handleYes}
           disabled={
             linkMode === "emailPassword" && (!password || !confirmPassword || Object.entries(passwordErrors).length > 0)
@@ -209,7 +209,7 @@ const LinkingModal = ({ linkMode, onClose }: Props) => {
         </button>
         <button
           type="button"
-          className="px-8 py-2 border-2 border-amber-400 text-gray-800 hover:bg-amber-300 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
+          className="px-8 py-4 md:py-2 w-full border-2 border-amber-400 text-gray-800 hover:bg-amber-300 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
           onClick={handleClose}
         >
           No

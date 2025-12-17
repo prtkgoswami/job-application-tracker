@@ -135,7 +135,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <span className="text-gray-400">--</span>
           );
         },
-        size: 90,
+        size: 110,
       },
       {
         accessorKey: "jobType",
@@ -143,7 +143,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
         cell: (info: CellContext<Job, unknown>) => (
           <span className="capitalize">{info.getValue() as string}</span>
         ),
-        size: 60,
+        size: 80,
       },
       {
         accessorKey: "status",
@@ -167,19 +167,19 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
             </button>
           );
         },
-        size: 80,
+        size: 110,
       },
       {
         accessorKey: "createDate",
         header: "Apply Date",
         cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "lastUpdateDate",
         header: "Last Updated",
         cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 80,
+        size: 100,
       },
     ],
     [onStatusClick]

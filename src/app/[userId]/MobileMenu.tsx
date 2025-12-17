@@ -84,6 +84,15 @@ const MobileMenu = ({
         >
           About
         </div>
+        <div
+          onClick={() => {
+            routeToPage("privacy");
+            onCloseMobileMenu();
+          }}
+          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
+        >
+          Privacy
+        </div>
       </nav>
 
       <div className="grow w-full flex flex-col justify-end gap-3">

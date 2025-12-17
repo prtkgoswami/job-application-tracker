@@ -104,7 +104,7 @@ export default function RootLayout({
         />
 
         {/* Mobile-Only Header */}
-        <header className="md:hidden flex justify-between items-center mb-3 px-3 py-3">
+        <header className="md:hidden flex justify-between items-center px-3 py-3">
           <h2 className="text-2xl md:text-2xl text-amber-400">
             JobTrackr{" "}
             <span className="hidden md:inline-block">- Job Dashboard</span>

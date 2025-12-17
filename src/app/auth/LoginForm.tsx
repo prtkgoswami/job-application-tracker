@@ -106,7 +106,7 @@ const LoginForm = ({
           </span>
         </div>
 
-          <div className="w-1/2 flex gap-2 items-center">
+          <div className="w-[90%] md:w-1/2 flex gap-2 items-center">
             <div className="flex-1 border border-gray-400 h-0" />
           </div>
 

@@ -161,8 +161,9 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       onClose={handleClose}
       theme="dark"
       title="JSON Import"
-      modalClasses="md:w-3/4 pb-3 shadow-xl shadow-slate-900 border-2 border-slate-700"
-      bodyClasses="px-5 py-2 relative"
+      modalClasses="md:w-3/4 pb-3 shadow-xl shadow-slate-900 border-2 border-slate-700 h-full"
+      bodyClasses="px-5 py-2 relative flex flex-col"
+      hasBackdropPadding={false}
     >
       <button
         className="absolute top-5 right-8 w-8 aspect-square rounded-full cursor-pointer text-sm border border-slate-200/60 text-slate-200/60 hover:text-slate-200 hover:border-slate-200 transition-colors duration-200 ease-in-out"
@@ -174,22 +175,22 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
         value={importJson}
         onChange={(e) => setImportJson(e.target.value)}
         placeholder={`Paste JSON of type: ${TYPE_STRING}`}
-        className={`w-full resize-none h-dull md:h-120 bg-slate-700 p-3 rounded-lg border border-transparent focus-visible:outline-none ${
+        className={`w-full resize-none grow md:h-120 bg-slate-700 p-3 rounded-lg border border-transparent focus-visible:outline-none ${
           error ? "border-red-600!" : "focus-visible:border-amber-400"
         }`}
       />
       {error && <p className="text-sm text-red-600">Parse Error: {error}</p>}
-      <div className="flex flex-col md:flex-row justify-between mt-4">
+      <div className="flex flex-col md:flex-row gap-3 justify-between mt-4">
         <button
           type="button"
-          className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-max"
+          className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-full md:w-max"
           onClick={handleFormat}
         >
           Format Text
         </button>
         <button
           type="button"
-          className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-max"
+          className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-full md:w-max"
           onClick={handleSubmit}
         >
           Submit
@@ -200,12 +201,14 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
         onClose={() => setShowInfo(false)}
         modalClasses="md:w-5/6"
         bodyClasses="flex justify-center pb-5"
+        hasBackdropPadding={false}
+        showCloseButton={false}
       >
-        <div className="w-max flex flex-col items-center gap-5">
+        <div className="w-max flex flex-col items-center gap-5 px-2">
           <p className="leading-relaxed text-gray-800 text-lg">
             JSON must be of the following type
           </p>
-          <pre className="font-mono text-sm border border-gray-800 text-gray-800 p-4 rounded-lg overflow-auto">
+          <pre className="font-mono text-sm border border-gray-800 text-gray-800 p-4 rounded-lg whitespace-pre-wrap">
             {TYPE_STRING}
           </pre>
 

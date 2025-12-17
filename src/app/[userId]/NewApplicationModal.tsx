@@ -209,20 +209,20 @@ const NewApplicationModal = ({
       theme="dark"
       header={header}
     >
-      <div className="flex w-full md:w-4/5 flex-col gap-2 my-4 border border-gray-200/60 rounded-lg p-3">
-        <div className="flex justify-between items-center">
-          <p className="text-lg text-amber-400 font-semibold">
+      <div className="flex w-full md:w-4/5 flex-col gap-4 md:gap-2 my-4 border border-gray-200/60 rounded-lg p-3">
+        <div className="flex flex-col md:flex-row gap-3 justify-between items-center">
+          <p className="text-base md:text-lg text-amber-400 font-semibold">
             Import Fields from JSON
           </p>
           <button
             type="button"
-            className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-5 md:py-2 rounded-md w-max"
+            className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-4 md:py-2 rounded-md w-max"
             onClick={() => setShowJsonImport(true)}
           >
             Import JSON
           </button>
         </div>
-        <p>
+        <p className="text-center md:text-left text-sm md:text-base">
           Easy import from a JSON object like one from{" "}
           <Link
             href="https://github.com/prtkgoswami/job-parse"
