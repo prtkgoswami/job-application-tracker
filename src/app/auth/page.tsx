@@ -13,6 +13,9 @@ import RegisterForm from "./RegisterForm";
 import Image from "next/image";
 import { loginWithEmailPassword, registerWithEmailPassword } from "@lib/auth";
 import { signInWithGoogle } from "@lib/googleAuth";
+import { logAnalyticsEvent, setAnalyticsUserId } from "@/lib/analytics";
+import { serverTimestamp } from "firebase/firestore";
+import { getDifferenceFromNow } from "@/lib/date";
 
 const LOGIN_SUBTITLES = [
   "Continue your job search journey",
@@ -53,8 +56,20 @@ const AuthPage = () => {
       if (mode === "email" && payload) {
         const { email, password } = payload;
         user = await loginWithEmailPassword(email, password);
-      } else {
+      } else if (mode === "google") {
         user = await signInWithGoogle();
+
+        setAnalyticsUserId(user.uid);
+        logAnalyticsEvent("user_returned", {
+          login_method: "google",
+          days_since_last_visit: user.metadata.lastSignInTime
+            ? Math.floor(
+                getDifferenceFromNow(new Date(user.metadata.lastSignInTime)) /
+                  (1000 * 3600 * 24)
+              )
+            : "unknown",
+          timestamp: serverTimestamp(),
+        });
       }
 
       if (!user) {
@@ -106,6 +121,12 @@ const AuthPage = () => {
         );
       } else if (mode === "google") {
         user = await signInWithGoogle();
+
+        setAnalyticsUserId(user.uid);
+        logAnalyticsEvent("account_created", {
+          signup_method: "google",
+          timestamp: serverTimestamp(),
+        });
       }
 
       if (!user) {
@@ -120,10 +141,10 @@ const AuthPage = () => {
         if (err.code === "auth/popup-closed-by-user") {
           //  Do nothing
         } else {
-      toast.error((err as Error).message || "Failed to Register");
+          toast.error((err as Error).message || "Failed to Register");
         }
       } else {
-      toast.error("Failed to Register");
+        toast.error("Failed to Register");
       }
     } finally {
       setIsLoading(false);
