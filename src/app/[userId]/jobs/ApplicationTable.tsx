@@ -1,4 +1,4 @@
-import { Job } from "@/types/job";
+import { Job, JobStatus } from "@/types/job";
 import { ActiveFilters } from "./OptionsModal";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -14,13 +14,6 @@ import {
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-type JobStatus =
-  | "wishlist"
-  | "applied"
-  | "interviewing"
-  | "rejected"
-  | "offered";
-
 const STATUS_COLOR_MAP: Record<JobStatus, string> = {
   wishlist:
     "bg-fuchsia-300 hover:bg-fuchsia-400 text-fuchsia-700 border-fuchsia-600",
@@ -29,6 +22,7 @@ const STATUS_COLOR_MAP: Record<JobStatus, string> = {
     "bg-amber-300 hover:bg-amber-400 text-amber-700 border-amber-600",
   rejected: "bg-red-300 hover:bg-red-400 text-red-700 border-red-600",
   offered: "bg-green-300 hover:bg-green-400 text-green-700 border-green-600",
+  cancelled: "bg-gray-300 hover:bg-gray-400 text-gray-700 border-gray-600",
 } as const;
 
 interface ApplicationTableProps {

@@ -13,7 +13,7 @@ type Props = {
   refetch: () => void;
 };
 
-const STATUS_LIST = ["applied", "interviewing", "rejected", "offered"];
+const STATUS_LIST = ["applied", "interviewing", "rejected", "offered", "cancelled"];
 
 const QuickStatusChangeModal = ({
   activeApplicationId,

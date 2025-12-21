@@ -37,6 +37,7 @@ const STATUS_COLOR_MAP = {
   interviewing: { bgColor: "bg-amber-300", textColor: "text-amber-600" },
   rejected: { bgColor: "bg-red-300", textColor: "text-red-600" },
   offered: { bgColor: "bg-green-300", textColor: "text-green-600" },
+  cancelled: { bgColor: "bg-gray-300", textColor: "text-gray-600" },
 };
 
 const INITIAL_DATA: Omit<Job, "id" | "createDate" | "lastUpdateDate"> = {
@@ -364,6 +365,7 @@ const JobDetailsModal = ({
                     <option value="interviewing">interviewing</option>
                     <option value="rejected">rejected</option>
                     <option value="offered">offered</option>
+                    <option value="cancelled">cancelled</option>
                   </select>
                 </div>
                 <div className="w-full">

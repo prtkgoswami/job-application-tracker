@@ -12,6 +12,7 @@ const JOB_STATUS_FILTERS = [
   "interviewing",
   "offered",
   "rejected",
+  "cancelled",
 ];
 
 const JOB_TYPE_FILTERS = ["onsite", "hybrid", "remote"];
