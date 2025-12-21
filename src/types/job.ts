@@ -1,4 +1,4 @@
-export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered";
+export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered" | "cancelled";
 
 export type JobType = "onsite" | "hybrid" | "remote";
 
