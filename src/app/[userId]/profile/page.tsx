@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User } from "firebase/auth";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
@@ -22,6 +22,7 @@ import ChangePasswordSection from "./ChangePasswordSection";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import LinkingModal from "./LinkingModal";
 import Tooltip from "@/components/Tooltip";
+import { useApplicationsRefetch } from "@/contexts/ApplicationContext";
 
 const ProfilePageContent = ({
   initialData,
@@ -36,6 +37,7 @@ const ProfilePageContent = ({
   const [linkMode, setLinkMode] = useState<"emailPassword" | "google" | null>(
     null
   );
+  const {triggerRefetch} = useApplicationsRefetch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,9 +60,10 @@ const ProfilePageContent = ({
       };
 
       const col = doc(db, "users", profileData.uid);
-      await setDoc(col, payload);
+      await updateDoc(col, payload);
       toast.success("Successfully saved Profile");
       setInEditMode(false);
+      triggerRefetch();
     } catch (err) {
       console.error("Failed to save User Details", err);
       toast.error("Failed to save Profile");
@@ -179,7 +182,7 @@ const ProfilePageContent = ({
                 <button
                   className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
                   onClick={() => setLinkMode("emailPassword")}
-                  // disabled={isEmailChecked}
+                  disabled={isEmailChecked}
                 >
                   <FontAwesomeIcon icon={faEnvelope} size="xl" />
                 </button>
@@ -188,7 +191,7 @@ const ProfilePageContent = ({
                 <button
                   className={`cursor-pointer disabled:text-amber-400 text-gray-200/60 hover:text-cyan-500`}
                   onClick={() => setLinkMode("google")}
-                  // disabled={isGoogleChecked}
+                  disabled={isGoogleChecked}
                 >
                   <FontAwesomeIcon icon={faGoogle} size="xl" />
                 </button>
@@ -196,7 +199,7 @@ const ProfilePageContent = ({
             </div>
           </>
 
-          <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5 grid grid-rows-2 md:grid-cols-2 gap-3 items-center">
+          <div className="md:col-span-2 border border-gray-50/50 p-5 rounded-xl mt-5 grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-3 items-center">
             <div className="flex flex-col gap-1">
               <p className="text-base md:text-lg text-amber-400 pt-2">
                 Delete Account

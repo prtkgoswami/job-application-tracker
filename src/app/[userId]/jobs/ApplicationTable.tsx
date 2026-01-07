@@ -154,7 +154,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
           return (
             <button
               type="button"
-              className={`w-full h-full border ${STATUS_COLOR_MAP[status]} text-sm px-4 py-1 rounded-md capitalize cursor-pointer`}
+              className={`w-full h-full border ${STATUS_COLOR_MAP[status]} text-sm px-4 py-3 rounded-md capitalize cursor-pointer`}
               onClick={handleClick}
             >
               {status}
@@ -277,12 +277,12 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     <tr
                       key={row.id}
                       onClick={() => handleRowClick(row.original)}
-                      className=" w-full cursor-pointer hover:bg-amber-50/5 transition-colors"
+                      className=" w-full cursor-pointer hover:bg-amber-50/5 transition-colors h-20"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className={`px-2 py-2 text-center border border-gray-200/20 ${
+                          className={`px-2 py-2 text-center border border-gray-200/20 truncate ${
                             virtualRow.index % 2 === 0 ? "bg-amber-50/10" : ""
                           }`}
                           style={{
