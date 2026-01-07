@@ -13,6 +13,7 @@ import {
 import { MENU_OPTIONS } from "./layout";
 import Tooltip from "@/components/Tooltip";
 import useJobs from "@/hooks/useJobs";
+import { useApplicationsRefetch } from "@/contexts/ApplicationContext";
 
 type Props = {
   onLogout: () => void;
@@ -27,7 +28,8 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
   const userId = user?.uid;
   const pathItems = pathName.split("/");
   const page = pathItems[pathItems.length - 1];
-  const { counts } = useJobs(userId);
+  const {refetchKey} = useApplicationsRefetch();
+  const { counts } = useJobs(userId, refetchKey);
 
   const routeToPage = (route: string, params?: string) => {
     if (new Set(["about", "privacy"]).has(route)) {
@@ -88,7 +90,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
       >
         <div className="flex flex-col gap-5 p-5 h-full justify-between">
           <div>
-            <h3 className={`text-4xl py-2 text-gray-800 select-none mb-2`}>
+            <h3 className={`text-4xl py-2 text-gray-800 select-none mb-2 cursor-pointer`} onClick={() => routeToPage("jobs")}>
               JobTrackr
             </h3>
             <h3 className="text-2xl font-extralight mb-5 text-gray-800">

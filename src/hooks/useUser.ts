@@ -13,7 +13,7 @@ type UserHookResponse = {
   error?: Error;
 };
 
-type FirestoreUser = {
+export type FirestoreUser = {
   name: string;
   email: string;
   password: string;

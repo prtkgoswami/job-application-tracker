@@ -37,7 +37,7 @@ export default function RootLayout({
         <PageViewAnalyticsProvider>
           <AuthProvider>{children}</AuthProvider>
         </PageViewAnalyticsProvider>
-        <ToastContainer />
+        <ToastContainer pauseOnFocusLoss={false} pauseOnHover={false} />
       </body>
     </html>
   );
