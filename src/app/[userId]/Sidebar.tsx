@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useAuth } from "../AuthProvider";
+import { useAuth } from "../../contexts/AuthProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAnglesLeft,
@@ -10,10 +10,10 @@ import {
   faCaretRight,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { MENU_OPTIONS } from "./layout";
 import Tooltip from "@/components/Tooltip";
 import useJobs from "@/hooks/useJobs";
 import { useApplicationsRefetch } from "@/contexts/ApplicationContext";
+import { getMenuItems } from "@/lib/menu";
 
 type Props = {
   onLogout: () => void;
@@ -28,8 +28,9 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
   const userId = user?.uid;
   const pathItems = pathName.split("/");
   const page = pathItems[pathItems.length - 1];
-  const {refetchKey} = useApplicationsRefetch();
+  const { refetchKey } = useApplicationsRefetch();
   const { counts } = useJobs(userId, refetchKey);
+  const menuItems = getMenuItems(userId);
 
   const routeToPage = (route: string, params?: string) => {
     if (new Set(["about", "privacy"]).has(route)) {
@@ -90,7 +91,10 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
       >
         <div className="flex flex-col gap-5 p-5 h-full justify-between">
           <div>
-            <h3 className={`text-4xl py-2 text-gray-800 select-none mb-2 cursor-pointer`} onClick={() => routeToPage("jobs")}>
+            <h3
+              className={`text-4xl py-2 text-gray-800 select-none mb-2 cursor-pointer`}
+              onClick={() => routeToPage("jobs")}
+            >
               JobTrackr
             </h3>
             <h3 className="text-2xl font-extralight mb-5 text-gray-800">
@@ -112,7 +116,13 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
                   <span className="font-semibold">
                     {counts.wishlisted} Jobs
                   </span>{" "}
-                  in your wishlist. <span className="underline cursor-pointer" onClick={() => routeToPage("jobs", "status=wishlisted")}>Maybe take some time to follow-up with them.</span>
+                  in your wishlist.{" "}
+                  <span
+                    className="underline cursor-pointer"
+                    onClick={() => routeToPage("jobs", "status=wishlisted")}
+                  >
+                    Maybe take some time to follow-up with them.
+                  </span>
                 </div>
                 <div className="w-full h-0 border border-amber-800" />
               </div>
@@ -120,24 +130,22 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
           </div>
           <div className={``}>
             <nav className="flex flex-col gap-3">
-              {MENU_OPTIONS.map((option) => {
-                const isSelected = page === option.route;
+              {menuItems.map(({ id, key, title }) => {
+                const isSelected = page === key;
                 return (
                   <div
-                    key={option.name}
+                    key={id}
                     onClick={() => {
-                      routeToPage(option.route);
+                      routeToPage(key);
                     }}
                     className={`py-2 text-xl select-none ${
-                      option.hidden && "hidden"
-                    } ${
                       isSelected ? "" : "cursor-pointer "
                     } text-gray-800 transition-colors duration-200 ease-in-out`}
                   >
                     <span className="w-5 aspect-square inline-block mr-1">
                       {isSelected && <FontAwesomeIcon icon={faCaretRight} />}
                     </span>
-                    {option.name}
+                    {title}
                   </div>
                 );
               })}

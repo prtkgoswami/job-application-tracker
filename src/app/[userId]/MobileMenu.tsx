@@ -6,7 +6,8 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../AuthProvider";
+import { useAuth } from "../../contexts/AuthProvider";
+import { getMenuItems } from "@/lib/menu";
 
 type MobileMenuProps = {
   showMenu: boolean;
@@ -24,6 +25,7 @@ const MobileMenu = ({
   const router = useRouter();
   const user = useAuth();
   const userId = user?.uid;
+  const menuItems = getMenuItems(user?.uid);
 
   const routeToPage = (route: string) => {
     router.push(`/${userId}/${route}`);
@@ -48,51 +50,18 @@ const MobileMenu = ({
         Menu
       </h2>
       <nav className="flex flex-col gap-3">
-        <div
-          onClick={() => {
-            routeToPage("jobs");
-            onCloseMobileMenu();
-          }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
-        >
-          Job Dashboard
-        </div>
-        <div
-          onClick={() => {
-            routeToPage("analysis");
-            onCloseMobileMenu();
-          }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer hidden"
-        >
-          Analysis Dashboard
-        </div>
-        <div
-          onClick={() => {
-            routeToPage("profile");
-            onCloseMobileMenu();
-          }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
-        >
-          Profile
-        </div>
-        <div
-          onClick={() => {
-            routeToPage("about");
-            onCloseMobileMenu();
-          }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
-        >
-          About
-        </div>
-        <div
-          onClick={() => {
-            routeToPage("privacy");
-            onCloseMobileMenu();
-          }}
-          className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
-        >
-          Privacy
-        </div>
+        {menuItems.map(({ id, key, title }) => (
+          <div
+            key={id}
+            onClick={() => {
+              routeToPage(key);
+              onCloseMobileMenu();
+            }}
+            className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"
+          >
+            {title}
+          </div>
+        ))}
       </nav>
 
       <div className="grow w-full flex flex-col justify-end gap-3">

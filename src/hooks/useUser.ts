@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { User as UserType } from "@/types/user";
-import { useAuth } from "@app/AuthProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { getDateString } from "@lib/date";
@@ -39,7 +39,9 @@ const useUser = (): UserHookResponse => {
       setData({
         ...userData,
         uid,
-        archiveDate: getDateString(userData?.archiveDate.toDate() ?? Date.now()),
+        archiveDate: getDateString(
+          userData?.archiveDate.toDate() ?? Date.now(),
+        ),
       });
     } catch (err) {
       console.error("Failed to fetch profile data", err);

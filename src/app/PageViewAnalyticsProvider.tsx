@@ -4,7 +4,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { logAnalyticsEvent } from "@lib/analytics";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "../contexts/AuthProvider";
 
 const PageViewAnalyticsProvider = ({
   children,

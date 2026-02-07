@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@app/AuthProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 import Modal from "@components/Modal";
 import { sendEmailVerification } from "firebase/auth";
 import { toast } from "react-toastify";
@@ -41,7 +41,15 @@ const EmailVerificationBlockModal = () => {
           or request a new one.
         </p>
 
-        <p className="md:text-center leading-relaxed text-gray-800 mb-10">Can&apos;t find the email. Try <span className="text-blue-500 cursor-pointer" onClick={handleResendEmail}>Sending Again</span></p>
+        <p className="md:text-center leading-relaxed text-gray-800 mb-10">
+          Can&apos;t find the email. Try{" "}
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={handleResendEmail}
+          >
+            Sending Again
+          </span>
+        </p>
 
         <button
           className="px-4 py-4 md:py-2 bg-amber-400 hover:bg-amber-500 rounded-lg text-gray-800 w-full md:w-80 cursor-pointer"

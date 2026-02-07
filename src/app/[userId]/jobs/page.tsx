@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAuth } from "@app/AuthProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 import useJobs from "@hooks/useJobs";
 import { useApplicationsRefetch } from "@contexts/ApplicationContext";
 import OptionsModal, { ActiveFilters } from "./OptionsModal";
@@ -56,7 +56,7 @@ const JobsDashboardPage = () => {
 
   useEffect(() => {
     if (defaultStatus) {
-      console.log("Setting status", defaultStatus)
+      console.log("Setting status", defaultStatus);
       setActiveJobFilters((prev) => ({ ...prev, status: defaultStatus }));
     }
   }, [defaultStatus]);
