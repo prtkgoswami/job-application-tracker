@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Jobs collection
+    match /jobs/{jobId} {
+      // Allow create if the userId in the document matches the auth uid
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Allow read/update/delete if the existing document's userId matches the auth uid
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Schedule collection
+    match /schedule/{scheduleId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

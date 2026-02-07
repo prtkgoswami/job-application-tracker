@@ -15,14 +15,6 @@ import WelcomeModal from "./WelcomeModal";
 import { unsetAnalyticsUserId } from "@lib/analytics";
 import Sidebar from "./Sidebar";
 
-export const MENU_OPTIONS = [
-  {name: "Applications", route:"jobs", hidden: false},
-  {name: "Analysis", route:"analysis", hidden: true},
-  {name: "Profile", route:"profile", hidden: false},
-  {name: "About", route:"about", hidden: false},
-  {name: "Privacy", route:"privacy", hidden: false},
-]
-
 export default function RootLayout({
   children,
 }: Readonly<{

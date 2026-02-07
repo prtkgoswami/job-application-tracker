@@ -1,0 +1,96 @@
+"use client";
+import { useAuth } from "@/contexts/AuthProvider";
+import useJobs from "@/hooks/useJobs";
+import { User } from "firebase/auth";
+import React from "react";
+
+const AnalyticsContent = ({ user }: { user: User }) => {
+  const { companyList, counts, jobs } = useJobs(user.uid);
+
+  const getLocationCount = () => {
+    const result: Record<string, number> = {};
+    const filteredJobs = jobs.filter(
+      (job) => job.status !== "wishlist" && job.status !== "rejected",
+    );
+
+    filteredJobs.forEach((job) => {
+      const location = job.location ?? "remote";
+      result[location] = (result[location] ?? 0) + 1;
+    });
+
+    return result;
+  };
+
+  return (
+    <div className="w-full grow flex gap-4 px-5 py-8">
+      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
+        <h3 className="text-xl text-amber-500">Companies Applied To</h3>
+        <ul className="max-h-100 overflow-auto list-none p-2">
+          {companyList.map((company) => (
+            <li key={company}>{company}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
+        <h3 className="text-xl text-amber-500">Stats</h3>
+        <div className="flex flex-col">
+          {Object.entries(counts).map(([key, value]) => (
+            <div
+              key={`stat-${key}`}
+              className="flex justify-between items-center"
+            >
+              <p className="capitalize">{key}</p>
+              <p>{value}</p>
+            </div>
+          ))}
+          <div className="flex justify-between items-center text-green-500">
+            <p className="capitalize">Success Rate</p>
+            <p className="blur-xs hover:blur-none">
+              {Number(
+                ((counts.rejected / counts.total) * 100).toFixed(2),
+              ).toString()}
+              %
+            </p>
+          </div>
+          <div className="flex justify-between items-center text-red-600">
+            <p className="capitalize">Rejection Rate</p>
+            <p className="blur-xs hover:blur-none">
+              {Number(
+                (
+                  ((counts.total - counts.rejected) / counts.total) *
+                  100
+                ).toFixed(2),
+              ).toString()}
+              %
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
+        <h3 className="text-xl text-amber-500">Preferred Location</h3>
+        <div className="flex flex-col">
+          {Object.entries(getLocationCount()).map(([key, value]) => (
+            <div
+              key={`stat-${key}`}
+              className="flex justify-between items-center"
+            >
+              <p className="capitalize">{key}</p>
+              <p>{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AnalyticsPage = () => {
+  const user = useAuth();
+  if (!user) return <></>;
+
+  return <AnalyticsContent user={user} />;
+};
+
+export default AnalyticsPage;
