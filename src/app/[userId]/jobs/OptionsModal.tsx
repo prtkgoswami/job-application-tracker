@@ -54,7 +54,7 @@ const OptionsModal = ({
   };
 
   const handleFilterChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, type } = e.target;
     if (!name) return;
@@ -74,9 +74,9 @@ const OptionsModal = ({
 
     // Analytics
     logAnalyticsEvent("filter_applications", {
-      "filter_keys": Object.keys(filterValues).join(','),
-      "filter_values": Object.values(filterValues).join(',')
-    })
+      filter_keys: Object.keys(filterValues).join(","),
+      filter_values: Object.values(filterValues).join(","),
+    });
 
     onClose();
   };

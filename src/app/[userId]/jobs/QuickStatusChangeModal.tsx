@@ -13,7 +13,13 @@ type Props = {
   refetch: () => void;
 };
 
-const STATUS_LIST = ["applied", "interviewing", "rejected", "offered", "cancelled"];
+const STATUS_LIST = [
+  "applied",
+  "interviewing",
+  "rejected",
+  "offered",
+  "cancelled",
+];
 
 const QuickStatusChangeModal = ({
   activeApplicationId,
@@ -64,30 +70,32 @@ const QuickStatusChangeModal = ({
     <Modal
       isVisible={!!activeApplicationId}
       onClose={onClose}
-      title="Quick Change Status"
-      modalClasses="md:w-1/4 h-max flex flex-col gap-5 items-center shadow-xl shadow-gray-900"
-      bodyClasses="px-3 flex justify-center pb-8"
+      theme="dark"
+      title="Change Status"
+      modalClasses="w-full md:w-1/3 lg:w-1/4 pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 mx-2"
+      bodyClasses="px-6 py-6 relative flex flex-col gap-4"
+      hasBackdropPadding={true}
     >
-      <div className="flex flex-col gap-3 justify-center w-2/3">
+      <div className="flex flex-col gap-3">
         {STATUS_LIST.map((status) => (
           <button
             key={`status-change-button-${status}`}
-            className={`w-full border-2 border-amber-400 ${
+            className={`w-full border-2 transition-all duration-200 ease-in-out px-5 py-3.5 text-base rounded-lg capitalize font-semibold cursor-pointer ${
               activeStatus === status
-                ? "text-amber-400 bg-gray-800"
-                : "text-gray-800 hover:bg-amber-100"
-            } transition-colors duration-200 ease-in-out px-4 py-3 text-lg rounded-xl capitalize font-semibold cursor-pointer`}
+                ? "border-amber-500 bg-amber-500/10 text-amber-400 shadow-lg shadow-amber-900/20"
+                : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-600"
+            }`}
             onClick={() => setActiveStatus(status)}
           >
             {status}
           </button>
         ))}
         <button
-          className="text-xl cursor-pointer disabled:cursor-not-allowed bg-amber-400 disabled:bg-gray-200 hover:bg-amber-500 text-gray-800 px-4 py-4 rounded-xl mt-5"
+          className="text-base font-bold cursor-pointer disabled:cursor-not-allowed border border-amber-600 disabled:border-zinc-600 bg-amber-500 disabled:bg-zinc-800 disabled:text-zinc-600 hover:bg-amber-400 disabled:hover:bg-zinc-800 text-zinc-900 px-5 py-4 rounded-lg mt-4 transition-all active:scale-[0.99]"
           onClick={handleSubmitClick}
           disabled={activeApplication.status === activeStatus || !activeStatus}
         >
-          Change Status
+          Update Status
         </button>
       </div>
     </Modal>

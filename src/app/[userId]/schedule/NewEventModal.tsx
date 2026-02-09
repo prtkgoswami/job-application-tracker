@@ -95,7 +95,7 @@ const NewAgendaModal = ({
       onClose={onClose}
       theme="dark"
       title="New Event"
-      modalClasses="w-full md:w-2/3 lg:w-1/2 pb-4 shadow-xl shadow-slate-900 border border-slate-700 h-max mx-2"
+      modalClasses="w-full md:w-2/3 lg:w-1/2 pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 h-max mx-2"
       bodyClasses="px-4 py-4 relative flex flex-col items-stretch"
       hasBackdropPadding={true}
     >
