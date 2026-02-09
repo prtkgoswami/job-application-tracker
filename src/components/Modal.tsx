@@ -61,7 +61,7 @@ const Modal = ({
 
   return (
     <div
-      className={`absolute top-0 left-0 h-full max-h-screen w-full flex justify-center items-center bg-gray-800/40 z-80 ${
+      className={`absolute top-0 left-0 h-full max-h-screen w-full flex justify-center items-center bg-zinc-800/40 z-80 ${
         hasBackdropPadding ? "px-3" : ""
       }`}
       onClick={handleBackdropClick}
@@ -69,32 +69,34 @@ const Modal = ({
     >
       <div
         className={`w-full ${
-          theme === "light" ? "bg-gray-100" : "bg-gray-800"
+          theme === "light" ? "bg-zinc-100" : "bg-zinc-800"
         } rounded-lg flex flex-col relative overflow-hidden ${modalClasses}`}
       >
         {!hideHeader && (
           <section className="w-full">
-            {header ?? <div className="w-full flex justify-between items-center p-5 pb-3">
-              <h3
-                className={`text-2xl ${
-                  theme === "light" ? "text-gray-800" : "text-gray-100"
-                }`}
-              >
-                {title}
-              </h3>
-              {showCloseButton && (
-                <button
-                  className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full ${
-                    theme === "light"
-                      ? "text-gray-800 hover:bg-amber-400"
-                      : "text-gray-100 hover:bg-amber-600"
+            {header ?? (
+              <div className="w-full flex justify-between items-center p-5 pb-3">
+                <h3
+                  className={`text-2xl ${
+                    theme === "light" ? "text-zinc-800" : "text-zinc-100"
                   }`}
-                  onClick={onClose}
                 >
-                  <FontAwesomeIcon icon={faXmark} size="lg" />
-                </button>
-              )}
-            </div>}
+                  {title}
+                </h3>
+                {showCloseButton && (
+                  <button
+                    className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full ${
+                      theme === "light"
+                        ? "text-zinc-800 hover:bg-amber-400"
+                        : "text-zinc-100 hover:text-zinc-800 hover:bg-amber-500"
+                    } transition-colors duration-200 ease-in-out`}
+                    onClick={onClose}
+                  >
+                    <FontAwesomeIcon icon={faXmark} size="lg" />
+                  </button>
+                )}
+              </div>
+            )}
           </section>
         )}
 
@@ -106,8 +108,8 @@ const Modal = ({
           <section
             className={`w-full ${
               theme === "light"
-                ? "bg-amber-400 border-gray-800"
-                : "bg-amber-400 border-gray-200"
+                ? "bg-amber-400 border-zinc-800"
+                : "bg-amber-400 border-zinc-200"
             } px-5 py-4 border-t`}
           >
             {footer}

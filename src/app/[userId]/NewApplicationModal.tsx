@@ -8,14 +8,10 @@ import Modal from "@components/Modal";
 import { logAnalyticsEvent } from "@lib/analytics";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faAsterisk,
   faChevronDown,
   faChevronRight,
-  faFloppyDisk,
-  faHeart,
-  faXmark,
+  faCloudUploadAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import Tooltip from "@/components/Tooltip";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Link from "next/link";
 import JsonImportModal from "./JsonImportModal";
@@ -150,40 +146,6 @@ const NewApplicationModal = ({
     formRef.current.requestSubmit();
   };
 
-  const header = (
-    <div className="w-full flex justify-between items-center p-5 pb-3">
-      <h3 className={`text-2xl text-gray-100`}>
-        New <span className="hidden md:inline-block">Application</span>
-      </h3>
-      <div className="flex gap-3">
-        <Tooltip content="Apply" position="bottom">
-          <button
-            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-            onClick={handleAppliedClick}
-          >
-            <FontAwesomeIcon icon={faFloppyDisk} size="lg" />
-          </button>
-        </Tooltip>
-        <Tooltip content="Wishlist" position="bottom">
-          <button
-            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-            onClick={handleWishlistClick}
-          >
-            <FontAwesomeIcon icon={faHeart} size="lg" />
-          </button>
-        </Tooltip>
-        <Tooltip content="Close" position="bottom">
-          <button
-            className={`w-10 h-10 cursor-pointer flex justify-center items-center rounded-full text-gray-800 bg-amber-400 hover:bg-amber-500`}
-            onClick={handleClose}
-          >
-            <FontAwesomeIcon icon={faXmark} size="lg" />
-          </button>
-        </Tooltip>
-      </div>
-    </div>
-  );
-
   useEffect(() => {
     if (showModal) {
       setShowNotesSection(false);
@@ -204,58 +166,54 @@ const NewApplicationModal = ({
     <Modal
       isVisible={showModal}
       onClose={handleClose}
-      modalClasses="md:w-2/3 h-full md:h-[97%] shadow-lg shadow-gray-900 border-2 border-slate-700"
-      bodyClasses="px-5 flex flex-col items-center"
       theme="dark"
-      header={header}
+      title="New Application"
+      modalClasses="w-full md:w-2/3 lg:w-2/3 h-[95%] md:h-auto md:max-h-[90%] pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 mx-2"
+      bodyClasses="px-5 py-4 relative flex flex-col gap-6 overflow-y-auto"
+      hasBackdropPadding={true}
     >
-      <div className="flex w-full md:w-4/5 flex-col gap-4 md:gap-2 my-4 border border-gray-200/60 rounded-lg p-3">
-        <div className="flex flex-col md:flex-row gap-3 justify-between items-center">
-          <p className="text-base md:text-lg text-amber-400 font-semibold">
-            Import Fields from JSON
+      {/* Import Section */}
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="text-sm">
+          <p className="text-zinc-300 font-medium">Have a JSON snippet?</p>
+          <p className="text-zinc-400 text-xs leading-relaxed mt-1">
+            Import from{" "}
+            <Link
+              href="https://github.com/prtkgoswami/job-parse"
+              target="_blank"
+              className="text-amber-500 hover:text-amber-400 hover:underline"
+            >
+              JobParse
+            </Link>{" "}
+            to autofill.
           </p>
-          <button
-            type="button"
-            className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-10 py-4 md:py-2 rounded-md w-max"
-            onClick={() => setShowJsonImport(true)}
-          >
-            Import JSON
-          </button>
         </div>
-        <p className="text-center md:text-left text-sm md:text-base">
-          Easy import from a JSON object like one from{" "}
-          <Link
-            href="https://github.com/prtkgoswami/job-parse"
-            target="_blank"
-            className="pb-0.5 border-b border-amber-400 text-amber-400 hover:text-amber-500"
-          >
-            JobParse
-          </Link>
-        </p>
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-900 text-zinc-200 px-4 py-2 rounded-md transition-colors text-sm font-medium border border-amber-500 cursor-pointer"
+          onClick={() => setShowJsonImport(true)}
+        >
+          <FontAwesomeIcon icon={faCloudUploadAlt} />
+          Import JSON
+        </button>
       </div>
 
-      <div className="flex w-full justify-center grow h-max pt-2 pb-5">
-        <form
-          className="w-full md:w-4/5 flex flex-col items-center gap-5"
-          onSubmit={handleSubmit}
-          ref={formRef}
-        >
-          <div className="w-full">
-            <div className="py-2">
-              <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-                Job Title{" "}
-                <FontAwesomeIcon
-                  icon={faAsterisk}
-                  size="xs"
-                  className="text-rose-700"
-                />
-              </label>
-            </div>
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5"
+      >
+        {/* Core Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label className="text-zinc-400 text-sm font-medium">
+              Job Title <span className="text-rose-500">*</span>
+            </label>
             <input
               type="text"
               name="job-title"
-              placeholder="Type here..."
-              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
+              placeholder="e.g. Senior Frontend Engineer"
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
               required
               value={formData["job-title"]}
               onChange={(e) =>
@@ -266,79 +224,48 @@ const NewApplicationModal = ({
               }
             />
           </div>
-          <div className="w-full grid grid-cols-2 gap-5">
-            <div className="w-full">
-              <div className="py-2">
-                <label className="text-amber-500 uppercase font-semibold">
-                  Job Link
-                </label>
-              </div>
-              <input
-                type="text"
-                name="job-link"
-                placeholder="Paste here..."
-                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
-                value={formData["job-link"]}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    "job-link": e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div className="w-full">
-              <div className="py-2">
-                <label className="text-amber-500 uppercase font-semibold flex items-start gap-1">
-                  Company{" "}
-                  <FontAwesomeIcon
-                    icon={faAsterisk}
-                    size="xs"
-                    className="text-rose-700"
-                  />
-                </label>
-              </div>
-              <input
-                type="text"
-                name="company"
-                placeholder="Type here..."
-                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
-                required
-                value={formData["company"]}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, company: e.target.value }))
-                }
-              />
-            </div>
+
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label className="text-zinc-400 text-sm font-medium">
+              Company <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="company"
+              placeholder="e.g. Acme Corp"
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+              required
+              value={formData["company"]}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, company: e.target.value }))
+              }
+            />
           </div>
-          <div className="w-full grid grid-cols-2 gap-5">
-            <div className="w-full">
-              <div className="py-2">
-                <label className="text-amber-500 uppercase font-semibold">
-                  Location
-                </label>
-              </div>
-              <input
-                type="text"
-                name="location"
-                placeholder="Type here..."
-                className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none"
-                value={formData["location"]}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, location: e.target.value }))
-                }
-              />
-            </div>
-            <div className="w-full">
-              <div className="py-2">
-                <label className="text-amber-500 uppercase font-semibold">
-                  Job Type
-                </label>
-              </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-zinc-400 text-sm font-medium">
+              Location
+            </label>
+            <input
+              type="text"
+              name="location"
+              placeholder="e.g. New York, NY"
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+              value={formData["location"]}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, location: e.target.value }))
+              }
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-zinc-400 text-sm font-medium">
+              Job Type
+            </label>
+            <div className="relative">
               <select
                 name="job-type"
-                className="capitalize w-full border bg-gray-200 px-4 py-[11px] text-gray-800"
-                defaultValue="onsite"
+                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all appearance-none capitalize"
                 value={formData["job-type"]}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -347,28 +274,49 @@ const NewApplicationModal = ({
                   }))
                 }
               >
-                <option value="onsite" className="bg-gray-100 text-gray-800">
-                  onsite
-                </option>
-                <option value="hybrid" className="bg-gray-100 text-gray-800">
-                  hybrid
-                </option>
-                <option value="remote" className="bg-gray-100 text-gray-800">
-                  remote
-                </option>
+                <option value="onsite">On-site</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="remote">Remote</option>
               </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-500">
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
             </div>
           </div>
-          <div className="w-full">
-            <div className="py-2">
-              <label className="text-amber-500 uppercase font-semibold">
-                Responsibilities
-              </label>
-            </div>
+
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label className="text-zinc-400 text-sm font-medium">
+              Job Link
+            </label>
+            <input
+              type="text"
+              name="job-link"
+              placeholder="https://..."
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+              value={formData["job-link"]}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, "job-link": e.target.value }))
+              }
+            />
+          </div>
+        </div>
+
+        {/* Details Textareas */}
+        <div className="grid grid-cols-1 gap-5 h-128">
+          <div className="flex flex-col gap-1.5 h-full">
+            <label className="text-zinc-400 text-sm font-medium">
+              Responsibilities
+            </label>
             <textarea
               name="job-responsibilities"
-              placeholder="Paste here..."
-              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              placeholder="Key responsibilities..."
+              className="w-full flex-1 px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all resize-none"
               value={formData["job-responsibilities"]}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -378,16 +326,14 @@ const NewApplicationModal = ({
               }
             />
           </div>
-          <div className="w-full">
-            <div className="py-2">
-              <label className="text-amber-500 uppercase font-semibold">
-                Requirements
-              </label>
-            </div>
+          <div className="flex flex-col gap-1.5 h-full">
+            <label className="text-zinc-400 text-sm font-medium">
+              Requirements
+            </label>
             <textarea
               name="job-requirements"
-              placeholder="Paste here..."
-              className="w-full border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none h-80 overflow-y-auto"
+              placeholder="Key requirements..."
+              className="w-full flex-1 px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all resize-none"
               value={formData["job-requirements"]}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -397,57 +343,65 @@ const NewApplicationModal = ({
               }
             />
           </div>
-          <div className="pb-5 w-full">
-            <div
-              className="flex gap-2 items-center py-2 cursor-pointer"
-              onClick={() => setShowNotesSection((prev) => !prev)}
-            >
-              <FontAwesomeIcon
-                icon={showNotesSection ? faChevronDown : faChevronRight}
-              />
-              <label className="text-amber-500 uppercase font-semibold">
-                Notes
-              </label>
-            </div>
-            <div
-              className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-in-out ${
-                showNotesSection ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <textarea
-                ref={notesRef}
-                name="job-notes"
-                placeholder="Paste here..."
-                className={`w-full h-80 border bg-gray-300 placeholder:text-gray-500 px-4 py-2 text-gray-900 focus-visible:outline-none resize-none overflow-y-auto`}
-                value={formData["job-notes"]}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    "job-notes": e.target.value,
-                  }))
-                }
-              />
-            </div>
-          </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-8 w-full">
-            <button
-              type="button"
-              className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-8 py-5 md:py-3 rounded-md w-full"
-              onClick={handleWishlistClick}
-            >
-              Wishlist
-            </button>
-            <button
-              type="button"
-              className="cursor-pointer bg-amber-400 text-gray-800 hover:bg-amber-500 px-8 py-5 md:py-3 rounded-md w-full"
-              onClick={handleAppliedClick}
-            >
-              Applied
-            </button>
+        {/* Notes Toggle */}
+        <div className="border border-zinc-800 rounded-lg overflow-hidden">
+          <button
+            type="button"
+            className="w-full flex items-center justify-between p-4 bg-zinc-900/30 hover:bg-zinc-900/50 transition-colors text-left cursor-pointer"
+            onClick={() => setShowNotesSection((prev) => !prev)}
+          >
+            <span className="text-zinc-300 font-medium text-sm flex items-center gap-2">
+              Your Notes
+              {formData["job-notes"] && (
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              )}
+            </span>
+            <FontAwesomeIcon
+              icon={showNotesSection ? faChevronDown : faChevronRight}
+              className="text-zinc-500"
+            />
+          </button>
+          <div
+            className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${
+              showNotesSection ? "max-h-84 opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <textarea
+              ref={notesRef}
+              name="job-notes"
+              placeholder="Add personal notes, salary range, referrals..."
+              className="w-full h-64 px-4 py-3 bg-zinc-900 text-zinc-300 placeholder-zinc-600 focus:outline-none resize-none border-t border-zinc-800"
+              value={formData["job-notes"]}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  "job-notes": e.target.value,
+                }))
+              }
+            />
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Actions */}
+        <div className="grid grid-cols-2 gap-4 mt-2">
+          <button
+            type="button"
+            className="cursor-pointer py-3.5 rounded-lg font-bold border border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all"
+            onClick={handleWishlistClick}
+          >
+            Save to Wishlist
+          </button>
+          <button
+            type="button"
+            className="cursor-pointer py-3.5 rounded-lg font-bold bg-amber-500 text-zinc-900 hover:bg-amber-400 shadow-lg shadow-amber-900/20 active:scale-[0.99] transition-all"
+            onClick={handleAppliedClick}
+          >
+            Mark as Applied
+          </button>
+        </div>
+      </form>
 
       <ConfirmDialog
         isVisible={showCloseWarning}
@@ -457,8 +411,8 @@ const NewApplicationModal = ({
           setFormData(EMPTY_DATA);
           onClose();
         }}
-        message="Are you sure you want to Close this Application?"
-        description="Looks like you have some unsaved data"
+        message="Discard unsaved changes?"
+        description="You have entered data that will be lost."
       />
 
       <JsonImportModal

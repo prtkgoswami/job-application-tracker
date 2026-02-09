@@ -55,7 +55,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
     switch (activeFilters.status) {
       case "active":
         jobList = jobList.filter(
-          (job) => job.status === "applied" || job.status === "interviewing"
+          (job) => job.status === "applied" || job.status === "interviewing",
         );
         break;
       case "applied":
@@ -77,7 +77,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
     if (activeFilters.jobType) {
       jobList = jobList.filter(
-        (job) => job.jobType.toLowerCase() === activeFilters.jobType
+        (job) => job.jobType.toLowerCase() === activeFilters.jobType,
       );
     }
 
@@ -87,7 +87,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
     if (activeFilters.location) {
       jobList = jobList.filter(
-        (job) => job.location === activeFilters.location
+        (job) => job.location === activeFilters.location,
       );
     }
 
@@ -103,20 +103,38 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
       {
         id: "index",
         header: "#",
-        cell: (info: CellContext<Job, unknown>) => info.row.index + 1,
-        size: 30,
+        cell: (info: CellContext<Job, unknown>) => (
+          <span className="text-zinc-500 font-mono text-sm">
+            {info.row.index + 1}
+          </span>
+        ),
+        size: 50,
       },
       {
         accessorKey: "title",
         header: "Title",
-        cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 300,
+        cell: (info: CellContext<Job, unknown>) => (
+          <div
+            className="truncate font-medium text-zinc-200 text-sm"
+            title={info.getValue() as string}
+          >
+            {info.getValue() as string}
+          </div>
+        ),
+        size: 370,
       },
       {
         accessorKey: "company",
         header: "Company",
-        cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 140,
+        cell: (info: CellContext<Job, unknown>) => (
+          <div
+            className="truncate text-zinc-300 text-sm"
+            title={info.getValue() as string}
+          >
+            {info.getValue() as string}
+          </div>
+        ),
+        size: 200,
       },
       {
         accessorKey: "location",
@@ -124,20 +142,27 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
         cell: (info: CellContext<Job, unknown>) => {
           const value = info.getValue() as string | undefined;
           return value ? (
-            <span className="capitalize">{value}</span>
+            <div
+              className="capitalize truncate text-zinc-400 text-sm"
+              title={value}
+            >
+              {value}
+            </div>
           ) : (
-            <span className="text-gray-400">--</span>
+            <span className="text-zinc-600 text-sm">--</span>
           );
         },
-        size: 110,
+        size: 200,
       },
       {
         accessorKey: "jobType",
         header: "Type",
         cell: (info: CellContext<Job, unknown>) => (
-          <span className="capitalize">{info.getValue() as string}</span>
+          <span className="capitalize text-zinc-400 text-sm">
+            {info.getValue() as string}
+          </span>
         ),
-        size: 80,
+        size: 100,
       },
       {
         accessorKey: "status",
@@ -154,35 +179,46 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
           return (
             <button
               type="button"
-              className={`w-full h-full border ${STATUS_COLOR_MAP[status]} text-sm px-4 py-3 rounded-md capitalize cursor-pointer`}
+              className={`w-full border ${STATUS_COLOR_MAP[status]} text-sm font-semibold px-3 py-1.5 rounded-md capitalize cursor-pointer transition-transform active:scale-95`}
               onClick={handleClick}
             >
               {status}
             </button>
           );
         },
-        size: 110,
+        size: 160,
       },
       {
         accessorKey: "createDate",
         header: "Apply Date",
-        cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 100,
+        cell: (info: CellContext<Job, unknown>) => (
+          <span className="text-zinc-400 text-sm">
+            {info.getValue() as string}
+          </span>
+        ),
+        size: 140,
       },
       {
         accessorKey: "lastUpdateDate",
         header: "Last Updated",
-        cell: (info: CellContext<Job, unknown>) => info.getValue() as string,
-        size: 100,
+        cell: (info: CellContext<Job, unknown>) => (
+          <span className="text-zinc-500 text-sm">
+            {info.getValue() as string}
+          </span>
+        ),
+        size: 140,
       },
     ],
-    [onStatusClick]
+    [onStatusClick],
   );
 
   const table = useReactTable<Job>({
     data: filteredJobs,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      size: 150, // Default column size
+    },
   });
 
   const { rows } = table.getRowModel();
@@ -190,8 +226,8 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 50,
-    overscan: 10,
+    estimateSize: () => 64, // Approximate row height
+    overscan: 20,
   });
 
   useEffect(() => {
@@ -211,9 +247,9 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
   if (isLoading) {
     return (
       <div className="grow w-full flex justify-center items-center mt-4 px-4">
-        <div className="text-center text-xl py-10">
-          <FontAwesomeIcon icon={faSpinner} size="2xl" spin /> Fetching Job
-          List...
+        <div className="text-center text-xl py-10 text-zinc-400 animate-pulse">
+          <FontAwesomeIcon icon={faSpinner} size="2xl" spin className="mb-4" />
+          <p>Fetching Job List...</p>
         </div>
       </div>
     );
@@ -223,87 +259,97 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
     <>
       <div
         ref={tableContainerRef}
-        className="grow w-full flex md:justify-center items-start overflow-auto mt-4 px-4 pb-8 md:pb-0 md:px-0"
+        className="w-full h-full overflow-auto rounded-xl border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm"
       >
-        <div className="w-full">
-          <table className="w-full table-fixed border-separate">
-            <thead className="sticky top-0 z-10 bg-zinc-950">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="px-2 py-2 text-center font-semibold border border-gray-200/20 text-amber-500"
-                      style={{
-                        width:
-                          header.getSize() !== 150
-                            ? header.getSize()
-                            : undefined,
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody
-              className="text-sm leading-relaxed md:text-base relative"
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-              }}
-            >
-              {filteredJobs.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-10 border border-gray-200/20 text-center text-md text-gray-100/50"
+        <div
+          style={{
+            width: table.getTotalSize(),
+            minWidth: "100%",
+          }}
+          className="flex flex-col"
+          role="table"
+        >
+          {/* Header */}
+          <div
+            className="sticky top-0 z-20 bg-zinc-950 shadow-sm border-b border-zinc-800 flex min-w-full"
+            role="rowgroup"
+          >
+            {table.getHeaderGroups().map((headerGroup) => (
+              <div key={headerGroup.id} className="flex w-full" role="row">
+                {headerGroup.headers.map((header) => (
+                  <div
+                    key={header.id}
+                    className="px-4 py-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider shrink-0 flex items-center"
+                    style={{
+                      width: header.getSize(),
+                    }}
+                    role="columnheader"
                   >
-                    You Don&apos;t have any applications. Try adding a new
-                    Entry.
-                  </td>
-                </tr>
-              ) : (
-                rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const row = rows[virtualRow.index];
-                  if (!row) return null;
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
 
-                  return (
-                    <tr
-                      key={row.id}
-                      onClick={() => handleRowClick(row.original)}
-                      className=" w-full cursor-pointer hover:bg-amber-50/5 transition-colors h-20"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className={`px-2 py-2 text-center border border-gray-200/20 truncate ${
-                            virtualRow.index % 2 === 0 ? "bg-amber-50/10" : ""
-                          }`}
-                          style={{
-                            width:
-                              cell.column.getSize() !== 150
-                                ? cell.column.getSize()
-                                : undefined,
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+          {/* Body */}
+          <div
+            className="relative w-full"
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+            }}
+            role="rowgroup"
+          >
+            {filteredJobs.length === 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center text-zinc-500">
+                <div className="flex flex-col items-center">
+                  <p className="text-lg font-medium text-zinc-300 mb-1">
+                    No applications found
+                  </p>
+                  <p className="text-sm">Add a new entry to get started.</p>
+                </div>
+              </div>
+            ) : (
+              rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const row = rows[virtualRow.index];
+                if (!row) return null;
+
+                return (
+                  <div
+                    key={row.id}
+                    onClick={() => handleRowClick(row.original)}
+                    className="group absolute w-full flex cursor-pointer hover:bg-zinc-800/40 transition-colors duration-150 ease-in-out border-b border-zinc-800/50"
+                    style={{
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    role="row"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <div
+                        key={cell.id}
+                        className="px-4 py-3 flex items-center shrink-0"
+                        style={{
+                          width: cell.column.getSize(),
+                        }}
+                        role="cell"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
 
