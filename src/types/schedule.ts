@@ -3,7 +3,10 @@ export type ScheduledEvent = {
   title: string;
   description?: string;
   dateTime: number;
+  duration: number;
   relatedJobId: string;
+  relatedPeople?: string;
+  relatedLink?: string;
   createdDate: number;
   isDone: boolean;
 };

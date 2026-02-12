@@ -21,7 +21,10 @@ type FirestoreEvent = {
   title: string;
   description?: string;
   dateTime: number;
+  durationMins: number;
   relatedJobId: string;
+  relatedPeople?: string;
+  relatedLink?: string;
   createdDate: Timestamp;
   userId: string;
   isDone: boolean;
@@ -65,7 +68,10 @@ const useSchedule = (
           title: data.title,
           description: data.description,
           dateTime: data.dateTime,
+          duration: Number(data.durationMins),
           relatedJobId: data.relatedJobId,
+          relatedLink: data.relatedLink ?? "",
+          relatedPeople: data.relatedPeople ?? "",
           createdDate: data.createdDate?.toMillis() || 0,
           isDone: data.isDone ?? false,
         };
