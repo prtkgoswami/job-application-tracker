@@ -46,7 +46,7 @@ const EventList = ({
           <div className="sticky top-0 z-10 bg-zinc-950/90 backdrop-blur pb-4 pt-2 border-b border-zinc-800 mb-4 flex items-baseline justify-between">
             <h3 className="text-xl font-bold text-zinc-100">{date}</h3>
             <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
-              {schedule.length} Events
+              {schedule.length} {schedule.length === 1 ? "Event" : "Events"}
             </span>
           </div>
 
@@ -73,22 +73,19 @@ const EventList = ({
                     ${event.isDone ? "bg-zinc-900/50 text-zinc-500" : "bg-zinc-800/30 text-zinc-300 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-colors"}
                   `}
                   >
-                    <span className="text-lg font-bold leading-none">
+                    <span className="text-xl font-bold leading-none">
                       {
                         eventDate
                           .toLocaleTimeString("en-US", {
                             hour: "numeric",
                             minute: "2-digit",
+                            hour12: false,
                           })
                           .split(" ")[0]
                       }
                     </span>
-                    <span className="text-[10px] font-medium uppercase mt-1 opacity-70">
-                      {
-                        eventDate
-                          .toLocaleTimeString("en-US", { hour12: true })
-                          .split(" ")[1]
-                      }
+                    <span className="text-sm font-semibold capitalize mt-3 opacity-70">
+                      {event.duration} mins
                     </span>
                   </div>
 

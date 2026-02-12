@@ -37,6 +37,9 @@ type FirestoreEvent = {
   createdDate: Timestamp;
   userId: string;
   isDone: boolean;
+  durationMins: number;
+  relatedPeople?: string;
+  relatedLink?: string;
 };
 
 const getDateString = (date: Date) => {
@@ -127,7 +130,10 @@ const useJobDetails = (
             title: data.title,
             description: data.description,
             dateTime: data.dateTime,
+            duration: Number(data.durationMins),
             relatedJobId: data.relatedJobId,
+            relatedLink: data.relatedLink ?? "",
+            relatedPeople: data.relatedPeople ?? "",
             createdDate: data.createdDate?.toMillis() || 0,
             isDone: data.isDone ?? false,
           };

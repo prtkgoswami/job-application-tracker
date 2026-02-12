@@ -19,6 +19,9 @@ type FormDataType = {
   "related-job": string;
   "datetime-date": string;
   "datetime-time": string;
+  "related-people": string;
+  "duration-mins": number;
+  "related-link": string;
 };
 
 const getEmptyData = () => {
@@ -35,6 +38,9 @@ const getEmptyData = () => {
     "related-job": "",
     "datetime-date": `${year}-${month}-${day}`,
     "datetime-time": `${hours}:${minutes}`,
+    "related-people": "",
+    "duration-mins": 0,
+    "related-link": "",
   };
 };
 
@@ -66,6 +72,9 @@ const NewAgendaModal = ({
       dateTime: new Date(
         `${formData["datetime-date"]} ${formData["datetime-time"]}`,
       ).getTime(),
+      durationMins: formData["duration-mins"],
+      relatedLink: formData["related-link"],
+      relatedPeople: formData["related-people"],
       createdDate: serverTimestamp(),
       isDone: false,
     };
@@ -95,8 +104,8 @@ const NewAgendaModal = ({
       onClose={onClose}
       theme="dark"
       title="New Event"
-      modalClasses="w-full md:w-2/3 lg:w-1/2 pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 h-max mx-2"
-      bodyClasses="px-4 py-4 relative flex flex-col items-stretch"
+      modalClasses="w-full md:w-2/3 lg:w-2/3 h-[95%] md:h-auto md:max-h-[90%] pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 mx-2"
+      bodyClasses="px-4 py-4 relative flex flex-col items-stretch overflow-y-auto"
       hasBackdropPadding={true}
     >
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -117,6 +126,43 @@ const NewAgendaModal = ({
             className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
             required
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="event-form-related-people"
+              className="text-zinc-400 text-sm font-medium"
+            >
+              Related People (Optional)
+            </label>
+            <input
+              name="related-people"
+              type="text"
+              id="event-form-related-people"
+              placeholder="e.g. John Doe"
+              value={formData["related-people"]}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="event-form-related-people"
+              className="text-zinc-400 text-sm font-medium"
+            >
+              Duration (in minutes)
+            </label>
+            <input
+              name="duration-mins"
+              type="text"
+              id="event-form-duration"
+              placeholder="e.g. 45"
+              value={formData["duration-mins"]}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+              required
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -208,7 +254,25 @@ const NewAgendaModal = ({
             placeholder="Add notes, meeting links, or other details..."
             value={formData["description"]}
             onChange={handleChange}
-            className="w-full px-4 py-3 h-32 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all resize-none"
+            className="w-full px-4 py-3 h-32 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="event-form-related-link"
+            className="text-zinc-400 text-sm font-medium"
+          >
+            Important Links (Optional)
+          </label>
+          <input
+            name="related-link"
+            type="text"
+            id="event-form-related-link"
+            placeholder="e.g. https://www.sample.com"
+            value={formData["related-link"]}
+            onChange={handleChange}
+            className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-lg transition-all"
           />
         </div>
 

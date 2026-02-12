@@ -20,7 +20,7 @@ export const getDifferenceFromNow = (date: Date) => {
   return now - target;
 };
 
-export const formatDateTime = (date: Date) => {
+export const formatDateAtTime = (date: Date) => {
   const d = date.getDate();
   const months = [
     "Jan",
@@ -46,4 +46,38 @@ export const formatDateTime = (date: Date) => {
   hours = hours ? hours : 12; // the hour '0' should be '12'
 
   return `${d} ${m} ${y} @ ${hours}:${minutes} ${ampm}`;
+};
+
+export const formatDayDate = (date: Date) => {
+  const dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = dayOfWeek[date.getDay()];
+  const d = date.getDate();
+  const m = months[date.getMonth()];
+  const y = date.getFullYear();
+
+  return `${day}, ${d} ${m} ${y}`;
+};
+
+export const formatTimeAmPm = (date: Date) => {
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+
+  return `${hours}:${minutes} ${ampm}`;
 };

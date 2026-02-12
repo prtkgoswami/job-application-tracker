@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAsterisk,
   faBuilding,
+  faCaretRight,
   faCopy,
   faFloppyDisk,
   faLink,
@@ -53,6 +54,7 @@ const INITIAL_DATA: Omit<Job, "id" | "createDate" | "lastUpdateDate"> = {
 };
 
 const JobDetailsModal = ({
+  userId,
   jobData,
   isVisible,
   refetchData,
@@ -77,7 +79,7 @@ const JobDetailsModal = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     if (!name || !value) return;
@@ -139,11 +141,11 @@ const JobDetailsModal = ({
         old_status: jobData.status,
         time_in_previous_stage: Math.floor(
           getDifferenceFromNow(new Date(jobData.lastUpdateDate)) /
-            (1000 * 3600 * 24)
+            (1000 * 3600 * 24),
         ),
         time_since_created: Math.floor(
           getDifferenceFromNow(new Date(jobData.createDate)) /
-            (1000 * 3600 * 24)
+            (1000 * 3600 * 24),
         ),
       });
 
@@ -476,23 +478,41 @@ const JobDetailsModal = ({
                     Last Updated On: {jobData.lastUpdateDate}
                   </p>
                 </div>
+
+                <Link href={`/${userId}/jobs/${jobData.id}`}>
+                  <button
+                    className={`cursor-pointer w-full border-2 border-amber-500 py-2 px-4 flex justify-between items-center rounded-md`}
+                  >
+                    <span className="flex gap-2 items-center">
+                      <span className="text-red-600 font-semibold uppercase text-sm animate-pulse">
+                        New
+                      </span>
+                      Visit Details Page
+                    </span>
+                    <FontAwesomeIcon icon={faCaretRight} />
+                  </button>
+                </Link>
               </section>
-              {jobData.responsibilities && <section className="flex flex-col gap-2">
-                <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                  Responsibilities
-                </h4>
-                <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
-                  {jobData.responsibilities}
-                </p>
-              </section>}
-              {jobData.requirements && <div className={`flex flex-col gap-2`}>
-                <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
-                  Requirements
-                </h4>
-                <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
-                  {jobData.requirements}
-                </p>
-              </div>}
+              {jobData.responsibilities && (
+                <section className="flex flex-col gap-2">
+                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                    Responsibilities
+                  </h4>
+                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                    {jobData.responsibilities}
+                  </p>
+                </section>
+              )}
+              {jobData.requirements && (
+                <div className={`flex flex-col gap-2`}>
+                  <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">
+                    Requirements
+                  </h4>
+                  <p className="px-4 whitespace-pre-wrap text-sm md:text-base">
+                    {jobData.requirements}
+                  </p>
+                </div>
+              )}
               {jobData.notes && (
                 <div className="flex flex-col gap-2">
                   <h4 className="text-amber-600 text-xl font-light uppercase border-b border-amber-700 p-2">

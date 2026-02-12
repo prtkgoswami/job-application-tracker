@@ -388,7 +388,7 @@ const NewApplicationModal = ({
         <div className="grid grid-cols-2 gap-4 mt-2">
           <button
             type="button"
-            className="cursor-pointer py-3.5 rounded-lg font-bold border border-zinc-700 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all"
+            className="cursor-pointer py-3.5 rounded-lg font-bold border border-zinc-300 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all"
             onClick={handleWishlistClick}
           >
             Save to Wishlist

@@ -1,11 +1,13 @@
 import Modal from "@/components/Modal";
-import { formatDateTime } from "@/lib/date";
+import { formatDayDate, formatTimeAmPm } from "@/lib/date";
 import { Job } from "@/types/job";
 import { ScheduledEvent } from "@/types/schedule";
 import {
   faCaretRight,
+  faCheck,
   faCheckCircle,
-  faClock,
+  faPaperPlane,
+  faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -32,13 +34,19 @@ const EventDetailsModal = ({
 }: Props) => {
   if (!eventDetails) return <></>;
 
+  const date = formatDayDate(new Date(eventDetails.dateTime));
+  const startTime = formatTimeAmPm(new Date(eventDetails.dateTime));
+  const endTime = formatTimeAmPm(
+    new Date(eventDetails.dateTime + eventDetails.duration * 60000),
+  );
+
   return (
     <Modal
       isVisible={isVisible}
       onClose={onClose}
       theme="dark"
       title="Event Details"
-      modalClasses="w-full md:w-2/3 lg:w-1/2 pb-4 shadow-xl shadow-slate-900 border border-slate-700 h-max mx-2"
+      modalClasses="w-full md:w-2/3 lg:w-1/2 md:h-auto md:max-h-[98%] pb-4 shadow-xl shadow-zinc-900 border border-zinc-700 h-max mx-2"
       bodyClasses="px-4 py-4 relative flex flex-col gap-5"
       hasBackdropPadding={true}
       hideHeader={true}
@@ -59,30 +67,26 @@ const EventDetailsModal = ({
           <span className="text-zinc-200 font-medium">{jobDetails?.title}</span>{" "}
           • {jobDetails?.company}
         </p>
-        <p className="text-xs md:text-sm text-zinc-500">
-          {jobDetails?.location ?? "Location not specified"}
-        </p>
 
         <Link
           href={`/${userId}/jobs/${eventDetails.relatedJobId}`}
-          className="text-amber-500 hover:text-amber-400 mt-2 inline-flex items-center gap-2 text-sm max-w-max"
+          className="text-amber-500 hover:text-amber-400 mt-2 inline-flex items-center gap-1 text-sm max-w-max"
         >
           View Application
           <FontAwesomeIcon icon={faCaretRight} />
         </Link>
       </div>
 
-      <div className="flex items-center gap-2 text-zinc-300 text-base md:text-lg">
-        <FontAwesomeIcon icon={faClock} className="text-amber-500" />
-        <span className="font-mono">
-          {eventDetails.dateTime
-            ? formatDateTime(new Date(eventDetails.dateTime))
-            : "No time set"}
-        </span>
+      <div className="flex flex-col gap-1 text-zinc-400 text-sm md:text-base">
+        <p className="text-zinc-300">Details:</p>
+        <p>Other Invitees: {eventDetails.relatedPeople}</p>
+        <p>Date: {date}</p>
+        <p>Start Time: {startTime}</p>
+        <p>End Time: {endTime}</p>
       </div>
 
       <div className="bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/50">
-        <p className="h-40 overflow-y-auto leading-relaxed text-sm md:text-base text-zinc-300 whitespace-pre-wrap">
+        <p className="min-h-40 max-h-80 md:max-h-55 overflow-y-auto leading-relaxed text-sm md:text-base text-zinc-300 whitespace-pre-wrap">
           {eventDetails.description || (
             <span className="text-zinc-600 italic">
               No description provided.
@@ -91,33 +95,87 @@ const EventDetailsModal = ({
         </p>
       </div>
 
-      <div className="flex flex-col-reverse md:flex-row justify-between gap-3 pt-2">
+      <div className="hidden md:flex justify-between gap-3 pt-2">
         <button
           className="cursor-pointer py-3 md:py-2 px-4 bg-red-900/20 text-red-500 hover:bg-red-900/40 border border-red-900/50 rounded-md transition-colors font-medium w-full md:w-auto"
           onClick={() => onDelete(eventDetails.id)}
         >
           Delete Event
         </button>
-        <button
-          className={`cursor-pointer py-3 md:py-2 px-6 rounded-md transition-all font-medium flex items-center justify-center gap-2 w-full md:w-auto shadow-lg
+        <div className="flex flex-col-reverse md:flex-row gap-4">
+          <button
+            className={`cursor-pointer py-3 md:py-2 px-6 rounded-md transition-all font-medium flex items-center justify-center gap-2 w-full md:w-auto shadow-lg
             ${
               eventDetails.isDone
                 ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700"
-                : "bg-green-600 text-white hover:bg-green-500 shadow-green-900/20"
+                : "bg-green-600 text-white hover:bg-green-600/80 shadow-green-900/20"
             }
           `}
-          onClick={() => onDone(eventDetails.id)}
-          disabled={eventDetails.isDone}
-        >
-          {eventDetails.isDone ? (
-            <>
-              <FontAwesomeIcon icon={faCheckCircle} />
-              Completed
-            </>
-          ) : (
-            "Mark as Done"
+            onClick={() => onDone(eventDetails.id)}
+            disabled={eventDetails.isDone}
+          >
+            {eventDetails.isDone ? (
+              <>
+                <FontAwesomeIcon icon={faCheckCircle} />
+                Completed
+              </>
+            ) : (
+              "Mark as Done"
+            )}
+          </button>
+
+          {eventDetails.relatedLink && (
+            <Link
+              href={eventDetails.relatedLink}
+              target="_blank"
+              className="text-blue-500 underline"
+            >
+              <button className="cursor-pointer py-3 md:py-2 px-8 bg-blue-600 text-white hover:bg-blue-600/80 border border-blue-900/50 rounded-md transition-colors font-medium w-full md:w-auto">
+                Open Link
+              </button>
+            </Link>
           )}
+        </div>
+      </div>
+
+      <div className="flex md:hidden justify-between gap-3 pt-2">
+        <button
+          className="cursor-pointer px-5 py-4 bg-red-900/20 text-red-500 hover:bg-red-900/40 border border-red-900/50 rounded-md transition-colors font-medium"
+          onClick={() => onDelete(eventDetails.id)}
+        >
+          <FontAwesomeIcon icon={faTrashAlt} />
         </button>
+        <div className="flex flex-row gap-4">
+          <button
+            className={`cursor-pointer px-5 py-4 rounded-md transition-all font-medium flex items-center justify-center gap-2 w-full md:w-auto shadow-lg
+            ${
+              eventDetails.isDone
+                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700"
+                : "bg-green-600 text-white hover:bg-green-600/80 shadow-green-900/20"
+            }
+          `}
+            onClick={() => onDone(eventDetails.id)}
+            disabled={eventDetails.isDone}
+          >
+            {eventDetails.isDone ? (
+              <FontAwesomeIcon icon={faCheckCircle} />
+            ) : (
+              <FontAwesomeIcon icon={faCheck} />
+            )}
+          </button>
+
+          {eventDetails.relatedLink && (
+            <Link
+              href={eventDetails.relatedLink}
+              target="_blank"
+              className="text-blue-500 underline"
+            >
+              <button className="cursor-pointer px-5 py-4 bg-blue-600 text-white hover:bg-blue-600/80 border border-blue-900/50 rounded-md transition-colors font-medium w-full md:w-auto">
+                <FontAwesomeIcon icon={faPaperPlane} />
+              </button>
+            </Link>
+          )}
+        </div>
       </div>
     </Modal>
   );

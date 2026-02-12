@@ -83,7 +83,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       const json: InputJson = JSON.parse(importJson);
 
       const validated = InputJsonSchema.parse(json);
-      console.log("JSON validated", validated)
+      console.log("JSON validated", validated);
 
       const data: FormDataType = {
         "job-title": json.title ?? "",
@@ -102,7 +102,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
                   `\n\n${key}:\n${
                     typeof val === "string" ? val : val.join(",\n")
                   }`),
-              ""
+              "",
             )
             .trim() ?? "",
       };
@@ -136,7 +136,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       const json = JSON.parse(importJson);
 
       const validated = InputJsonSchema.parse(json);
-      console.log("JSON validated", validated)
+      console.log("JSON validated", validated);
 
       setImportJson(JSON.stringify(json, null, 2));
     } catch (err) {
@@ -161,7 +161,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
       onClose={handleClose}
       theme="dark"
       title="JSON Import"
-      modalClasses="md:w-3/4 pb-3 shadow-xl shadow-slate-900 border-2 border-slate-700 h-full"
+      modalClasses="md:w-3/4 pb-3 shadow-xl shadow-zinc-900 border-2 border-zinc-700 h-full"
       bodyClasses="px-5 py-2 relative flex flex-col"
       hasBackdropPadding={false}
     >
@@ -175,7 +175,7 @@ const JsonImportModal = ({ isVisible, setJson, onClose }: Props) => {
         value={importJson}
         onChange={(e) => setImportJson(e.target.value)}
         placeholder={`Paste JSON of type: ${TYPE_STRING}`}
-        className={`w-full resize-none grow md:h-120 bg-slate-700 p-3 rounded-lg border border-transparent focus-visible:outline-none ${
+        className={`w-full resize-none grow md:h-120 bg-zinc-700 p-3 rounded-lg border border-transparent focus-visible:outline-none ${
           error ? "border-red-600!" : "focus-visible:border-amber-400"
         }`}
       />
