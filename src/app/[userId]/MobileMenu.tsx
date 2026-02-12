@@ -8,6 +8,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../contexts/AuthProvider";
 import { getMenuItems } from "@/lib/menu";
+import { useFeatureFlags } from "@/contexts/FeatureFlagContext";
 
 type MobileMenuProps = {
   showMenu: boolean;
@@ -25,7 +26,8 @@ const MobileMenu = ({
   const router = useRouter();
   const user = useAuth();
   const userId = user?.uid;
-  const menuItems = getMenuItems(user?.uid);
+  const { featureFlags } = useFeatureFlags();
+  const menuItems = getMenuItems(featureFlags);
 
   const routeToPage = (route: string) => {
     router.push(`/${userId}/${route}`);
@@ -50,11 +52,11 @@ const MobileMenu = ({
         Menu
       </h2>
       <nav className="flex flex-col gap-3">
-        {menuItems.map(({ id, key, title }) => (
+        {menuItems.map(({ id, routeKey, title }) => (
           <div
             key={id}
             onClick={() => {
-              routeToPage(key);
+              routeToPage(routeKey);
               onCloseMobileMenu();
             }}
             className="p-2 rounded-md text-2xl text-gray-800 cursor-pointer"

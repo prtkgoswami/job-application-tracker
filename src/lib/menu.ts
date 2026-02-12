@@ -1,54 +1,50 @@
 type MenuItem = {
   id: string;
-  key: string;
+  routeKey: string;
   title: string;
-  isExperimental?: boolean;
+  experimentKey?: string;
 };
 
 const MENU: MenuItem[] = [
   {
     id: "menu-item-jobs",
-    key: "jobs",
+    routeKey: "jobs",
     title: "Jobs Dashboard",
   },
   {
     id: "menu-item-analytics",
-    key: "analytics",
+    routeKey: "analytics",
     title: "Analytics Dashboard",
-    isExperimental: true,
+    experimentKey: "show_analytics_menu_option",
   },
   {
     id: "menu-item-schedule",
-    key: "schedule",
+    routeKey: "schedule",
     title: "Schedule",
-    isExperimental: true,
+    experimentKey: "show_schedule_menu_option",
   },
   {
     id: "menu-item-profile",
-    key: "profile",
+    routeKey: "profile",
     title: "Profile Preferences",
   },
   {
     id: "menu-item-about",
-    key: "about",
+    routeKey: "about",
     title: "About",
   },
   {
     id: "menu-item-privacy",
-    key: "privacy",
+    routeKey: "privacy",
     title: "Privacy Policy",
   },
 ];
 
-export const getMenuItems = (userId: string | undefined) => {
-  const whitelistedUsers =
-    process.env.NEXT_PUBLIC_EXPERIMENT_WHITELISTED_USER_LIST?.split("|");
-
-  if (!userId) {
-    return MENU.filter((item) => !item.isExperimental);
-  }
-
-  if (!whitelistedUsers || whitelistedUsers.indexOf(userId) >= 0) return MENU;
-
-  return MENU.filter((item) => !item.isExperimental);
+export const getMenuItems = (
+  featureFlags: Record<string, boolean> | undefined,
+) => {
+  if (!featureFlags) return MENU;
+  return MENU.filter(
+    (item) => !item.experimentKey || featureFlags[item.experimentKey],
+  );
 };

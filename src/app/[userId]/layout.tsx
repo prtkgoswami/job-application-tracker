@@ -14,6 +14,7 @@ import useUser from "@hooks/useUser";
 import WelcomeModal from "./WelcomeModal";
 import { unsetAnalyticsUserId } from "@lib/analytics";
 import Sidebar from "./Sidebar";
+import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
 
 export default function RootLayout({
   children,
@@ -89,54 +90,56 @@ export default function RootLayout({
 
   return (
     <ApplicationsProvider>
-      <div className="h-screen w-full relative flex flex-col md:flex-row gap-1">
-        <Sidebar
-          onLogout={handleLogout}
-          onNewEntryClick={() => setNewShowEntryModal(true)}
-        />
+      <FeatureFlagProvider>
+        <div className="h-screen w-full relative flex flex-col md:flex-row gap-1">
+          <Sidebar
+            onLogout={handleLogout}
+            onNewEntryClick={() => setNewShowEntryModal(true)}
+          />
 
-        {/* Mobile-Only Header */}
-        <header className="md:hidden flex justify-between items-center px-3 py-3">
-          <h2 className="text-2xl md:text-2xl text-amber-400">
-            JobTrackr{" "}
-            <span className="hidden md:inline-block">- Job Dashboard</span>
-          </h2>
-          <div className="flex gap-4 md:hidden">
-            <button
-              className="cursor-pointer w-10 aspect-square rounded-md text-gray-50 hover:bg-amber-500 hover:text-gray-900"
-              onClick={handleShowMobileMenu}
-            >
-              <FontAwesomeIcon icon={faBars} size="xl" />
-            </button>
+          {/* Mobile-Only Header */}
+          <header className="md:hidden flex justify-between items-center px-3 py-3">
+            <h2 className="text-2xl md:text-2xl text-amber-400">
+              JobTrackr{" "}
+              <span className="hidden md:inline-block">- Job Dashboard</span>
+            </h2>
+            <div className="flex gap-4 md:hidden">
+              <button
+                className="cursor-pointer w-10 aspect-square rounded-md text-gray-50 hover:bg-amber-500 hover:text-gray-900"
+                onClick={handleShowMobileMenu}
+              >
+                <FontAwesomeIcon icon={faBars} size="xl" />
+              </button>
+            </div>
+          </header>
+
+          <div className="flex flex-col w-full h-screen overflow-auto">
+            {children}
           </div>
-        </header>
 
-        <div className="flex flex-col w-full h-screen overflow-auto">
-          {children}
+          <MobileMenu
+            showMenu={showMobileMenu}
+            onCloseMobileMenu={handleCloseMobileMenu}
+            onNewEntryClick={() => setNewShowEntryModal(true)}
+            onLogout={handleLogout}
+          />
+
+          <NewApplicationModal
+            showModal={showNewEntryModal}
+            userId={user.uid}
+            onClose={() => setNewShowEntryModal(false)}
+          />
+
+          <EmailVerificationBlockModal />
+
+          <WelcomeModal
+            user={user}
+            isVisible={showWelcomeModal}
+            onClose={() => setShowWelcomeModal(false)}
+            onOpenNewApplication={() => setNewShowEntryModal(true)}
+          />
         </div>
-
-        <MobileMenu
-          showMenu={showMobileMenu}
-          onCloseMobileMenu={handleCloseMobileMenu}
-          onNewEntryClick={() => setNewShowEntryModal(true)}
-          onLogout={handleLogout}
-        />
-
-        <NewApplicationModal
-          showModal={showNewEntryModal}
-          userId={user.uid}
-          onClose={() => setNewShowEntryModal(false)}
-        />
-
-        <EmailVerificationBlockModal />
-
-        <WelcomeModal
-          user={user}
-          isVisible={showWelcomeModal}
-          onClose={() => setShowWelcomeModal(false)}
-          onOpenNewApplication={() => setNewShowEntryModal(true)}
-        />
-      </div>
+      </FeatureFlagProvider>
     </ApplicationsProvider>
   );
 }

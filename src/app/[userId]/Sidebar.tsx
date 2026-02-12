@@ -14,6 +14,7 @@ import Tooltip from "@/components/Tooltip";
 import useJobs from "@/hooks/useJobs";
 import { useApplicationsRefetch } from "@/contexts/ApplicationContext";
 import { getMenuItems } from "@/lib/menu";
+import { useFeatureFlags } from "@/contexts/FeatureFlagContext";
 
 type Props = {
   onLogout: () => void;
@@ -30,7 +31,9 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
   const page = pathItems[pathItems.length - 1];
   const { refetchKey } = useApplicationsRefetch();
   const { counts } = useJobs(userId, refetchKey);
-  const menuItems = getMenuItems(userId);
+  const { featureFlags } = useFeatureFlags();
+  const menuItems = getMenuItems(featureFlags);
+  console.log("menu items", menuItems);
 
   const routeToPage = (route: string, params?: string) => {
     if (new Set(["about", "privacy"]).has(route)) {
@@ -130,13 +133,13 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
           </div>
           <div className={``}>
             <nav className="flex flex-col gap-3">
-              {menuItems.map(({ id, key, title }) => {
-                const isSelected = page === key;
+              {menuItems.map(({ id, routeKey, title }) => {
+                const isSelected = page === routeKey;
                 return (
                   <div
                     key={id}
                     onClick={() => {
-                      routeToPage(key);
+                      routeToPage(routeKey);
                     }}
                     className={`py-2 text-xl select-none ${
                       isSelected ? "" : "cursor-pointer "
