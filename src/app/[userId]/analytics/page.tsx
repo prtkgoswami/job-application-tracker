@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthProvider";
 import useJobs from "@/hooks/useJobs";
 import { User } from "firebase/auth";
 import React from "react";
+import AnalyticsCard from "./AnalyticsCard";
 
 const AnalyticsContent = ({ user }: { user: User }) => {
   const { companyList, counts, jobs } = useJobs(user.uid);
@@ -14,74 +15,88 @@ const AnalyticsContent = ({ user }: { user: User }) => {
     );
 
     filteredJobs.forEach((job) => {
-      const location = job.location ?? "remote";
+      let location;
+      location = job.location ?? "remote";
+      if (job.jobType === "remote") location = "remote";
       result[location] = (result[location] ?? 0) + 1;
     });
 
-    return result;
+    return Object.entries(result)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .reduce(
+        (acc, [key, val]) => {
+          acc[key.trim()] = (acc[key.trim()] ?? 0) + val;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
   };
 
+  const sortedCompanyList = companyList.sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase()),
+  );
+
   return (
-    <div className="w-full grow flex gap-4 px-5 py-8">
-      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
-        <h3 className="text-xl text-amber-500">Companies Applied To</h3>
-        <ul className="max-h-100 overflow-auto list-none p-2">
+    <div className="w-full grow grid grid-cols-2 lg:grid-cols-3 gap-4 px-5 py-8">
+      <AnalyticsCard title="Companies" showCount count={companyList.length}>
+        <ul className="max-h-120 overflow-auto list-none p-2">
           {companyList.map((company) => (
             <li key={company}>{company}</li>
           ))}
         </ul>
-      </div>
+      </AnalyticsCard>
 
-      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
-        <h3 className="text-xl text-amber-500">Stats</h3>
-        <div className="flex flex-col">
-          {Object.entries(counts).map(([key, value]) => (
-            <div
-              key={`stat-${key}`}
-              className="flex justify-between items-center"
-            >
-              <p className="capitalize">{key}</p>
-              <p>{value}</p>
-            </div>
-          ))}
-          <div className="flex justify-between items-center text-green-500">
-            <p className="capitalize">Success Rate</p>
-            <p className="blur-xs hover:blur-none">
-              {Number(
-                ((counts.rejected / counts.total) * 100).toFixed(2),
-              ).toString()}
-              %
-            </p>
+      <AnalyticsCard title="Stats">
+        {Object.entries(counts).map(([key, value]) => (
+          <div
+            key={`stat-${key}`}
+            className="flex justify-between items-center"
+          >
+            <p className="capitalize">{key}</p>
+            <p>{value}</p>
           </div>
-          <div className="flex justify-between items-center text-red-600">
-            <p className="capitalize">Rejection Rate</p>
-            <p className="blur-xs hover:blur-none">
-              {Number(
-                (
-                  ((counts.total - counts.rejected) / counts.total) *
-                  100
-                ).toFixed(2),
-              ).toString()}
-              %
-            </p>
-          </div>
+        ))}
+        <div className="flex justify-between items-center">
+          <p className="capitalize">Applied (Waiting)</p>
+          <p>{jobs.filter((job) => job.status === "applied").length}</p>
         </div>
-      </div>
+        <div className="flex justify-between items-center text-green-500">
+          <p className="capitalize">Success Rate</p>
+          <p className="blur-xs hover:blur-none">
+            {Number(
+              ((counts.rejected / counts.total) * 100).toFixed(2),
+            ).toString()}
+            %
+          </p>
+        </div>
+        <div className="flex justify-between items-center text-red-600">
+          <p className="capitalize">Rejection Rate</p>
+          <p className="blur-xs hover:blur-none">
+            {Number(
+              (((counts.total - counts.rejected) / counts.total) * 100).toFixed(
+                2,
+              ),
+            ).toString()}
+            %
+          </p>
+        </div>
+      </AnalyticsCard>
 
-      <div className="h-max w-100 flex flex-col gap-2 p-4 border-2 border-amber-500 rounded-lg">
-        <h3 className="text-xl text-amber-500">Preferred Location</h3>
-        <div className="flex flex-col">
-          {Object.entries(getLocationCount()).map(([key, value]) => (
-            <div
-              key={`stat-${key}`}
-              className="flex justify-between items-center"
-            >
-              <p className="capitalize">{key}</p>
-              <p>{value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <AnalyticsCard
+        title="Locations"
+        showCount
+        count={Object.keys(getLocationCount()).length}
+      >
+        {Object.entries(getLocationCount()).map(([key, value]) => (
+          <div
+            key={`stat-${key}`}
+            className="flex justify-between items-center"
+          >
+            <p className="capitalize">{key}</p>
+            <p>{value}</p>
+          </div>
+        ))}
+      </AnalyticsCard>
     </div>
   );
 };
