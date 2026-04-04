@@ -1,5 +1,5 @@
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,6 +7,7 @@ import {
   faAnglesRight,
   faArrowRightFromBracket,
   faAsterisk,
+  faCalendarAlt,
   faCaretRight,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
@@ -26,6 +27,7 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
   const router = useRouter();
   const pathName = usePathname();
   const user = useAuth();
+  const menuRef = useRef<HTMLDivElement>(null);
   const userId = user?.uid;
   const pathItems = pathName.split("/");
   const page = pathItems[pathItems.length - 1];
@@ -33,7 +35,6 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
   const { counts } = useJobs(userId, refetchKey);
   const { featureFlags } = useFeatureFlags();
   const menuItems = getMenuItems(featureFlags);
-  console.log("menu items", menuItems);
 
   const routeToPage = (route: string, params?: string) => {
     if (new Set(["about", "privacy"]).has(route)) {
@@ -44,8 +45,24 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
     setIsExpanded(false);
   };
 
+  useEffect(() => {
+    const clickHandler = (e: MouseEvent) => {
+      e.stopPropagation();
+      if (!e.target) return;
+
+      if (!menuRef.current?.contains(e.target as Node)) {
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener("click", clickHandler);
+
+    return () => {
+      document.removeEventListener("click", clickHandler);
+    };
+  }, []);
+
   return (
-    <div className="relative h-full w-20 hidden md:block">
+    <div className="relative h-full w-20 hidden md:block" ref={menuRef}>
       <div className="h-full flex flex-col items-center justify-between py-5 bg-zinc-950 border-r border-amber-500">
         <button
           type="button"
@@ -64,7 +81,18 @@ const Sidebar = ({ onLogout, onNewEntryClick }: Props) => {
                 setIsExpanded(false);
               }}
             >
-              <FontAwesomeIcon icon={faPlus} size="1x" className="mr-1" />
+              <FontAwesomeIcon icon={faPlus} size="1x" className="" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Schedule">
+            <button
+              className="w-12 aspect-square cursor-pointer justify-self-end flex justify-center items-center py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-gray-800"
+              onClick={() => {
+                routeToPage("schedule");
+                setIsExpanded(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faCalendarAlt} size="1x" className="" />
             </button>
           </Tooltip>
           <Tooltip content="Logout">
