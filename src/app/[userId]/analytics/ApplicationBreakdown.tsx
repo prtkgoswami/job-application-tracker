@@ -1,20 +1,13 @@
 import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { JobStatus } from "@/types/job";
 
 // 1. Register the specific element for Pie/Doughnut
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Props = {
-  counts:
-    | {
-        applied: number;
-        interviewing: number;
-        rejected: number;
-        offered: number;
-        wishlisted: number;
-      }
-    | undefined;
+  counts: Record<JobStatus, number> | undefined;
 };
 
 const ApplicationBreakdown = ({ counts }: Props) => {
@@ -27,7 +20,7 @@ const ApplicationBreakdown = ({ counts }: Props) => {
           counts?.interviewing || 0,
           counts?.rejected || 0,
           counts?.offered || 0,
-          counts?.wishlisted || 0,
+          counts?.wishlist || 0,
         ],
         backgroundColor: [
           "rgba(54, 162, 235, 0.8)", // Applied - Blue

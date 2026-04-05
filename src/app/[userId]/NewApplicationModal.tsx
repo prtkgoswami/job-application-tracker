@@ -1,7 +1,15 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  increment,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { useApplicationsRefetch } from "@contexts/ApplicationContext";
 import Modal from "@components/Modal";
@@ -94,31 +102,43 @@ const NewApplicationModal = ({
     const lastUpdateDate = serverTimestamp();
     const createDate = serverTimestamp();
 
-    const payload = {
-      title,
-      link,
-      company,
-      location,
-      jobType,
-      responsibilities,
-      requirements,
-      notes,
-      lastUpdateDate,
-      createDate,
-      status: entryModeRef.current,
-    };
-
     try {
-      const col = collection(db, "jobs");
-      await addDoc(col, {
+      const batch = writeBatch(db);
+
+      const jobsCol = collection(db, "jobs");
+      const newJobRef = doc(jobsCol);
+      const analyticsRef = doc(db, "users", userId, "metadata", "analytics");
+
+      const newJobPayload = {
         userId,
-        ...payload,
-      });
+        title,
+        link,
+        company,
+        location,
+        jobType,
+        responsibilities,
+        requirements,
+        notes,
+        lastUpdateDate,
+        createDate,
+        status: entryModeRef.current,
+      };
+      const analyticsPayload = {
+        "applicationCounts.applied": increment(1),
+        "companies.allApplied": arrayUnion(company),
+        "companies.activeList": arrayUnion(company),
+        lastUpdated: serverTimestamp(),
+      };
+
+      batch.set(newJobRef, newJobPayload);
+      batch.update(analyticsRef, analyticsPayload);
+      await batch.commit();
+
       toast("New Job Added", { type: "success" });
 
       // Analytics
       logAnalyticsEvent("application_entry_created", {
-        status: payload.status,
+        status: newJobPayload.status,
       });
 
       triggerRefetch();

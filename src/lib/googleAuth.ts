@@ -43,12 +43,12 @@ export async function signInWithGoogle() {
     const analyticsRef = doc(db, "users", user.uid, "metadata", "analytics");
     const initialAnalytics = {
       applicationCounts: {
-        total: 0,
-        wishlisted: 0,
-        active: 0,
+        wishlist: 0,
+        applied: 0,
+        interviewing: 0,
         rejected: 0,
         offered: 0,
-        pending: 0,
+        cancelled: 0,
       },
       companies: { allApplied: [], activeList: [] },
       weeklyActivity: {},

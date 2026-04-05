@@ -10,6 +10,7 @@ import { auth, db } from "./firebase";
 import { logAnalyticsEvent, setAnalyticsUserId } from "./analytics";
 import { toast } from "react-toastify";
 import { getDifferenceFromNow } from "./date";
+import { Analytics } from "@/types/analytics";
 
 export const loginWithEmailPassword = async (
   email: string,
@@ -76,12 +77,12 @@ export const registerWithEmailPassword = async (
     const analyticsRef = doc(db, "users", user.uid, "metadata", "analytics");
     const initialAnalytics = {
       applicationCounts: {
-        total: 0,
-        wishlisted: 0,
-        active: 0,
+        wishlist: 0,
+        applied: 0,
+        interviewing: 0,
         rejected: 0,
         offered: 0,
-        pending: 0,
+        cancelled: 0,
       },
       companies: { allApplied: [], activeList: [] },
       weeklyActivity: {},

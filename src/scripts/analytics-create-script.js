@@ -15,9 +15,6 @@ async function migrateAnalytics() {
         for (const userDoc of usersSnapshot.docs) {
             const userId = userDoc.id;
 
-            if (userId === "fpSYEVNzyKdC8a87HkkiTIsLFL73")
-                continue
-
             const jobsSnapshot = await db.collection('jobs')
                 .where('userId', '==', userId)
                 .get();
@@ -26,12 +23,12 @@ async function migrateAnalytics() {
 
             const analytics = {
                 applicationCounts: {
-                    total: jobs.length,
-                    wishlisted: 0,
-                    active: 0,
+                    wishlist: 0,
+                    applied: 0,
+                    interviewing: 0,
                     rejected: 0,
                     offered: 0,
-                    pending: 0
+                    cancelled: 0
                 },
                 companies: {
                     allApplied: new Set(),
@@ -44,16 +41,12 @@ async function migrateAnalytics() {
             jobs.forEach(job => {
                 const status = job.status;
 
-                if (status === "wishlist") analytics.applicationCounts.wishlisted++;
-                else if (status === "offered") analytics.applicationCounts.offered++;
-                else if (status === "rejected") analytics.applicationCounts.rejected++;
-                else if (['applied', 'interviewing'].includes(status)) {
-                    analytics.applicationCounts.active++;
-                    if (status === "applied") analytics.applicationCounts.pending++;
-                    analytics.companies.activeList.add(job.company)
-                }
+                analytics.applicationCounts[status]++;
 
                 analytics.companies.allApplied.add(job.company);
+                if (['applied', 'interviewing'].includes(status)) {
+                    analytics.companies.activeList.add(job.company)
+                }
 
                 const date = job.createDate.toDate().toISOString().split('T')[0];
                 const weekKey = `W-${getWeekNumber(new Date(date))}`;
@@ -70,7 +63,14 @@ async function migrateAnalytics() {
                 },
             };
 
-            await db.doc(`users/${userId}/metadata/analytics`).set(finalPayload, { merge: true });
+            // console.log(finalPayload)
+            const analyticsRef = db.doc(`users/${userId}/metadata/analytics`);
+            const batch = db.batch();
+
+            batch.delete(analyticsRef); // Deletes the old doc if it exists
+            batch.set(analyticsRef, finalPayload); // Sets the fresh one
+
+            await batch.commit();
             console.log(`Successfully updated analytics for ${userId}`);
 
         }
