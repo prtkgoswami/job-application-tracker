@@ -81,3 +81,15 @@ export const formatTimeAmPm = (date: Date) => {
 
   return `${hours}:${minutes} ${ampm}`;
 };
+
+export const getWeekNumber = (date: Date) => {
+  const dateObj = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
+  dateObj.setUTCDate(dateObj.getUTCDate() + 4 - (dateObj.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(dateObj.getUTCFullYear(), 0, 1));
+
+  return Math.ceil(
+    ((dateObj.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
+  );
+};

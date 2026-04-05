@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import Modal from "@components/Modal"
+import Modal from "@components/Modal";
 import { User } from "firebase/auth";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -65,6 +65,7 @@ const WelcomeModal = ({
       hideHeader
       hasBackdropPadding={false}
       onClose={handleClose}
+      theme="dark"
       modalClasses="md:w-1/2 h-full md:h-[95%] shadow-lg shadow-gray-900 bg-gray-800"
       bodyClasses="flex flex-col relative"
     >
