@@ -14,7 +14,14 @@ import {
   faTrash,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  increment,
+  serverTimestamp,
+  updateDoc,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -90,16 +97,26 @@ const JobDetailsModal = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const ref = doc(db, "jobs", jobData?.id);
-      await updateDoc(ref, {
+      const batch = writeBatch(db);
+      const jobRef = doc(db, "jobs", jobData?.id);
+      const analyticsRef = doc(db, "users", userId, "metadata", "analytics");
+
+      const jobPayload = {
         ...formData,
         createDate: new Date(jobData.createDate),
         lastUpdateDate: serverTimestamp(),
-      });
-      toast.success("Successfully updated Application");
+      };
+
+      batch.update(jobRef, jobPayload);
 
       // Analytics
       if (jobData.status !== formData.status) {
+        const analyticsPayload = {
+          [`applicationCounts.${jobData.status}`]: increment(-1),
+          [`applicationCounts.${formData.status}`]: increment(1),
+          lastUpdated: serverTimestamp(),
+        };
+        batch.update(analyticsRef, analyticsPayload);
         logAnalyticsEvent("application_status_updated", {
           job_id: jobData.id,
           old_status: jobData.status,
@@ -120,6 +137,9 @@ const JobDetailsModal = ({
           has_notes_changed: jobData.notes !== formData.notes,
         });
       }
+
+      await batch.commit();
+      toast.success("Successfully updated Application");
 
       setIsInEditMode(false);
       refetchData();

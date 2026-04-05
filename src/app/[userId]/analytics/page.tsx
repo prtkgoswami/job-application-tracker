@@ -17,15 +17,6 @@ const AnalyticsContent = ({ user }: { user: User }) => {
   const todayDate = today.split("T")[0];
   const weekNum = getWeekNumber(new Date(todayDate));
   const weekStreak = data?.weeklyActivity[`W-${weekNum}`];
-  const counts = {
-    applied: data?.applicationCounts.pending ?? 0,
-    interviewing:
-      (data?.applicationCounts.active ?? 0) -
-      (data?.applicationCounts.pending ?? 0),
-    rejected: data?.applicationCounts.rejected ?? 0,
-    offered: data?.applicationCounts.offered ?? 0,
-    wishlisted: data?.applicationCounts.wishlisted ?? 0,
-  };
 
   return (
     <div>
@@ -46,7 +37,7 @@ const AnalyticsContent = ({ user }: { user: User }) => {
           <h2 className="text-2xl font-light text-amber-500 text-center mb-5">
             Application Stats
           </h2>
-          <ApplicationBreakdown counts={counts} />
+          <ApplicationBreakdown counts={data?.applicationCounts} />
         </div>
 
         <div className="md:col-start-6 col-span-12 md:col-span-6 bg-gray-100/5 rounded-lg py-8 px-5 h-max">

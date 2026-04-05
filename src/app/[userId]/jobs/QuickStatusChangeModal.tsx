@@ -1,10 +1,16 @@
 import Modal from "@components/Modal";
 import { db } from "@lib/firebase";
-import { Job } from "@/types/job";
-import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { Job, JobStatus } from "@/types/job";
+import {
+  doc,
+  increment,
+  runTransaction,
+  serverTimestamp,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { logAnalyticsEvent } from "@/lib/analytics";
+import { useAuth } from "@/contexts/AuthProvider";
 
 type Props = {
   activeApplicationId: string;
@@ -28,15 +34,29 @@ const QuickStatusChangeModal = ({
   refetch,
 }: Props) => {
   const [activeStatus, setActiveStatus] = useState("");
+  const user = useAuth();
 
-  const handleSubmitClick = () => {
-    if (!activeApplicationId) return;
+  const handleSubmitClick = async () => {
+    if (!activeApplicationId || !user) return;
+
+    const oldStatus = activeApplication.status;
+    const newStatus = activeStatus as JobStatus;
 
     try {
-      const docRef = doc(db, "jobs", activeApplicationId);
-      updateDoc(docRef, {
-        status: activeStatus,
-        lastUpdateDate: serverTimestamp(),
+      const jobDocRef = doc(db, "jobs", activeApplicationId);
+      const analyticsRef = doc(db, "users", user.uid, "metadata", "analytics");
+
+      await runTransaction(db, async (transaction) => {
+        transaction.update(jobDocRef, {
+          status: newStatus,
+          lastUpdateDate: serverTimestamp(),
+        });
+
+        transaction.update(analyticsRef, {
+          [`applicationCounts.${oldStatus}`]: increment(-1),
+          [`applicationCounts.${newStatus}`]: increment(1),
+          lastUpdated: serverTimestamp(),
+        });
       });
 
       toast.success("Application Status Changed");

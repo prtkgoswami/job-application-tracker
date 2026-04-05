@@ -1,30 +1,8 @@
 import { useAuth } from "@/contexts/AuthProvider";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { Analytics } from "@/types/analytics";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-
-export type WeeklyActivity = {
-  [weekKey: string]: {
-    [dateKey: string]: number;
-  };
-};
-
-export type Analytics = {
-  applicationCounts: {
-    total: number;
-    wishlisted: number;
-    active: number;
-    rejected: number;
-    offered: number;
-    pending: number;
-  };
-  companies: {
-    allApplied: string[];
-    activeList: string[];
-  };
-  weeklyActivity: WeeklyActivity;
-  lastUpdated: Timestamp;
-};
 
 type HookResponse = {
   data: Analytics | undefined;
@@ -48,7 +26,11 @@ const useAnalytics = (): HookResponse => {
 
       if (!analyticsSnapshot.exists()) return;
 
-      setData(analyticsSnapshot.data() as Analytics);
+      const respObj = analyticsSnapshot.data() as Analytics;
+
+      console.log(respObj);
+
+      setData(respObj);
     } catch (err) {
       console.error("Failed to fetch User Analytics", err);
       setError(err as Error);
