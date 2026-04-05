@@ -4,99 +4,63 @@ import useJobs from "@/hooks/useJobs";
 import { User } from "firebase/auth";
 import React from "react";
 import AnalyticsCard from "./AnalyticsCard";
+import useAnalytics from "@/hooks/useAnalytics";
+import { getWeekNumber } from "@/lib/date";
+import WeeklyGraph from "./WeeklyGraph";
+import ApplicationBreakdown from "./ApplicationBreakdown";
+import { analytics } from "@/lib/firebase";
+import CompaniesTab from "./CompaniesTab";
 
 const AnalyticsContent = ({ user }: { user: User }) => {
-  const { companyList, counts, jobs } = useJobs(user.uid);
-
-  const getLocationCount = () => {
-    const result: Record<string, number> = {};
-    const filteredJobs = jobs.filter(
-      (job) => job.status !== "wishlist" && job.status !== "rejected",
-    );
-
-    filteredJobs.forEach((job) => {
-      let location;
-      location = job.location ?? "remote";
-      if (job.jobType === "remote") location = "remote";
-      result[location] = (result[location] ?? 0) + 1;
-    });
-
-    return Object.entries(result)
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .reduce(
-        (acc, [key, val]) => {
-          acc[key.trim()] = (acc[key.trim()] ?? 0) + val;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
+  const { data, isLoading, error } = useAnalytics();
+  const today = new Date().toISOString();
+  const todayDate = today.split("T")[0];
+  const weekNum = getWeekNumber(new Date(todayDate));
+  const weekStreak = data?.weeklyActivity[`W-${weekNum}`];
+  const counts = {
+    applied: data?.applicationCounts.pending ?? 0,
+    interviewing:
+      (data?.applicationCounts.active ?? 0) -
+      (data?.applicationCounts.pending ?? 0),
+    rejected: data?.applicationCounts.rejected ?? 0,
+    offered: data?.applicationCounts.offered ?? 0,
+    wishlisted: data?.applicationCounts.wishlisted ?? 0,
   };
 
-  const sortedCompanyList = companyList.sort((a, b) =>
-    a.toLowerCase().localeCompare(b.toLowerCase()),
-  );
-
   return (
-    <div className="w-full grow grid grid-cols-2 lg:grid-cols-3 gap-4 px-5 py-8">
-      <AnalyticsCard title="Companies" showCount count={companyList.length}>
-        <ul className="max-h-120 overflow-auto list-none p-2">
-          {companyList.map((company) => (
-            <li key={company}>{company}</li>
-          ))}
-        </ul>
-      </AnalyticsCard>
+    <div>
+      <div className="flex justify-between items-center px-3 py-2 md:px-5 pt-5">
+        <h2 className="text-xl md:text-2xl text-amber-400 leading-relaxed">
+          Analytics Dashboard
+        </h2>
+      </div>
+      <div className="w-full grow grid grid-cols-12 gap-x-5 gap-y-5 px-5 py-8">
+        <div className="md:col-start-2 col-span-12 md:col-span-10 bg-gray-100/5 rounded-lg py-8 px-5 h-max">
+          <h2 className="text-2xl font-light text-amber-500 text-center mb-5">
+            Weekly Streak
+          </h2>
+          <WeeklyGraph weeklyStreak={weekStreak ?? {}} />
+        </div>
 
-      <AnalyticsCard title="Stats">
-        {Object.entries(counts).map(([key, value]) => (
-          <div
-            key={`stat-${key}`}
-            className="flex justify-between items-center"
-          >
-            <p className="capitalize">{key}</p>
-            <p>{value}</p>
-          </div>
-        ))}
-        <div className="flex justify-between items-center">
-          <p className="capitalize">Applied (Waiting)</p>
-          <p>{jobs.filter((job) => job.status === "applied").length}</p>
+        <div className="md:col-start-2 col-span-12 md:col-span-4 bg-gray-100/5 rounded-lg py-8 px-5 h-max">
+          <h2 className="text-2xl font-light text-amber-500 text-center mb-5">
+            Application Stats
+          </h2>
+          <ApplicationBreakdown counts={counts} />
         </div>
-        <div className="flex justify-between items-center text-green-500">
-          <p className="capitalize">Success Rate</p>
-          <p className="blur-xs hover:blur-none">
-            {Number(
-              ((counts.rejected / counts.total) * 100).toFixed(2),
-            ).toString()}
-            %
-          </p>
-        </div>
-        <div className="flex justify-between items-center text-red-600">
-          <p className="capitalize">Rejection Rate</p>
-          <p className="blur-xs hover:blur-none">
-            {Number(
-              (((counts.total - counts.rejected) / counts.total) * 100).toFixed(
-                2,
-              ),
-            ).toString()}
-            %
-          </p>
-        </div>
-      </AnalyticsCard>
 
-      <AnalyticsCard
-        title="Locations"
-        showCount
-        count={Object.keys(getLocationCount()).length}
-      >
-        {Object.entries(getLocationCount()).map(([key, value]) => (
-          <div
-            key={`stat-${key}`}
-            className="flex justify-between items-center"
-          >
-            <p className="capitalize">{key}</p>
-            <p>{value}</p>
-          </div>
-        ))}
-      </AnalyticsCard>
+        <div className="md:col-start-6 col-span-12 md:col-span-6 bg-gray-100/5 rounded-lg py-8 px-5 h-max">
+          <h2 className="text-2xl font-light text-amber-500 text-center mb-5">
+            Companies
+          </h2>
+          <CompaniesTab
+            listData={{
+              all: data?.companies.allApplied ?? [],
+              active: data?.companies.activeList ?? [],
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

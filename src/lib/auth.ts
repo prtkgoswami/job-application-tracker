@@ -5,7 +5,7 @@ import {
   updateProfile,
   User,
 } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, writeBatch } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { logAnalyticsEvent, setAnalyticsUserId } from "./analytics";
 import { toast } from "react-toastify";
@@ -13,7 +13,7 @@ import { getDifferenceFromNow } from "./date";
 
 export const loginWithEmailPassword = async (
   email: string,
-  password: string
+  password: string,
 ): Promise<User> => {
   try {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
@@ -26,9 +26,9 @@ export const loginWithEmailPassword = async (
       days_since_last_visit: userCred.user.metadata.lastSignInTime
         ? Math.floor(
             getDifferenceFromNow(
-              new Date(userCred.user.metadata.lastSignInTime)
+              new Date(userCred.user.metadata.lastSignInTime),
             ) /
-              (1000 * 3600 * 24)
+              (1000 * 3600 * 24),
           )
         : "unknown",
       timestamp: serverTimestamp(),
@@ -44,13 +44,13 @@ export const registerWithEmailPassword = async (
   firstName: string,
   lastName: string,
   email: string,
-  password: string
+  password: string,
 ): Promise<User> => {
   try {
     const userCred = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     const user = userCred.user;
 
@@ -61,6 +61,9 @@ export const registerWithEmailPassword = async (
       await updateProfile(user, { displayName });
     }
 
+    const batch = writeBatch(db);
+
+    const userRef = doc(db, "users", user.uid);
     const userPayload = {
       name: displayName,
       email: email,
@@ -68,8 +71,27 @@ export const registerWithEmailPassword = async (
       archiveDate: serverTimestamp(),
       hasSeenWelcome: false,
     };
-    const docRef = doc(db, "users", user.uid);
-    await setDoc(docRef, userPayload);
+    // await setDoc(userRef, userPayload);
+
+    const analyticsRef = doc(db, "users", user.uid, "metadata", "analytics");
+    const initialAnalytics = {
+      applicationCounts: {
+        total: 0,
+        wishlisted: 0,
+        active: 0,
+        rejected: 0,
+        offered: 0,
+        pending: 0,
+      },
+      companies: { allApplied: [], activeList: [] },
+      weeklyActivity: {},
+      lastUpdated: serverTimestamp(),
+    };
+
+    batch.set(userRef, userPayload);
+    batch.set(analyticsRef, initialAnalytics);
+
+    await batch.commit();
 
     // Analytics
     setAnalyticsUserId(user.uid);
