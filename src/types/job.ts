@@ -1,4 +1,10 @@
-export type JobStatus = "wishlist" | "applied" | "interviewing" | "rejected" | "offered" | "cancelled";
+export type JobStatus =
+  | "wishlist"
+  | "applied"
+  | "interviewing"
+  | "rejected"
+  | "offered"
+  | "cancelled";
 
 export type JobType = "onsite" | "hybrid" | "remote";
 
@@ -15,4 +21,5 @@ export type Job = {
   status: JobStatus;
   createDate: string; // ISO string for UI
   lastUpdateDate: string; // ISO string for UI
+  lastNotifiedAt?: string | null; // ISO string for reminder cronjob
 };

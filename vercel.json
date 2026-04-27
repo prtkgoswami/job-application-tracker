@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/sendWishlistReminderCron",
+      "schedule": "0 20 * * 0,3"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Job, JobStatus, JobType } from "@/types/job";
+import { Job } from "@/types/job";
 import {
   collection,
   doc,
@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { getDateString } from "@lib/date";
-import { FirestoreUser } from "./useUser";
+import { FirestoreJob, FirestoreUser } from "@/types/firestore";
 
 export type CountsType = {
   total: number;
@@ -20,7 +20,7 @@ export type CountsType = {
   active: number;
   rejected: number;
   offered: number;
-}
+};
 
 type JobsHookResponse = {
   jobs: Job[];
@@ -32,22 +32,10 @@ type JobsHookResponse = {
   refetch: () => void;
 };
 
-type FirestoreJob = {
-  title: string;
-  link: string;
-  location?: string;
-  company: string;
-  jobType: JobType;
-  responsibilities: string;
-  requirements: string;
-  notes?: string;
-  status: JobStatus;
-  createDate?: Timestamp;
-  lastUpdateDate?: Timestamp;
-  userId: string;
-};
-
-const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHookResponse => {
+const useJobs = (
+  userId: string | null | undefined,
+  refetchKey?: number,
+): JobsHookResponse => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [companyList, setCompanyList] = useState<string[]>([]);
   const [locationList, setLocationList] = useState<string[]>([]);
@@ -71,7 +59,7 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
       const q = query(
         jobsRef,
         where("userId", "==", userId),
-        orderBy("lastUpdateDate", "desc")
+        orderBy("lastUpdateDate", "desc"),
       );
       const snapshot = await getDocs(q);
 
@@ -79,7 +67,7 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
       const userDoc = await getDoc(docRef);
       const userData = userDoc.data() as FirestoreUser;
       const userArchiveDate = userData?.archiveDate.toDate();
-      setArchiveDate(userArchiveDate)
+      setArchiveDate(userArchiveDate);
 
       const nextJobs: Job[] = snapshot.docs.map((docSnap) => {
         const data = docSnap.data() as FirestoreJob;
@@ -93,10 +81,10 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
           : createDate;
 
         if (data.company && !companySet.has(data.company)) {
-          companySet.add(data.company)
+          companySet.add(data.company);
         }
         if (data.location && !locationSet.has(data.location)) {
-          locationSet.add(data.location)
+          locationSet.add(data.location);
         }
 
         return {
@@ -121,8 +109,8 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
       listOfCompanies.sort();
       listOfLocations.sort();
 
-      setCompanyList(listOfCompanies)
-      setLocationList(listOfLocations)
+      setCompanyList(listOfCompanies);
+      setLocationList(listOfLocations);
       setJobs(nextJobs);
     } catch (err: unknown) {
       console.error("Application Fetch Error", err);
@@ -136,18 +124,22 @@ const useJobs = (userId: string | null | undefined, refetchKey?: number): JobsHo
     void fetchJobs();
   }, [fetchJobs, refetchKey]);
 
-  const currentJobs = archiveDate ? jobs.filter(job => {
-    const jobUpdateDate = new Date(job.lastUpdateDate);
-    return jobUpdateDate > archiveDate;
-  }) : jobs;
+  const currentJobs = archiveDate
+    ? jobs.filter((job) => {
+        const jobUpdateDate = new Date(job.lastUpdateDate);
+        return jobUpdateDate > archiveDate;
+      })
+    : jobs;
 
   const counts: CountsType = {
     total: currentJobs.length,
-    wishlisted: currentJobs.filter(job => job.status === "wishlist").length,
-    active: currentJobs.filter(job => (job.status === 'applied' || job.status === "interviewing")).length,
-    rejected: currentJobs.filter(job => job.status === "rejected").length,
-    offered: currentJobs.filter(job => job.status === "offered").length
-  }
+    wishlisted: currentJobs.filter((job) => job.status === "wishlist").length,
+    active: currentJobs.filter(
+      (job) => job.status === "applied" || job.status === "interviewing",
+    ).length,
+    rejected: currentJobs.filter((job) => job.status === "rejected").length,
+    offered: currentJobs.filter((job) => job.status === "offered").length,
+  };
 
   return {
     jobs,

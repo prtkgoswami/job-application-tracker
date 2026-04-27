@@ -5,21 +5,13 @@ import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { getDateString } from "@lib/date";
 import { User } from "firebase/auth";
+import { FirestoreUser } from "@/types/firestore";
 
 type UserHookResponse = {
   data?: UserType;
   user: User | null;
   isLoading: boolean;
   error?: Error;
-};
-
-export type FirestoreUser = {
-  name: string;
-  email: string;
-  password: string;
-  archiveDate: Timestamp;
-  targetApplicationPerDay: number;
-  hasSeenWelcome: boolean;
 };
 
 const useUser = (): UserHookResponse => {
