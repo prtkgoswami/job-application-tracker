@@ -9,25 +9,13 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { FirestoreEvent } from "@/types/firestore";
 
 type ScheduleHookResponse = {
   events: ScheduledEvent[];
   isLoading: boolean;
   error?: Error;
   refetch: () => void;
-};
-
-type FirestoreEvent = {
-  title: string;
-  description?: string;
-  dateTime: number;
-  durationMins: number;
-  relatedJobId: string;
-  relatedPeople?: string;
-  relatedLink?: string;
-  createdDate: Timestamp;
-  userId: string;
-  isDone: boolean;
 };
 
 const useSchedule = (

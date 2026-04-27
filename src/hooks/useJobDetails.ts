@@ -1,4 +1,5 @@
 import { db } from "@/lib/firebase";
+import { FirestoreEvent, FirestoreJob } from "@/types/firestore";
 import { Job, JobType } from "@/types/job";
 import { ScheduledEvent } from "@/types/schedule";
 import {
@@ -13,34 +14,6 @@ import {
   where,
 } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
-
-type FirestoreJob = {
-  title: string;
-  link: string;
-  location?: string;
-  company: string;
-  jobType: JobType;
-  responsibilities: string;
-  requirements: string;
-  notes?: string;
-  status: Job["status"];
-  createDate?: Timestamp;
-  lastUpdateDate?: Timestamp;
-  userId: string;
-};
-
-type FirestoreEvent = {
-  title: string;
-  description?: string;
-  dateTime: number;
-  relatedJobId: string;
-  createdDate: Timestamp;
-  userId: string;
-  isDone: boolean;
-  durationMins: number;
-  relatedPeople?: string;
-  relatedLink?: string;
-};
 
 const getDateString = (date: Date) => {
   return date.toLocaleDateString("en-GB", {
