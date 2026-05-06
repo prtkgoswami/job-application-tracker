@@ -11,7 +11,12 @@ const AuthProvider = ({children}: {children: ReactNode}) => {
 
     useEffect(() => {
         return onAuthStateChanged(auth, (currUser) => {
-            setUser(currUser)
+            setUser(currUser);
+            if (currUser) {
+                localStorage.setItem("jobTrackr_userId", currUser.uid);
+            } else {
+                localStorage.removeItem("jobTrackr_userId");
+            }
         });
     }, [])
 

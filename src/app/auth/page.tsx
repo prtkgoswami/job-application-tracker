@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { auth } from "@lib/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,13 +34,24 @@ const REGISTER_SUBTITLES = [
   "Never lose track of an opportunity again",
 ];
 
-const AuthPage = () => {
+const AuthContent = () => {
+  const searchParams = useSearchParams();
+  const modeParam = searchParams?.get("mode");
+
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const router = useRouter();
-  const randomIndex = Math.floor(Math.random() * LOGIN_SUBTITLES.length);
+  const [randomIndex] = useState(() => Math.floor(Math.random() * LOGIN_SUBTITLES.length));
+
+  useEffect(() => {
+    if (modeParam === "register") {
+      setAuthMode("register");
+    } else if (modeParam === "login") {
+      setAuthMode("login");
+    }
+  }, [modeParam]);
 
   const handleLoginClick = async (
     mode: "email" | "google",
@@ -250,6 +261,35 @@ const AuthPage = () => {
         isVisible={showResetPasswordModal}
         onClose={() => setShowResetPasswordModal(false)}
       />
+    </>
+  );
+};
+
+const AuthPage = () => {
+  return (
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            var userId = localStorage.getItem('jobTrackr_userId');
+            if (userId) {
+              window.location.replace('/' + userId + '/jobs');
+            }
+          `
+        }}
+      />
+      <Suspense
+        fallback={
+          <div className="min-h-screen w-full flex flex-col justify-center items-center">
+            <FontAwesomeIcon icon={faSpinner} spin size="5x" />
+            <h2 className="text-3xl text-gray-200 animate-pulse mt-8">
+              Loading ...
+            </h2>
+          </div>
+        }
+      >
+        <AuthContent />
+      </Suspense>
     </>
   );
 };

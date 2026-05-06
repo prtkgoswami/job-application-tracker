@@ -34,20 +34,25 @@ const EmailVerificationBlockModal = () => {
         <h4 className="text-xl md:text-2xl text-amber-600 mb-8">
           Verify Your Email to Get Started
         </h4>
-        <p className="md:text-center leading-relaxed text-gray-800 mb-5">
-          We&apos;ve sent a verification email to your address. Click the
+        <p className="md:text-center leading-relaxed text-gray-800 mb-4">
+          We have sent a verification email to your address. Click the
           verification link in the email to activate your account and start
-          using all our features. Didn&apos;t receive it? Check your spam folder
-          or request a new one.
+          using all our features.
         </p>
 
-        <p className="md:text-center leading-relaxed text-gray-800 mb-10">
-          Can&apos;t find the email. Try{" "}
-          <span
-            className="text-blue-500 cursor-pointer"
-            onClick={handleResendEmail}
-          >
-            Sending Again
+        <p className="md:text-center text-amber-600 font-medium mb-10">
+          If you don&apos;t see the email in your main inbox, please check your
+          Spam or Junk folder.
+          <br />
+          <br />
+          <span className="text-gray-800 font-normal">
+            Can&apos;t find the email? Try{" "}
+            <span
+              className="text-blue-500 cursor-pointer hover:underline"
+              onClick={handleResendEmail}
+            >
+              Sending Again
+            </span>
           </span>
         </p>
 
