@@ -17,10 +17,8 @@ import {
 import {
   deleteDoc,
   doc,
-  increment,
+  runTransaction,
   serverTimestamp,
-  updateDoc,
-  writeBatch,
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { toast } from "react-toastify";
@@ -97,50 +95,65 @@ const JobDetailsModal = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const batch = writeBatch(db);
       const jobRef = doc(db, "jobs", jobData?.id);
       const analyticsRef = doc(db, "users", userId, "metadata", "analytics");
 
-      const jobPayload = {
-        ...formData,
-        createDate: new Date(jobData.createDate),
-        lastUpdateDate: serverTimestamp(),
-      };
+      await runTransaction(db, async (transaction) => {
+        let updatedAnalytics = null;
 
-      batch.update(jobRef, jobPayload);
+        if (jobData.status !== formData.status) {
+          const analyticsDoc = await transaction.get(analyticsRef);
 
-      // Analytics
-      if (jobData.status !== formData.status) {
-        const analyticsPayload = {
-          [`applicationCounts.${jobData.status}`]: increment(-1),
-          [`applicationCounts.${formData.status}`]: increment(1),
-          lastUpdated: serverTimestamp(),
+          if (analyticsDoc.exists()) {
+            const currentCounts = analyticsDoc.data().applicationCounts || {};
+
+            const oldStatusCount = currentCounts[jobData.status] || 0;
+            const newStatusCount = currentCounts[formData.status] || 0;
+
+            updatedAnalytics = {
+              [`applicationCounts.${jobData.status}`]: Math.max(
+                0,
+                oldStatusCount - 1,
+              ),
+              [`applicationCounts.${formData.status}`]: newStatusCount + 1,
+              lastUpdated: serverTimestamp(),
+            };
+          }
+        }
+
+        const jobPayload = {
+          ...formData,
+          createDate: new Date(jobData.createDate),
+          lastUpdateDate: serverTimestamp(),
         };
-        batch.update(analyticsRef, analyticsPayload);
-        logAnalyticsEvent("application_status_updated", {
-          job_id: jobData.id,
-          old_status: jobData.status,
-          new_status: formData.status,
-        });
-      } else {
-        logAnalyticsEvent("application_details_updated", {
-          job_id: jobData.id,
-          has_link_changed: jobData.link !== formData.link,
-          has_title_changed: jobData.title !== formData.title,
-          has_location_changed: jobData.location !== formData.location,
-          has_company_changed: jobData.company !== formData.company,
-          has_job_type_changed: jobData.jobType !== formData.jobType,
-          has_responsibilities_changed:
-            jobData.responsibilities !== formData.responsibilities,
-          has_requirements_changed:
-            jobData.requirements !== formData.requirements,
-          has_notes_changed: jobData.notes !== formData.notes,
-        });
-      }
+        transaction.update(jobRef, jobPayload);
 
-      await batch.commit();
+        if (updatedAnalytics) {
+          transaction.update(analyticsRef, updatedAnalytics);
+
+          logAnalyticsEvent("application_status_updated", {
+            job_id: jobData.id,
+            old_status: jobData.status,
+            new_status: formData.status,
+          });
+        } else {
+          logAnalyticsEvent("application_details_updated", {
+            job_id: jobData.id,
+            has_link_changed: jobData.link !== formData.link,
+            has_title_changed: jobData.title !== formData.title,
+            has_location_changed: jobData.location !== formData.location,
+            has_company_changed: jobData.company !== formData.company,
+            has_job_type_changed: jobData.jobType !== formData.jobType,
+            has_responsibilities_changed:
+              jobData.responsibilities !== formData.responsibilities,
+            has_requirements_changed:
+              jobData.requirements !== formData.requirements,
+            has_notes_changed: jobData.notes !== formData.notes,
+          });
+        }
+      });
+
       toast.success("Successfully updated Application");
-
       setIsInEditMode(false);
       refetchData();
       onClose();
@@ -169,6 +182,7 @@ const JobDetailsModal = ({
         ),
       });
 
+      setShowConfirmDialog(false);
       refetchData();
       onClose();
     } catch (err) {
@@ -277,6 +291,7 @@ const JobDetailsModal = ({
       bodyClasses="px-5 flex justify-center w-full"
       onClose={() => {
         setIsInEditMode(false);
+        setShowConfirmDialog(false);
         onClose();
       }}
       footer={renderFooter()}
