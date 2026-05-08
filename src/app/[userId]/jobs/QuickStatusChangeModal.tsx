@@ -47,14 +47,27 @@ const QuickStatusChangeModal = ({
       const analyticsRef = doc(db, "users", user.uid, "metadata", "analytics");
 
       await runTransaction(db, async (transaction) => {
+        const analyticsDoc = await transaction.get(analyticsRef);
+        if (!analyticsDoc.exists()) {
+          throw new Error("Analytics document does not exist!");
+        }
+
+        const currentCounts = analyticsDoc.data().applicationCounts || {};
+
+        const currentOldCount = currentCounts[oldStatus] || 0;
+        const currentNewCount = currentCounts[newStatus] || 0;
+
+        const updatedOldCount = Math.max(0, currentOldCount - 1);
+        const updatedNewCount = currentNewCount + 1;
+
         transaction.update(jobDocRef, {
           status: newStatus,
           lastUpdateDate: serverTimestamp(),
         });
 
         transaction.update(analyticsRef, {
-          [`applicationCounts.${oldStatus}`]: increment(-1),
-          [`applicationCounts.${newStatus}`]: increment(1),
+          [`applicationCounts.${oldStatus}`]: updatedOldCount,
+          [`applicationCounts.${newStatus}`]: updatedNewCount,
           lastUpdated: serverTimestamp(),
         });
       });

@@ -24,6 +24,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import Link from "next/link";
 import JsonImportModal from "./JsonImportModal";
 import { JobType } from "@/types/job";
+import { getWeekNumber } from "@/lib/date";
 
 type NewApplicationModalProps = {
   showModal: boolean;
@@ -101,6 +102,9 @@ const NewApplicationModal = ({
     const notes = String(formData["job-notes"] ?? "");
     const lastUpdateDate = serverTimestamp();
     const createDate = serverTimestamp();
+    const now = new Date();
+    const dateKey = now.toISOString().split('T')[0]; // e.g., "2026-05-08"
+    const weekKey = `W-${getWeekNumber(now)}`;       // e.g., "W-19"
 
     try {
       const batch = writeBatch(db);
@@ -123,12 +127,25 @@ const NewApplicationModal = ({
         createDate,
         status: entryModeRef.current,
       };
-      const analyticsPayload = {
-        "applicationCounts.applied": increment(1),
-        "companies.allApplied": arrayUnion(company),
-        "companies.activeList": arrayUnion(company),
-        lastUpdated: serverTimestamp(),
-      };
+      let analyticsPayload;
+      
+      if (entryModeRef.current === "applied") {
+        analyticsPayload = {
+          "applicationCounts.applied": increment(1),
+          "companies.allApplied": arrayUnion(company),
+          "companies.activeList": arrayUnion(company),
+          [`weeklyActivity.${weekKey}.${dateKey}`]: increment(1),
+          lastUpdated: serverTimestamp(),
+        };
+      } else {
+        analyticsPayload = {
+          "applicationCounts.wishlist": increment(1),
+          "companies.allApplied": arrayUnion(company),
+          "companies.activeList": arrayUnion(company),
+          [`weeklyActivity.${weekKey}.${dateKey}`]: increment(1),
+          lastUpdated: serverTimestamp(),
+        };
+      }
 
       batch.set(newJobRef, newJobPayload);
       batch.update(analyticsRef, analyticsPayload);
