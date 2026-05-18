@@ -14,6 +14,7 @@ type ModalProps = {
   children: ReactNode;
   theme?: "light" | "dark";
   footer?: React.JSX.Element;
+  footerClasses?: string;
   onClose: () => void;
 };
 
@@ -27,6 +28,7 @@ const Modal = ({
   children,
   modalClasses,
   bodyClasses,
+  footerClasses,
   theme = "light",
   footer,
   onClose,
@@ -110,7 +112,7 @@ const Modal = ({
               theme === "light"
                 ? "bg-amber-400 border-zinc-800"
                 : "bg-amber-400 border-zinc-200"
-            } px-5 py-4 border-t`}
+            } px-5 py-4 border-t ${footerClasses}`}
           >
             {footer}
           </section>

@@ -2,11 +2,7 @@
 import PasswordInput from "@/components/PasswordInput";
 import {
   faCaretDown,
-  faCaretLeft,
-  faCaretRight,
   faCaretUp,
-  faMinus,
-  faPlus,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -117,7 +113,7 @@ const ChangePasswordSection = ({ user }: Props) => {
         className="flex justify-between items-center cursor-pointer"
         onClick={() => setIsExpanded((prev) => !prev)}
       >
-        <h4 className="text-base md:text-lg text-amber-400 font-light mb-5">
+        <h4 className="text-base md:text-lg text-accent-1 font-light mb-5">
           Change Password
         </h4>
         <FontAwesomeIcon icon={isExpanded ? faCaretUp : faCaretDown} size="lg" />
@@ -133,7 +129,7 @@ const ChangePasswordSection = ({ user }: Props) => {
           autoComplete="off"
         >
           <>
-            <p className="text-base md:text-lg text-amber-400 pt-2">
+            <p className="text-base md:text-lg text-accent-1 pt-2">
               Current Password
             </p>
             <div className="flex flex-col gap-1 w-full">
@@ -155,7 +151,7 @@ const ChangePasswordSection = ({ user }: Props) => {
           </>
 
           <>
-            <p className="text-base md:text-lg text-amber-400 pt-2">
+            <p className="text-base md:text-lg text-accent-1 pt-2">
               New Password
             </p>
             <div className="flex flex-col gap-1 w-full">
@@ -177,7 +173,7 @@ const ChangePasswordSection = ({ user }: Props) => {
           </>
 
           <>
-            <p className="text-base md:text-lg text-amber-400 pt-2">
+            <p className="text-base md:text-lg text-accent-1 pt-2">
               Confirm Password
             </p>
             <div className="flex flex-col gap-1 w-full">
@@ -201,7 +197,7 @@ const ChangePasswordSection = ({ user }: Props) => {
           <div className="col-span-2 flex justify-center md:justify-end mt-5 w-full">
             <button
               type="submit"
-              className="px-8 py-2 bg-amber-400 text-gray-800 hover:bg-amber-500 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
+              className="px-8 py-2 bg-accent-1 text-gray-800 hover:bg-accent-1/70 transition-colors duration-200 ease-in-out text-lg rounded-lg cursor-pointer"
               disabled={isChangingPassword}
             >
               {isChangingPassword ? (

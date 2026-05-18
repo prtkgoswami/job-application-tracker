@@ -1,17 +1,13 @@
 "use client";
 import { useAuth } from "@/contexts/AuthProvider";
-import useJobs from "@/hooks/useJobs";
-import { User } from "firebase/auth";
 import React from "react";
-import AnalyticsCard from "./AnalyticsCard";
 import useAnalytics from "@/hooks/useAnalytics";
 import { getWeekNumber } from "@/lib/date";
 import WeeklyGraph from "./WeeklyGraph";
 import ApplicationBreakdown from "./ApplicationBreakdown";
-import { analytics } from "@/lib/firebase";
 import CompaniesTab from "./CompaniesTab";
 
-const AnalyticsContent = ({ user }: { user: User }) => {
+const AnalyticsContent = () => {
   const { data, isLoading, error } = useAnalytics();
   const today = new Date().toISOString();
   const todayDate = today.split("T")[0];
@@ -21,7 +17,7 @@ const AnalyticsContent = ({ user }: { user: User }) => {
   return (
     <div>
       <div className="flex justify-between items-center px-3 py-2 md:px-5 pt-5">
-        <h2 className="text-xl md:text-2xl text-amber-400 leading-relaxed">
+        <h2 className="text-xl md:text-2xl text-accent-1 leading-relaxed">
           Analytics Dashboard
         </h2>
       </div>
@@ -60,7 +56,7 @@ const AnalyticsPage = () => {
   const user = useAuth();
   if (!user) return <></>;
 
-  return <AnalyticsContent user={user} />;
+  return <AnalyticsContent />;
 };
 
 export default AnalyticsPage;
