@@ -1,16 +1,13 @@
 import { db } from "@/lib/firebase";
 import { FirestoreEvent, FirestoreJob } from "@/types/firestore";
-import { Job, JobType } from "@/types/job";
+import { Job } from "@/types/job";
 import { ScheduledEvent } from "@/types/schedule";
 import {
   collection,
-  doc,
   documentId,
-  getDoc,
   getDocs,
   orderBy,
   query,
-  Timestamp,
   where,
 } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
@@ -28,6 +25,7 @@ type UseJobDetailsResponse = {
   events: ScheduledEvent[];
   isLoading: boolean;
   error: string | null;
+  refetchData: () => Promise<void>;
 };
 
 const useJobDetails = (
@@ -126,7 +124,13 @@ const useJobDetails = (
     void fetchData();
   }, [fetchData]);
 
-  return { job, events, isLoading, error };
+  return {
+    job,
+    events,
+    isLoading,
+    error,
+    refetchData: fetchData,
+  };
 };
 
 export default useJobDetails;

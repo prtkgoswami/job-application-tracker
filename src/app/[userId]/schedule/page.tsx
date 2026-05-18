@@ -97,11 +97,11 @@ const ScheduleContent = ({ user }: { user: User }) => {
   return (
     <div className="h-screen flex flex-col w-full">
       <div className="flex justify-between items-center px-3 py-2 md:px-5 md:py-5">
-        <h2 className="text-xl md:text-2xl text-amber-400 leading-relaxed">
+        <h2 className="text-xl md:text-2xl text-accent-1 leading-relaxed">
           Schedule
         </h2>
         <button
-          className="cursor-pointer h-10 md:h-12 px-3 py-2 rounded-md text-zinc-900 bg-amber-500 hover:bg-amber-400"
+          className="cursor-pointer h-10 md:h-12 px-3 py-2 rounded-md text-accent-1 border border-accent-1 hover:text-background hover:bg-accent-1 transition-colors duration-150 ease-in-out"
           onClick={() => setShowAddEventModal(true)}
         >
           <FontAwesomeIcon icon={faPlus} /> New Event

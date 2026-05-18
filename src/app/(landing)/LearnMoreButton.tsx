@@ -37,7 +37,7 @@ export default function LearnMoreButton() {
     <a
       href="#features"
       onClick={handleScroll}
-      className="inline-block w-full sm:w-auto text-center bg-zinc-800 hover:bg-zinc-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition-colors border border-zinc-700 cursor-pointer"
+      className="inline-block w-full sm:w-auto text-center bg-foreground/5 hover:bg-foreground/15 text-foreground px-8 py-3 rounded-lg font-semibold text-lg transition-colors border border-foreground/50 cursor-pointer"
     >
       Learn More
     </a>

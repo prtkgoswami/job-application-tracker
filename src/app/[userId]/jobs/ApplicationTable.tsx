@@ -1,10 +1,8 @@
 import { Job, JobStatus } from "@/types/job";
-import { ActiveFilters } from "./OptionsModal";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import JobDetailsModal from "./JobDetailsModal";
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,90 +11,80 @@ import {
   CellContext,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRouter } from "next/navigation";
 
 const STATUS_COLOR_MAP: Record<JobStatus, string> = {
   wishlist:
-    "bg-fuchsia-300 hover:bg-fuchsia-400 text-fuchsia-700 border-fuchsia-600",
-  applied: "bg-blue-300 hover:bg-blue-400 text-blue-700 border-blue-600",
+    "bg-fuchsia-500/10 hover:bg-fuchsia-500/0 text-fuchsia-300 border-fuchsia-400",
+  applied: "bg-blue-500/10 hover:bg-blue-500/0 text-blue-300 border-blue-400",
   interviewing:
-    "bg-amber-300 hover:bg-amber-400 text-amber-700 border-amber-600",
-  rejected: "bg-red-300 hover:bg-red-400 text-red-700 border-red-600",
-  offered: "bg-green-300 hover:bg-green-400 text-green-700 border-green-600",
-  cancelled: "bg-gray-300 hover:bg-gray-400 text-gray-700 border-gray-600",
+    "bg-amber-500/10 hover:bg-amber-500/0 text-amber-300 border-amber-400",
+  rejected: "bg-red-500/10 hover:bg-red-500/0 text-red-300 border-red-400",
+  offered: "bg-green-500/10 hover:bg-green-500/0 text-green-300 border-green-400",
+  cancelled: "bg-gray-500/10 hover:bg-gray-500/0 text-gray-300 border-gray-400",
 } as const;
 
 interface ApplicationTableProps {
   userId: string;
-  activeFilters: ActiveFilters;
+  searchQuery: string;
+  showAllJobs: boolean;
   archivedApplicationIDs: Set<string>;
   jobs: Job[];
   isLoading: boolean;
   error?: Error;
   onStatusClick: (id: string) => void;
-  refetch: () => void;
 }
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({
   userId,
-  activeFilters,
+  searchQuery,
+  showAllJobs,
   archivedApplicationIDs,
   jobs,
   isLoading,
   error,
   onStatusClick,
-  refetch,
 }) => {
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const filteredJobs = useMemo<Job[]>(() => {
-    let jobList: Job[] = [...jobs];
 
-    switch (activeFilters.status) {
-      case "active":
-        jobList = jobList.filter(
-          (job) => job.status === "applied" || job.status === "interviewing",
-        );
-        break;
-      case "applied":
-        jobList = jobList.filter((job) => job.status === "applied");
-        break;
-      case "wishlisted":
-        jobList = jobList.filter((job) => job.status === "wishlist");
-        break;
-      case "interviewing":
-        jobList = jobList.filter((job) => job.status === "interviewing");
-        break;
-      case "offered":
-        jobList = jobList.filter((job) => job.status === "offered");
-        break;
-      case "rejected":
-        jobList = jobList.filter((job) => job.status === "rejected");
-        break;
+    // Strategy: Separate global flags from textual keyword search
+    let results = jobs.filter((job) => !archivedApplicationIDs.has(job.id));
+
+    if (!showAllJobs) {
+    results = results.filter(
+      (job) => job.status === "applied" || job.status === "interviewing"
+    );
+  }
+
+    const normalizedQuery = searchQuery.toLowerCase().trim();
+    if (!normalizedQuery) {
+      return results;
     }
 
-    if (activeFilters.jobType) {
-      jobList = jobList.filter(
-        (job) => job.jobType.toLowerCase() === activeFilters.jobType,
+    return results.filter((job) => {
+      const title = job.title?.toLowerCase() || "";
+      const company = job.company?.toLowerCase() || "";
+      const location = job.location?.toLowerCase() || "";
+      const jobType = job.jobType?.toLowerCase() || "";
+      const status = job.status?.toLowerCase() || "";
+
+      // Semantic sugar: let 'wishlisted' keyword capture the 'wishlist' status record
+      const isWishlistMatch = 
+        status === "wishlist" && normalizedQuery.includes("wishlist");
+
+      return (
+        title.includes(normalizedQuery) ||
+        company.includes(normalizedQuery) ||
+        location.includes(normalizedQuery) ||
+        jobType.includes(normalizedQuery) ||
+        status.includes(normalizedQuery) ||
+        isWishlistMatch
       );
-    }
-
-    if (activeFilters.company) {
-      jobList = jobList.filter((job) => job.company === activeFilters.company);
-    }
-
-    if (activeFilters.location) {
-      jobList = jobList.filter(
-        (job) => job.location === activeFilters.location,
-      );
-    }
-
-    if (!activeFilters.showArchived) {
-      jobList = jobList.filter((job) => !archivedApplicationIDs.has(job.id));
-    }
-
-    return jobList;
-  }, [jobs, activeFilters, archivedApplicationIDs]);
+    });
+  }, [jobs, searchQuery, archivedApplicationIDs]);
 
   const columns = useMemo<ColumnDef<Job>[]>(
     () => [
@@ -158,7 +146,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
         accessorKey: "jobType",
         header: "Type",
         cell: (info: CellContext<Job, unknown>) => (
-          <span className="capitalize text-zinc-400 text-sm">
+          <span className="capitalize text-sm border px-2 py-1 rounded-sm border-accent-3 bg-accent-3/10 text-foreground w-20 text-center">
             {info.getValue() as string}
           </span>
         ),
@@ -179,7 +167,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
           return (
             <button
               type="button"
-              className={`w-full border ${STATUS_COLOR_MAP[status]} text-sm font-semibold px-3 py-1.5 rounded-md capitalize cursor-pointer transition-transform active:scale-95`}
+              className={`w-full border ${STATUS_COLOR_MAP[status]} text-sm font-semibold px-3 py-1.5 rounded-md capitalize cursor-pointer transition-all active:scale-95 duration-150 ease-in-out`}
               onClick={handleClick}
             >
               {status}
@@ -237,17 +225,13 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
   }, [error]);
 
   const handleRowClick = (job: Job): void => {
-    setSelectedJob(job);
-  };
-
-  const handleModalClose = (): void => {
-    setSelectedJob(null);
+    router.push(`/${userId}/jobs/${job.id}`)
   };
 
   if (isLoading) {
     return (
       <div className="grow w-full flex justify-center items-center mt-4 px-4">
-        <div className="text-center text-xl py-10 text-zinc-400 animate-pulse">
+        <div className="text-center text-xl py-10 text-foreground/50 animate-pulse">
           <FontAwesomeIcon icon={faSpinner} size="2xl" spin className="mb-4" />
           <p>Fetching Job List...</p>
         </div>
@@ -259,7 +243,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
     <>
       <div
         ref={tableContainerRef}
-        className="w-full h-full overflow-auto rounded-xl border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm"
+        className="w-full h-full overflow-auto rounded-xl border border-foreground/5 bg-zinc-900/20 backdrop-blur-sm"
       >
         <div
           style={{
@@ -352,14 +336,6 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({
           </div>
         </div>
       </div>
-
-      <JobDetailsModal
-        userId={userId}
-        jobData={selectedJob}
-        isVisible={!!selectedJob}
-        onClose={handleModalClose}
-        refetchData={refetch}
-      />
     </>
   );
 };

@@ -44,28 +44,28 @@ export default function LandingPage() {
           `
         }}
       />
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans">
+      <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
         <AuthRedirect />
         <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Navbar */}
-      <header className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-zinc-800">
-        <div className="flex items-center gap-2 text-xl font-bold text-white">
-          <FontAwesomeIcon icon={faBriefcase} className="text-amber-400" />
+      <header className="flex items-center justify-between px-4 md:px-6 py-4">
+        <div className="flex items-center gap-2 text-xl font-bold text-foreground">
+          <FontAwesomeIcon icon={faBriefcase} className="text-accent-1" />
           <span>JobTrackr</span>
         </div>
         <nav>
           <Link
             href="/auth?mode=login"
-            className="text-sm font-medium text-zinc-300 hover:text-white transition-colors mr-4"
+            className="text-sm font-medium text-foreground/80 hover:text-foreground px-4 py-2 rounded-md border border-foreground/80 hover:border-foreground transition-colors mr-4"
           >
             Login
           </Link>
           <Link
             href="/auth?mode=register"
-            className="text-sm font-medium bg-amber-500 hover:bg-amber-400 text-zinc-950 px-4 py-2 rounded-md transition-colors"
+            className="text-sm font-medium bg-accent-1 hover:bg-accent-2 text-background px-4 py-2 rounded-md transition-colors"
           >
             Get Started
           </Link>
@@ -75,11 +75,11 @@ export default function LandingPage() {
       <main className="grow">
         {/* Hero Section */}
         <section className="px-4 md:px-6 py-16 md:py-24 text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
             Take Control of Your{" "}
-            <span className="text-cyan-500">Job Search</span>
+            <span className="text-accent-3">Job Search</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-zinc-400 mb-10">
+          <p className="text-base sm:text-lg md:text-xl text-foreground/60 mb-10">
             Stop losing track of your applications. Organize your links, manage
             your interview schedule, and visualize your progress all in one
             place.
@@ -87,7 +87,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-4 sm:px-0">
             <Link
               href="/auth"
-              className="w-full sm:w-auto text-center bg-amber-500 hover:bg-amber-400 text-zinc-950 px-8 py-3 rounded-lg font-semibold text-lg transition-colors shadow-lg shadow-cyan-500/20"
+              className="w-full sm:w-auto text-center bg-accent-1 hover:bg-accent-1/80 text-background px-8 py-3 rounded-lg font-semibold text-lg transition-colors"
             >
               Start Tracking Now
             </Link>
@@ -117,10 +117,10 @@ export default function LandingPage() {
         {/* Features Section */}
         <section
           id="features"
-          className="px-4 md:px-6 py-16 md:py-24 bg-zinc-900/50 border-y border-zinc-800"
+          className="px-4 md:px-6 py-16 md:py-24 border-y border-foreground/10"
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-16">
               Everything you need to land your dream job
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -130,10 +130,10 @@ export default function LandingPage() {
                   <FontAwesomeIcon icon={faBriefcase} className="text-[8rem]" />
                 </div>
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
+                  <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
                     Track Applications
                   </h3>
-                  <p className="text-zinc-300">
+                  <p className="text-foreground/80">
                     Log every job you apply to. Keep track of URLs, job
                     descriptions, salaries, and current status in a clean,
                     organized table.
@@ -150,10 +150,10 @@ export default function LandingPage() {
                   />
                 </div>
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
+                  <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
                     Manage Interviews
                   </h3>
-                  <p className="text-zinc-300">
+                  <p className="text-foreground/80">
                     Never miss an interview. Schedule upcoming calls, technical
                     assessments, and final rounds directly in your calendar.
                   </p>
@@ -166,10 +166,10 @@ export default function LandingPage() {
                   <FontAwesomeIcon icon={faChartLine} className="text-[8rem]" />
                 </div>
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
+                  <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
                     Visual Analytics
                   </h3>
-                  <p className="text-zinc-300">
+                  <p className="text-foreground/80">
                     Gain insights into your job search. View your conversion
                     rates, application volume over time, and status breakdowns.
                   </p>
@@ -181,18 +181,18 @@ export default function LandingPage() {
 
         {/* Contact / Feedback Section */}
         <section className="px-4 md:px-6 py-16 md:py-24 max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6">
             We would Love Your Feedback
           </h2>
-          <p className="text-zinc-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-foreground/60 mb-8 max-w-2xl mx-auto">
             JobTrackr is constantly improving. If you have feature requests,
             found a bug, or just want to say hi, reach out to us!
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 bg-zinc-900 border border-zinc-800 px-4 md:px-6 py-4 rounded-xl max-w-fit mx-auto break-all">
-            <FontAwesomeIcon icon={faEnvelope} className="text-zinc-400" />
+            <FontAwesomeIcon icon={faEnvelope} className="text-foreground/60" />
             <a
               href="mailto:jobtrackrapp@gmail.com"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
+              className="text-accent-3 hover:text-accent-3/80 transition-colors font-medium"
             >
               jobtrackrapp@gmail.com
             </a>
